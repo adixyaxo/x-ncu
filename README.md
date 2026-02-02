@@ -53,14 +53,17 @@ This project is built using **C++ (Crow framework)** for the backend, **MySQL** 
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/X-NCU.git
+   
 2. Configure MySQL credentials in the backend config.
 
 3. Compile the backend:
-  g++ main.cpp -o x-ncu -std=c++17
-4. Run the server:
+   ```bash
+     g++ main.cpp -o x-ncu -std=c++17
+  
+5. Run the server:
+   ```bash
+     ./x-ncu
    
-  ./x-ncu
   Frontend Setup
   Open index.html in a browser
-  
   Or serve it using any local server

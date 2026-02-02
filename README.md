@@ -38,7 +38,6 @@ This project is built using **C++ (Crow framework)** for the backend, **MySQL** 
 - MVC-inspired project structure
 
 ---
----
 
 ## ⚙️ Setup Instructions
 

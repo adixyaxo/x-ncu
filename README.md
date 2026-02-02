@@ -1,5 +1,4 @@
-# X NCU ( X for The NorthCap University )
-# X-NCU  
+# X NCU
 **X for The NorthCap University**
 
 X-NCU is a Twitter-inspired social networking platform built exclusively for **The NorthCap University (NCU)** community.  

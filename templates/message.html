@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | X-NCU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Utilizing your exact Tailwind config from the main page
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xblack: '#000000',
+                        xdark: '#16181c',
+                        xborder: '#2f3336',
+                        xgreen: '#00ba7c',
+                        xtext: '#e7e9ea',
+                        xmuted: '#71767b'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 8s ease-in-out infinite 2s',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) rotate(-12deg)' },
+                            '50%': { transform: 'translateY(-20px) rotate(-8deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* CSS to create the hollow/outlined text effect for 404 */
+        .text-outline {
+            color: transparent;
+            -webkit-text-stroke: 3px #e7e9ea;
+        }
+
+        /* Simple starry background generator */
+        .stars {
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, #e7e9ea, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 40px 70px, #71767b, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 50px 160px, #e7e9ea, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 90px 40px, #e7e9ea, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 130px 80px, #71767b, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 160px 120px, #e7e9ea, rgba(0, 0, 0, 0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-xblack text-xtext font-sans antialiased h-screen w-full flex items-center justify-center overflow-hidden relative">
+
+    <div class="absolute inset-0 stars z-0"></div>
+
+    <div
+        class="relative z-10 flex flex-col md:flex-row items-center justify-center gap-16 md:gap-32 w-full max-w-5xl px-8">
+
+        <div class="animate-float hidden md:block">
+            <svg width="200" height="200" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
+                class="text-xtext transform -rotate-12">
+                <circle cx="50" cy="50" r="25" stroke="currentColor" stroke-width="3" />
+                <path d="M10 50 C 10 65, 90 65, 90 50" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                <path d="M15 50 C 15 40, 85 40, 85 50" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                    stroke-dasharray="4 6" />
+                <circle cx="42" cy="42" r="4" stroke="currentColor" stroke-width="3" />
+            </svg>
+        </div>
+
+        <div class="flex flex-col items-center text-center">
+
+            <h1 class="text-[120px] md:text-[180px] font-black tracking-tighter leading-none text-outline mb-4">
+                {{error_code}}
+            </h1>
+
+            <h2 class="text-xl md:text-2xl font-bold text-xtext mb-2 tracking-wide">
+                {{error_message}}
+            </h2>
+
+            <a href="/login"
+                class="group relative inline-flex items-center justify-center px-8 py-3 font-bold uppercase tracking-widest text-xs md:text-sm text-xtext border-2 border-xtext rounded-full overflow-hidden transition-all hover:bg-xtext hover:text-xblack focus:outline-none">
+                <span class="relative z-10">Go To Login Page</span>
+            </a>
+
+        </div>
+    </div>
+
+    <div class="absolute top-24 left-1/4 animate-float-delayed opacity-50 hidden lg:block pointer-events-none">
+        <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
+            class="text-xtext">
+            <circle cx="50" cy="50" r="20" stroke="currentColor" stroke-width="4" />
+            <path d="M20 50 C 20 60, 80 60, 80 50" stroke="currentColor" stroke-width="4" />
+        </svg>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-NCU | NorthCap University</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xblack: '#000000',
+                        xdark: '#16181c',
+                        xborder: '#2f3336',
+                        xgreen: '#00ba7c',
+                        xtext: '#e7e9ea',
+                        xmuted: '#71767b'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-xblack text-xtext font-sans antialiased flex h-screen overflow-hidden">
+
+    <aside class="w-64 border-r border-xborder flex flex-col justify-between h-full hidden md:flex">
+        <div class="p-4 overflow-y-auto no-scrollbar">
+            <div class="mb-8 px-2">
+                <h1 class="text-xl font-bold tracking-wider">
+                    <span class="text-xgreen">&gt;_</span> X-NCU
+                </h1>
+                <p class="text-xs text-xmuted mt-1">NorthCap University</p>
+            </div>
+
+            <nav class="space-y-6">
+                <div class="nav-group">
+                    <h2
+                        class="dropdown-toggle cursor-pointer text-xs font-semibold text-xmuted mb-2 uppercase px-2 tracking-wider flex items-center transition-colors hover:text-xtext">
+                        <i class="ph ph-caret-down mr-1 transition-transform duration-200"></i> FEED
+                    </h2>
+                    <div class="dropdown-content">
+                        <a href="#/" data-route="home"
+                            class="nav-link flex items-center space-x-3 px-3 py-2 rounded-md transition-colors active">
+                            <i class="ph ph-house text-xl"></i>
+                            <span>General Feed</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-group">
+                    <h2
+                        class="dropdown-toggle cursor-pointer text-xs font-semibold text-xmuted mb-2 uppercase px-2 tracking-wider flex items-center transition-colors hover:text-xtext">
+                        <i class="ph ph-caret-down mr-1 transition-transform duration-200"></i> OCCUPATION CHATS
+                    </h2>
+                    <ul class="dropdown-content space-y-1">
+                        <li>
+                            <a href="#/students" data-route="students"
+                                class="nav-link flex items-center space-x-3 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors text-gray-300">
+                                <i class="ph ph-student text-xl"></i><span>Students</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/teachers" data-route="teachers"
+                                class="nav-link flex items-center space-x-3 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors text-gray-300">
+                                <i class="ph ph-chalkboard-teacher text-xl"></i><span>Teachers</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/staff" data-route="staff"
+                                class="nav-link flex items-center space-x-3 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors text-gray-300">
+                                <i class="ph ph-users text-xl"></i><span>Staff</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-group">
+                    <h2
+                        class="dropdown-toggle cursor-pointer text-xs font-semibold text-xmuted mb-2 uppercase px-2 tracking-wider flex items-center transition-colors hover:text-xtext">
+                        <i class="ph ph-caret-down mr-1 transition-transform duration-200"></i> ACADEMIC HUB
+                    </h2>
+                    <ul class="dropdown-content space-y-1 text-sm text-gray-300">
+                        <li>
+                            <a href="#/cse" data-route="cse"
+                                class="nav-link flex items-center space-x-2 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors">
+                                <span class="text-xmuted">&gt;_</span><span>CSE</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/ece" data-route="ece"
+                                class="nav-link flex items-center space-x-2 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors">
+                                <span class="text-xmuted">&gt;_</span><span>ECE</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#/me" data-route="me"
+                                class="nav-link flex items-center space-x-2 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors">
+                                <span class="text-xmuted">&gt;_</span><span>ME</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <a href="/profile">
+            <div href="/profile"
+                class="p-4 hover:bg-xborder/30 cursor-pointer transition-colors mt-auto border-t border-xborder flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-xborder flex items-center justify-center font-bold">
+                    {{user_initials}}
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-sm">{{user_name}}</p>
+                    <p class="text-xmuted text-sm">{{user_handle}}</p>
+                </div>
+                <i class="ph ph-dots-three text-xl"></i>
+            </div>
+        </a>
+    </aside>
+
+    <main class="flex-1 border-r border-xborder h-full overflow-y-auto no-scrollbar">
+        <header class="sticky top-0 bg-xblack/80 backdrop-blur-md z-10 border-b border-xborder flex">
+            <button
+                class="feed-tab flex-1 py-4 text-center hover:bg-xborder/30 transition-colors relative text-white font-bold">
+                For you
+                <div
+                    class="tab-underline absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-xgreen rounded-full">
+                </div>
+            </button>
+            <button class="feed-tab flex-1 py-4 text-center text-xmuted hover:bg-xborder/30 transition-colors relative">
+                Following
+                <div
+                    class="tab-underline absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-xgreen rounded-full hidden">
+                </div>
+            </button>
+        </header>
+
+        <div class="p-4 border-b border-xborder flex space-x-4">
+            <div class="w-10 h-10 rounded-full bg-xborder flex-shrink-0 flex items-center justify-center font-bold">
+                {{user_initials}}
+            </div>
+            <div class="flex-1">
+                <textarea id="post-input"
+                    class="w-full bg-transparent text-xl placeholder-xmuted outline-none resize-none mt-2" rows="2"
+                    placeholder="What's happening at NCU?"></textarea>
+                <div class="flex justify-between items-center mt-4 border-t border-xborder/50 pt-3">
+                    <div class="flex space-x-2 text-xgreen">
+                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors"><i
+                                class="ph ph-image text-xl"></i></button>
+                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors"><i
+                                class="ph ph-chart-bar text-xl"></i></button>
+                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors"><i
+                                class="ph ph-smiley text-xl"></i></button>
+                    </div>
+                    <button id="post-btn"
+                        class="bg-xgreen text-xblack font-bold py-1.5 px-6 rounded-full hover:bg-opacity-90 transition-colors">
+                        Post
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="feed-container">
+            {{#posts}}
+            <article
+                class="p-4 border-b border-xborder hover:bg-xborder/10 transition-colors cursor-pointer flex space-x-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-xborder flex-shrink-0 flex items-center justify-center text-sm font-bold mt-1">
+                    {{author_initials}}
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center space-x-1 text-sm">
+                        <span class="font-bold hover:underline">{{author_name}}</span>
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded border 
+                            {{#is_user}}text-xgreen border-xgreen/30 bg-xgreen/10{{/is_user}}
+                            {{#is_prof}}text-blue-400 border-blue-400/30 bg-blue-400/10{{/is_prof}}">
+                            {{author_role}}
+                        </span>
+                        <span class="text-xmuted">{{author_handle}} · {{time_ago}}</span>
+                    </div>
+
+                    <div class="mt-1 text-[15px] leading-snug whitespace-pre-wrap">{{body}}</div>
+
+                    <div class="flex justify-between items-center mt-3 text-xmuted w-full max-w-md">
+                        <button class="flex items-center space-x-2 hover:text-blue-400 transition-colors group">
+                            <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full"><i
+                                    class="ph ph-chat-circle text-lg"></i></div>
+                            <span class="text-xs">{{replies}}</span>
+                        </button>
+                        <button class="flex items-center space-x-2 hover:text-xgreen transition-colors group">
+                            <div class="p-1.5 group-hover:bg-xgreen/10 rounded-full"><i
+                                    class="ph ph-arrows-left-right text-lg"></i></div>
+                            <span class="text-xs">{{reposts}}</span>
+                        </button>
+                        <button class="flex items-center space-x-2 hover:text-pink-500 transition-colors group">
+                            <div class="p-1.5 group-hover:bg-pink-500/10 rounded-full"><i
+                                    class="ph ph-heart text-lg"></i></div>
+                            <span class="text-xs">{{likes}}</span>
+                        </button>
+                        <button class="flex items-center hover:text-blue-400 transition-colors group">
+                            <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full"><i
+                                    class="ph ph-export text-lg"></i></div>
+                        </button>
+                    </div>
+                </div>
+            </article>
+            {{/posts}}
+        </div>
+    </main>
+
+    <aside class="hidden lg:block w-80 p-4 h-full border-l border-xborder">
+        <div class="bg-xdark rounded-2xl p-4 border border-xborder/50">
+            <h2 class="text-xl font-extrabold mb-4">Campus Trends</h2>
+            <div class="space-y-4">
+                <div class="hover:bg-xborder/20 p-2 -mx-2 rounded-xl transition-colors cursor-pointer">
+                    <p class="text-xs text-xmuted">Trending in CSE</p>
+                    <p class="font-bold">#Hackathon2026</p>
+                    <p class="text-xs text-xmuted">1.2k Posts</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

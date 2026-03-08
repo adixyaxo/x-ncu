@@ -251,6 +251,8 @@ int registerUser(const string &email, const string &fullName, const string &role
     return newId;
 }
 
+user Current_User(global_login_stats);
+
 int main()
 {
     crow::SimpleApp app; // define your crow application
@@ -271,7 +273,7 @@ int main()
         else
         {
             crow::mustache::context ctx;
-            ctx["title"] = "HOME | X-NCU"
+            ctx["title"] = "HOME | X-NCU";
             // Fetch the logged-in user's info dynamically from the CSV
             user currentUser(global_login_stats);
 
@@ -356,6 +358,7 @@ int main()
         }
         else {
             // SUCCESSFUL REGISTRATION - Force a GET request to the feed
+            Current_User = user(signup_status);
             crow::response res;
             res.code = 303; 
             res.set_header("Location", "/");
@@ -364,9 +367,17 @@ int main()
 
     // 4. GET PROFILE PAGE
     CROW_ROUTE(app, "/profile")([]()
-                                { crow::mustache::context ctx;
-                                    ctx["title"] = profile_name + "||" profile_handle;
-]
+                                {
+        if (global_login_stats <= 0) // If no user is logged in
+        {
+        crow::response res;
+        res.code = 303;
+        res.set_header("Location", "/login");
+        return res; }
+
+        else { crow::mustache::context ctx;
+                                    ctx["title"] = Current_User.handle;
+
                                     // 1. The viewer (Left Sidebar)
                                     ctx["user_initials"] = "AD";
                                     ctx["user_name"] = "Aditya Dagar";
@@ -387,8 +398,9 @@ int main()
                                     // 3. Logic flags
                                     ctx["is_own_profile"] = true; // Shows "Edit profile" instead of "Follow"
                                     ctx["has_posts"] = false;     // Triggers the "No posts yet" empty state
-        auto variable_page = crow::mustache::load("profile.html"); 
-        return variable_page.render(ctx); });
+                                    
+        auto profile_page = crow::mustache::load("profile.html").render(ctx); 
+        return crow::response(profile_page); } });
 
     // 5. POST AUTHENTICATION DATA
     CROW_ROUTE(app, "/auth").methods(crow::HTTPMethod::POST)([](const crow::request &req)

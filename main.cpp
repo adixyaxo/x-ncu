@@ -271,7 +271,7 @@ int main()
         else
         {
             crow::mustache::context ctx;
-
+            ctx["title"] = "HOME | X-NCU"
             // Fetch the logged-in user's info dynamically from the CSV
             user currentUser(global_login_stats);
 
@@ -362,9 +362,11 @@ int main()
             return res;
         } });
 
+    // 4. GET PROFILE PAGE
     CROW_ROUTE(app, "/profile")([]()
                                 { crow::mustache::context ctx;
-
+                                    ctx["title"] = profile_name + "||" profile_handle;
+]
                                     // 1. The viewer (Left Sidebar)
                                     ctx["user_initials"] = "AD";
                                     ctx["user_name"] = "Aditya Dagar";

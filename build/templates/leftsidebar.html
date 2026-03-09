@@ -15,7 +15,7 @@
                 </h2>
                 <div class="dropdown-content">
                     <a href="#/" data-route="home"
-                        class="nav-link flex items-center space-x-3 px-3 py-2 rounded-md transition-colors text-gray-300 hover:bg-xborder/50">
+                        class="nav-link flex items-center space-x-3 px-3 py-2 rounded-md transition-colors active">
                         <i class="ph ph-house text-xl"></i>
                         <span>General Feed</span>
                     </a>
@@ -30,7 +30,7 @@
                 <ul class="dropdown-content space-y-1">
                     <li>
                         <a href="#/students" data-route="students"
-                            class="nav-link flex items-center space-x-3 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors text-gray-300">
+                            class="nav-link flex items-center space-x-3 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors text-gray-300 active">
                             <i class="ph ph-student text-xl"></i><span>Students</span>
                         </a>
                     </li>
@@ -91,33 +91,3 @@
         </div>
     </a>
 </aside>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const updateActiveTab = () => {
-            // 1. Get current hash from URL, default to '#/' if empty
-            const currentHash = window.location.hash || '#/';
-
-            // 2. Select all navigation links
-            const navLinks = document.querySelectorAll('.nav-link');
-
-            navLinks.forEach(link => {
-                // 3. Reset all links to their inactive state
-                link.classList.remove('active', 'bg-xborder/50', 'text-white');
-                link.classList.add('text-gray-300'); // Add the muted gray color back
-
-                // 4. If the link's href matches the current URL hash, make it active
-                if (link.getAttribute('href') === currentHash) {
-                    link.classList.add('active', 'bg-xborder/50', 'text-white'); // Add active background and bright text
-                    link.classList.remove('text-gray-300'); // Remove muted text color
-                }
-            });
-        };
-
-        // Run on initial page load
-        updateActiveTab();
-
-        // Listen for changes in the URL hash (when a user clicks a link)
-        window.addEventListener('hashchange', updateActiveTab);
-    });
-</script>

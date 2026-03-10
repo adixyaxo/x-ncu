@@ -11,25 +11,52 @@ int global_login_stats = -1;
 
 class user
 {
-public:
-    int id;
-    string fullname = "";
-    string email = "";
-    string handle = "";
-    string role = "";
-    string password = "";
-    string bio = "";
-    bool is_verified = false;
-    bool isFound = false;
+private:
+    int id_private;
+    string fullname_private = "";
+    string email_private = "";
+    string handle_private = "";
+    string role_private = "";
+    string password_private = "";
+    string bio_private = "";
+    bool is_verified_private = false;
+    bool isFound_private = false;
 
+public:
     user();
     user(int targetUserNo);
     ~user();
+
+    // ==========================================
+    // GETTERS
+    // ==========================================
+    int id() const { return id_private; }
+    string fullname() const { return fullname_private; }
+    string email() const { return email_private; }
+    string handle() const { return handle_private; }
+    string role() const { return role_private; }
+    string password() const { return password_private; }
+    string bio() const { return bio_private; }
+    bool is_verified() const { return is_verified_private; }
+    bool isFound() const { return isFound_private; }
+
+    // ==========================================
+    // SETTERS
+    // ==========================================
+    void id(int val) { id_private = val; }
+    void fullname(const string &val) { fullname_private = val; }
+    void email(const string &val) { email_private = val; }
+    void handle(const string &val) { handle_private = val; }
+    void role(const string &val) { role_private = val; }
+    void password(const string &val) { password_private = val; }
+    void bio(const string &val) { bio_private = val; }
+    void is_verified(bool val) { is_verified_private = val; }
+    void isFound(bool val) { isFound_private = val; }
 };
 
 user::user() {}
 
-// FIX 1: Updated constructor to map to your new users.csv layout
+// Updated constructor to populate the private variables
 user::user(int targetUserNo)
 {
     ifstream file("database/users.csv");
@@ -49,19 +76,19 @@ user::user(int targetUserNo)
 
         if (!idStr.empty() && stoi(idStr) == targetUserNo)
         {
-            id = targetUserNo;
-            getline(ss, handle, ',');
-            getline(ss, email, ',');
-            getline(ss, fullname, ',');
-            getline(ss, role, ',');
-            getline(ss, password, ',');
-            getline(ss, bio, ',');
+            id_private = targetUserNo;
+            getline(ss, handle_private, ',');
+            getline(ss, email_private, ',');
+            getline(ss, fullname_private, ',');
+            getline(ss, role_private, ',');
+            getline(ss, password_private, ',');
+            getline(ss, bio_private, ',');
 
             string verified_str;
             getline(ss, verified_str, ',');
-            is_verified = (verified_str == "TRUE");
+            is_verified_private = (verified_str == "TRUE");
 
-            isFound = true;
+            isFound_private = true;
             break;
         }
     }
@@ -71,9 +98,6 @@ user::~user() {}
 
 int getuserprofile(const string &username)
 {
-    // search username in users.csv and return the user id if found, else return -1
-    // handle any file errors with -2 and make sure to skip the header row
-
     ifstream file("database/users.csv");
     if (!file.is_open())
     {
@@ -176,8 +200,6 @@ int authenticateUser(const string &inputEmail, const string &inputPassword)
                 return -1;
             }
         }
-        // Notice there is no 'else' block here anymore!
-        // If the email doesn't match, we simply let the loop move to the next row.
     }
 
     // 6. Loop finished, email was never found
@@ -191,41 +213,33 @@ int registerUser(const string &email, const string &fullName, const string &role
 
     int maxId = 0;
 
-    // 1. Open the CSV file to check for existing users and find the highest ID
     if (inFile.is_open())
     {
         string line;
-
-        // Read and discard the first line (the header row)
         getline(inFile, line);
 
-        // Loop through the rows
         while (getline(inFile, line))
         {
             if (line.empty())
-                continue; // Skip empty lines
+                continue;
 
             stringstream ss(line);
             string idStr, storedEmail, dummy;
 
-            // Extract the ID and Email (we don't need the rest for this check)
             getline(ss, idStr, ',');
             getline(ss, storedEmail, ',');
 
-            // Fast-forward through the rest of the columns
             getline(ss, dummy, ','); // fullName
             getline(ss, dummy, ','); // handle
             getline(ss, dummy, ','); // role
             getline(ss, dummy, ','); // password
 
-            // 2. Check if the email is already registered
             if (storedEmail == email)
             {
                 inFile.close();
-                return -1; // -1 means User Already Exists
+                return -1; // User Already Exists
             }
 
-            // 3. Keep track of the highest ID so we know what ID to assign next
             try
             {
                 int currentId = stoi(idStr);
@@ -236,16 +250,13 @@ int registerUser(const string &email, const string &fullName, const string &role
             }
             catch (...)
             {
-                // Ignore any parsing errors if a row is malformed
             }
         }
         inFile.close();
     }
 
-    // 4. Generate the new user data
     int newId = maxId + 1;
 
-    // Generate a handle from the email (e.g., "aditya@ncuindia.edu" -> "@aditya")
     string handle = "";
     size_t atPos = email.find('@');
     if (atPos != string::npos)
@@ -254,10 +265,9 @@ int registerUser(const string &email, const string &fullName, const string &role
     }
     else
     {
-        handle = "@user" + to_string(newId); // Fallback handle
+        handle = "@user" + to_string(newId);
     }
 
-    // Check if the file ends with a newline character
     bool needsNewline = false;
     {
         ifstream checkFile(filePath, ios::binary | ios::ate);
@@ -276,7 +286,6 @@ int registerUser(const string &email, const string &fullName, const string &role
         }
     }
 
-    // 5. Open the file in Append mode (ios::app) so we don't overwrite existing users
     ofstream outFile(filePath, ios::app);
     if (!outFile.is_open())
     {
@@ -289,7 +298,6 @@ int registerUser(const string &email, const string &fullName, const string &role
         outFile << "\n";
     }
 
-    // 6. Append the new user to the end of the file
     outFile << newId << ","
             << email << ","
             << fullName << ","
@@ -299,7 +307,6 @@ int registerUser(const string &email, const string &fullName, const string &role
 
     outFile.close();
 
-    // 7. Success! Return the new ID
     return newId;
 }
 
@@ -307,9 +314,8 @@ user Current_User(global_login_stats);
 
 int main()
 {
-    crow::SimpleApp app; // define your crow application
+    crow::SimpleApp app;
 
-    // Explicitly set the base directory for Mustache templates
     crow::mustache::set_base(".");
 
     // 1. HOME ROUTE
@@ -329,20 +335,20 @@ int main()
             
             user currentUser(global_login_stats);
 
-            if (currentUser.isFound) {
+            // Updated to use getter methods
+            if (currentUser.isFound()) {
                 string initials = "U";
-                if (currentUser.fullname.length() >= 2) {
-                    initials = currentUser.fullname.substr(0, 2);
+                if (currentUser.fullname().length() >= 2) {
+                    initials = currentUser.fullname().substr(0, 2);
                 }
                 ctx["user_initials"] = initials;
-                ctx["user_name"] = currentUser.fullname;
-                ctx["user_handle"] = currentUser.handle;
+                ctx["user_name"] = currentUser.fullname();
+                ctx["user_handle"] = currentUser.handle();
             } 
 
             std::vector<crow::mustache::context> posts_vector;
             std::vector<crow::mustache::context> news_vector;
             
-            // --- PARSE POSTS ---
             std::ifstream posts_file("database/posts.csv"); 
             std::string line;
             
@@ -352,7 +358,6 @@ int main()
                 std::stringstream ss(line);
                 std::string post_id, user_id, content, parent_id, likes_count, retweets_count, created_at, role;
                 
-                // Parse up to the new "role" column
                 std::getline(ss, post_id, ',');
                 std::getline(ss, user_id, ',');
                 std::getline(ss, content, ',');
@@ -362,7 +367,6 @@ int main()
                 std::getline(ss, created_at, ',');
                 std::getline(ss, role, ','); 
 
-                // Clean up carriage returns (\r) just in case
                 if (!role.empty() && role.back() == '\r') {
                     role.pop_back();
                 }
@@ -373,34 +377,28 @@ int main()
                 post_ctx["likes"] = likes_count;
                 post_ctx["reposts"] = retweets_count;
                 post_ctx["replies"] = 0; 
-                
-                // Format timestamp string slightly for UI
                 post_ctx["time_ago"] = created_at.substr(0, 10); 
                 
-                // FIX 2: Look up the actual author of the post dynamically
                 user post_author(stoi(user_id));
                 
-                if(post_author.isFound) {
-                    post_ctx["author_name"] = post_author.fullname;
-                    post_ctx["author_handle"] = post_author.handle;
-                    
-                    // Use the role from the post database rather than author lookup
+                // Updated to use getter methods
+                if(post_author.isFound()) {
+                    post_ctx["author_name"] = post_author.fullname();
+                    post_ctx["author_handle"] = post_author.handle();
                     post_ctx["author_role"] = role;
-                    post_ctx["is_verified"] = post_author.is_verified;
+                    post_ctx["is_verified"] = post_author.is_verified();
                     
-                    // Generate Author Initials dynamically
                     string author_initials = "";
-                    if (!post_author.fullname.empty()) {
-                        author_initials += post_author.fullname[0];
-                        size_t space_pos = post_author.fullname.find(' ');
-                        if (space_pos != string::npos && space_pos + 1 < post_author.fullname.length()) {
-                            author_initials += post_author.fullname[space_pos + 1];
+                    if (!post_author.fullname().empty()) {
+                        author_initials += post_author.fullname()[0];
+                        size_t space_pos = post_author.fullname().find(' ');
+                        if (space_pos != string::npos && space_pos + 1 < post_author.fullname().length()) {
+                            author_initials += post_author.fullname()[space_pos + 1];
                         }
                     }
                     if(author_initials.empty()) author_initials = "U";
                     post_ctx["author_initials"] = author_initials;
 
-                    // Set Boolean flags for CSS role pills dynamically checking the DB
                     post_ctx["is_user"] = (role == "student" || role == "Student");
                     post_ctx["is_prof"] = (role == "teacher" || role == "Teacher");
                     post_ctx["is_staff"] = (role == "staff" || role == "Staff");
@@ -411,7 +409,6 @@ int main()
             
             ctx["posts"] = std::move(posts_vector);
             
-            // --- PARSE NEWS ---
             std::ifstream news_file("database/news.csv");
             if (news_file.good()) std::getline(news_file, line); 
             
@@ -453,28 +450,28 @@ int main()
         ctx["title"] = "Students | X-NCU";
         
         user currentUser(global_login_stats);
-        if (currentUser.isFound) {
+        
+        // Updated to use getter methods
+        if (currentUser.isFound()) {
             string initials = "U";
-            if (currentUser.fullname.length() >= 2) initials = currentUser.fullname.substr(0, 2);
+            if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
             ctx["user_initials"] = initials;
-            ctx["user_name"] = currentUser.fullname;
-            ctx["user_handle"] = currentUser.handle;
+            ctx["user_name"] = currentUser.fullname();
+            ctx["user_handle"] = currentUser.handle();
         } 
 
         std::vector<crow::mustache::context> posts_vector;
         std::vector<crow::mustache::context> news_vector;
         
-        // Parse Students CSV
         std::ifstream posts_file("database/students.csv"); 
         std::string line;
         
-        if (posts_file.good()) std::getline(posts_file, line); // Skip header
+        if (posts_file.good()) std::getline(posts_file, line); 
         
         while (std::getline(posts_file, line)) {
             std::stringstream ss(line);
             std::string post_id, username, full_name, content, likes_count, created_at;
             
-            // PostID,Username,FullName,Content,LikesCount,CreatedAt
             std::getline(ss, post_id, ',');
             std::getline(ss, username, ',');
             std::getline(ss, full_name, ',');
@@ -492,13 +489,11 @@ int main()
             post_ctx["author_name"] = full_name;
             post_ctx["author_handle"] = username;
             
-            // Hardcode the role UI for this specific feed
             post_ctx["author_role"] = "Student";
             post_ctx["is_user"] = true;
             post_ctx["is_prof"] = false;
             post_ctx["is_staff"] = false;
 
-            // Generate Initials
             string author_initials = "";
             if (!full_name.empty()) {
                 author_initials += full_name[0];
@@ -514,7 +509,6 @@ int main()
         }
         ctx["posts"] = std::move(posts_vector);
         
-        // --- PARSE NEWS (Reused) ---
         std::ifstream news_file("database/news.csv");
         if (news_file.good()) std::getline(news_file, line); 
         while (std::getline(news_file, line)) {
@@ -541,9 +535,11 @@ int main()
 
         crow::mustache::context ctx; ctx["title"] = "Teachers | X-NCU";
         user currentUser(global_login_stats);
-        if (currentUser.isFound) {
-            string initials = "U"; if (currentUser.fullname.length() >= 2) initials = currentUser.fullname.substr(0, 2);
-            ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname; ctx["user_handle"] = currentUser.handle;
+        
+        // Updated to use getter methods
+        if (currentUser.isFound()) {
+            string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
+            ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname(); ctx["user_handle"] = currentUser.handle();
         } 
 
         std::vector<crow::mustache::context> posts_vector;
@@ -562,7 +558,6 @@ int main()
             post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = 0; post_ctx["replies"] = 0; 
             post_ctx["time_ago"] = created_at.substr(0, 10); post_ctx["author_name"] = full_name; post_ctx["author_handle"] = username;
             
-            // Hardcode the role UI for Teachers
             post_ctx["author_role"] = "Teacher";
             post_ctx["is_user"] = false;
             post_ctx["is_prof"] = true;
@@ -599,9 +594,11 @@ int main()
 
         crow::mustache::context ctx; ctx["title"] = "Staff | X-NCU";
         user currentUser(global_login_stats);
-        if (currentUser.isFound) {
-            string initials = "U"; if (currentUser.fullname.length() >= 2) initials = currentUser.fullname.substr(0, 2);
-            ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname; ctx["user_handle"] = currentUser.handle;
+        
+        // Updated to use getter methods
+        if (currentUser.isFound()) {
+            string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
+            ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname(); ctx["user_handle"] = currentUser.handle();
         } 
 
         std::vector<crow::mustache::context> posts_vector;
@@ -620,7 +617,6 @@ int main()
             post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = 0; post_ctx["replies"] = 0; 
             post_ctx["time_ago"] = created_at.substr(0, 10); post_ctx["author_name"] = full_name; post_ctx["author_handle"] = username;
             
-            // Hardcode the role UI for Staff
             post_ctx["author_role"] = "Staff";
             post_ctx["is_user"] = false;
             post_ctx["is_prof"] = false;
@@ -683,7 +679,6 @@ int main()
             return crow::response(422, message_page.render(ctx));
         }
         else {
-            // SUCCESSFUL REGISTRATION - Force a GET request to the feed
             Current_User = user(signup_status);
             crow::response res;
             res.code = 303; 
@@ -705,7 +700,10 @@ int main()
         { 
             username = "@" + username;
             int search_userID = getuserprofile(username);
+            
             if (search_userID > 0) {
+                // Note: Re-assigning to the global Current_User object here overwrites 
+                // the currently logged-in user in memory. You might want to fix this logic later!
                 Current_User = user(search_userID);
             }
             else {
@@ -713,27 +711,27 @@ int main()
                 crow::mustache::context ctx({{"error_code", "404"}, {"error_message", "User Not Found"}});
                 return crow::response(404, message_page.render(ctx));
             }
+
             crow::mustache::context ctx;
             user SEARCH_USER(search_userID);
-            ctx["title"] = SEARCH_USER.fullname + " | X-NCU";
-
-            ctx["user_initials"] = Current_User.fullname.substr(0, 2);
-            ctx["user_name"] = Current_User.fullname;
-            ctx["user_handle"] = Current_User.handle;
             
-            ctx["profile_name"] = SEARCH_USER.fullname;
-            ctx["profile_handle"] = SEARCH_USER.handle;
-            ctx["profile_initials"] = SEARCH_USER.fullname.substr(0, 2);
+            // Updated to use getter methods
+            ctx["title"] = SEARCH_USER.fullname() + " | X-NCU";
+
+            ctx["user_initials"] = Current_User.fullname().substr(0, 2);
+            ctx["user_name"] = Current_User.fullname();
+            ctx["user_handle"] = Current_User.handle();
+            
+            ctx["profile_name"] = SEARCH_USER.fullname();
+            ctx["profile_handle"] = SEARCH_USER.handle();
+            ctx["profile_initials"] = SEARCH_USER.fullname().substr(0, 2);
             ctx["profile_post_count"] = 0;
-            ctx["profile_bio"] = SEARCH_USER.bio;
-            // ctx["profile_location"] = SEARCH_USER.location;
-            // ctx["profile_link"] = SEARCH_USER.link;
-            // ctx["profile_join_date"] = SEARCH_USER.join_date;
-            // ctx["following_count"] = SEARCH_USER.following_count;
-            // ctx["followers_count"] = SEARCH_USER.followers_count;
-            ctx["is_verified"] = SEARCH_USER.is_verified;
-            if(SEARCH_USER.id == Current_User.id){
-                ctx["is_own_profile"] = true; }
+            ctx["profile_bio"] = SEARCH_USER.bio();
+            ctx["is_verified"] = SEARCH_USER.is_verified();
+            
+            if(SEARCH_USER.id() == Current_User.id()) {
+                ctx["is_own_profile"] = true; 
+            }
             ctx["has_posts"] = true;     
 
             auto profile_page = crow::mustache::load("profile.html").render(ctx); 
@@ -750,9 +748,8 @@ int main()
         int userId = authenticateUser(email, password);
         global_login_stats = userId;
         
-        if (userId > 0) // Valid IDs are positive numbers
+        if (userId > 0) 
         {
-            // SUCCESSFUL LOGIN - Force a GET request to the feed
             crow::response res;
             res.code = 303; 
             res.set_header("Location", "/");
@@ -777,6 +774,5 @@ int main()
             return crow::response(401, message_page.render(ctx));
         } });
 
-    // set the port, set the app to run on multiple threads, and run the app
     app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }

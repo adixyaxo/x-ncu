@@ -31,12 +31,15 @@
                     placeholder="What's happening at NCU?"></textarea>
                 <div class="flex justify-between items-center mt-4 border-t border-xborder/50 pt-3">
                     <div class="flex space-x-2 text-xgreen">
-                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors"><i
-                                class="ph ph-image text-xl"></i></button>
-                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors"><i
-                                class="ph ph-chart-bar text-xl"></i></button>
-                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors"><i
-                                class="ph ph-smiley text-xl"></i></button>
+                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors">
+                            <i class="ph ph-image text-xl"></i>
+                        </button>
+                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors">
+                            <i class="ph ph-chart-bar text-xl"></i>
+                        </button>
+                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors">
+                            <i class="ph ph-smiley text-xl"></i>
+                        </button>
                     </div>
                     <button id="post-btn"
                         class="bg-xgreen text-xblack font-bold py-1.5 px-6 rounded-full hover:bg-opacity-90 transition-colors">
@@ -54,38 +57,49 @@
                     class="w-10 h-10 rounded-full bg-xborder flex-shrink-0 flex items-center justify-center text-sm font-bold mt-1">
                     {{author_initials}}
                 </div>
+
                 <div class="flex-1">
                     <div class="flex items-center space-x-1 text-sm">
                         <span class="font-bold hover:underline">{{author_name}}</span>
-                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded border 
+                        {{#is_verified}}
+                        <i class="ph-fill ph-seal-check text-[#1DA1F2] text-[16px] ml-0.5" title="Verified"></i>
+                        {{/is_verified}}
+
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded border ml-1
                             {{#is_user}}text-xgreen border-xgreen/30 bg-xgreen/10{{/is_user}}
-                            {{#is_prof}}text-blue-400 border-blue-400/30 bg-blue-400/10{{/is_prof}}">
+                            {{#is_prof}}text-blue-400 border-blue-400/30 bg-blue-400/10{{/is_prof}}
+                            {{#is_staff}}text-orange-400 border-orange-400/30 bg-orange-400/10{{/is_staff}}">
                             {{author_role}}
                         </span>
-                        <span class="text-xmuted">{{author_handle}} · {{time_ago}}</span>
+
+                        <span class="text-xmuted ml-1">{{author_handle}} · {{time_ago}}</span>
                     </div>
 
                     <div class="mt-1 text-[15px] leading-snug whitespace-pre-wrap">{{body}}</div>
 
                     <div class="flex justify-between items-center mt-3 text-xmuted w-full max-w-md">
                         <button class="flex items-center space-x-2 hover:text-blue-400 transition-colors group">
-                            <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full"><i
-                                    class="ph ph-chat-circle text-lg"></i></div>
+                            <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full">
+                                <i class="ph ph-chat-circle text-lg"></i>
+                            </div>
                             <span class="text-xs">{{replies}}</span>
                         </button>
                         <button class="flex items-center space-x-2 hover:text-xgreen transition-colors group">
-                            <div class="p-1.5 group-hover:bg-xgreen/10 rounded-full"><i
-                                    class="ph ph-arrows-left-right text-lg"></i></div>
+                            <div class="p-1.5 group-hover:bg-xgreen/10 rounded-full">
+                                <i class="ph ph-arrows-left-right text-lg"></i>
+                            </div>
                             <span class="text-xs">{{reposts}}</span>
                         </button>
                         <button class="flex items-center space-x-2 hover:text-pink-500 transition-colors group">
-                            <div class="p-1.5 group-hover:bg-pink-500/10 rounded-full"><i
-                                    class="ph ph-heart text-lg"></i></div>
+                            <div class="p-1.5 group-hover:bg-pink-500/10 rounded-full">
+                                <i class="ph ph-heart text-lg"></i>
+                            </div>
                             <span class="text-xs">{{likes}}</span>
                         </button>
                         <button class="flex items-center hover:text-blue-400 transition-colors group">
-                            <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full"><i
-                                    class="ph ph-export text-lg"></i></div>
+                            <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full">
+                                <i class="ph ph-export text-lg"></i>
+                            </div>
                         </button>
                     </div>
                 </div>

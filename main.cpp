@@ -1,6 +1,9 @@
 #include "crow.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -252,7 +255,6 @@ int registerUser(const string &email, const string &fullName, const string &role
 }
 
 user Current_User(global_login_stats);
-
 int main()
 {
     crow::SimpleApp app; // define your crow application
@@ -294,30 +296,71 @@ int main()
             }
 
             // Feed Posts Data
-            ctx["posts"] = std::vector<crow::mustache::context>{
-                crow::mustache::context{
-                    {"author_initials", "DPS"},
-                    {"author_name", "Dr. Priya Sharma"},
-                    {"author_role", "PROFESSOR"},
-                    {"is_prof", true},
-                    {"author_handle", "@priya.sharma"},
-                    {"time_ago", "2h ago"},
-                    {"body", "Reminder: The deadline for submitting your final year project proposals is next Friday. Please ensure your abstract follows the IEEE format. Office hours are open if you need guidance."},
-                    {"replies", 8},
-                    {"reposts", 3},
-                    {"likes", 24}},
-                crow::mustache::context{
-                    {"author_initials", "AM"},
-                    {"author_name", "Arjun Mehta"},
-                    {"author_role", "B.TECH_CS"},
-                    {"is_user", true},
-                    {"author_handle", "@arjun.m"},
-                    {"time_ago", "4h ago"},
-                    {"body", "Anyone else having issues with the campus Wi-Fi in Block C? Can't push to GitHub and the hackathon is in 3 days. Need a fix ASAP."},
-                    {"replies", 15},
-                    {"reposts", 6},
-                    {"likes", 47}}};
-                    
+            std::ifstream posts_file("posts.csv"); 
+            std::string line;
+            
+            // Skip the header row
+            if (posts_file.good()) std::getline(posts_file, line); 
+            
+            while (std::getline(posts_file, line)) {
+                std::stringstream ss(line);
+                
+                // Create variables for all 7 columns in the posts CSV
+                std::string post_id, user_id, content, parent_id, likes_count, retweets_count, created_at;
+                
+                // Extract each column strictly in the order they appear
+                std::getline(ss, post_id, ',');
+                std::getline(ss, user_id, ',');
+                std::getline(ss, content, ',');
+                std::getline(ss, parent_id, ',');
+                std::getline(ss, likes_count, ',');
+                std::getline(ss, retweets_count, ',');
+                std::getline(ss, created_at, ',');
+            
+                crow::mustache::context post_ctx;
+                
+                // Map the extracted values to the Mustache template variables
+                post_ctx["body"] = content;
+                post_ctx["likes"] = likes_count;
+                post_ctx["reposts"] = retweets_count;
+                post_ctx["time_ago"] = created_at; 
+                
+                // Since this file only has UserID, we create a placeholder for the UI
+                // In a full database setup, you would JOIN the Users and Posts tables to get the real name
+                post_ctx["author_name"] = "User " + user_id;
+                post_ctx["author_handle"] = "@user_" + user_id;
+            
+                // Optional: Add logic to check if it's a reply
+                post_ctx["is_reply"] = (parent_id != "0");
+            
+                // Push to your vector
+                posts_vector.push_back(post_ctx); 
+            }
+                                    ctx["news"] = std::move(news_vector);
+                    std::ifstream news_file("./database/news.csv");
+                                    if (news_file.good()) std::getline(news_file, line); // skip header
+                            
+                                    while (std::getline(news_file, line)) {
+                                        std::stringstream ss(line);
+                                        std::string id, headline, category, time_ago, post_count;
+                                        
+                                        // NewsID,Headline,Category,TimeAgo,PostCount
+                                        std::getline(ss, id, ',');
+                                        std::getline(ss, headline, ',');
+                                        std::getline(ss, category, ',');
+                                        std::getline(ss, time_ago, ',');
+                                        std::getline(ss, post_count, ',');
+                            
+                                        crow::mustache::context news_ctx;
+                                        news_ctx["headline"] = headline;
+                                        news_ctx["category"] = category;
+                                        news_ctx["time_ago"] = time_ago;
+                                        news_ctx["post_count"] = post_count;
+                                        
+                                        news_vector.push_back(news_ctx);
+                                    }
+
+                                    ctx["news"] = std::move(news_vector);
             auto page = crow::mustache::load("index.html");
             return crow::response(page.render(ctx));
         } });
@@ -399,6 +442,17 @@ int main()
                                     ctx["is_own_profile"] = true; // Shows "Edit profile" instead of "Follow"
                                     ctx["has_posts"] = false;     // Triggers the "No posts yet" empty state
                                     
+
+
+                                    
+
+
+
+
+
+
+
+
         auto profile_page = crow::mustache::load("profile.html").render(ctx); 
         return crow::response(profile_page); } });
 

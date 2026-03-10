@@ -59,54 +59,23 @@
     </div>
 
     <div class="bg-xdark rounded-2xl p-4 border border-xborder/50">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-extrabold">Campus News</h2>
-            <div class="text-xmuted hover:bg-xborder/20 p-1 rounded-full cursor-pointer transition-colors">
-                <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current" aria-hidden="true">
-                    <path
-                        d="M13.414 12l5.793-5.793c.39-.39.39-1.023 0-1.414s-1.023-.39-1.414 0L12 10.586 6.207 4.793c-.39-.39-1.023-.39-1.414 0s-.39 1.023 0 1.414L10.586 12l-5.793 5.793c-.39.39-.39 1.023 0 1.414.195.195.45.293.707.293s.512-.098.707-.293L12 13.414l5.793 5.793c.195.195.45.293.707.293s.512-.098.707-.293c.39-.39.39-1.023 0-1.414L13.414 12z">
-                    </path>
-                </svg>
-            </div>
-        </div>
+
+        <h2 class="text-xl font-extrabold mb-4">Campus News</h2>
 
         <div class="space-y-4">
+            {{#news}}
             <div class="hover:bg-xborder/20 p-2 -mx-2 rounded-xl transition-colors cursor-pointer">
-                <p class="font-bold text-sm leading-snug text-white">E-Cell Opens Registrations for Annual Startup Pitch
-                    Competition</p>
+                <p class="font-bold text-sm leading-snug text-white">{{headline}}</p>
                 <div class="flex items-center mt-2 space-x-2">
                     <div class="flex -space-x-1.5">
                         <div class="w-5 h-5 rounded-full bg-blue-600 border border-xdark"></div>
                         <div class="w-5 h-5 rounded-full bg-purple-600 border border-xdark"></div>
-                        <div class="w-5 h-5 rounded-full bg-green-600 border border-xdark"></div>
                     </div>
-                    <p class="text-xs text-xmuted">2 hours ago · Entrepreneurship · 450 posts</p>
+                    <p class="text-xs text-xmuted">{{time_ago}} · {{category}} · {{post_count}} posts</p>
                 </div>
             </div>
-
-            <div class="hover:bg-xborder/20 p-2 -mx-2 rounded-xl transition-colors cursor-pointer">
-                <p class="font-bold text-sm leading-snug text-white">Google Developers Society Hosting Advanced Python
-                    Workshop</p>
-                <div class="flex items-center mt-2 space-x-2">
-                    <div class="flex -space-x-1.5">
-                        <div class="w-5 h-5 rounded-full bg-yellow-500 border border-xdark"></div>
-                        <div class="w-5 h-5 rounded-full bg-red-500 border border-xdark"></div>
-                    </div>
-                    <p class="text-xs text-xmuted">5 hours ago · Tech · 890 posts</p>
-                </div>
-            </div>
-
-            <div class="hover:bg-xborder/20 p-2 -mx-2 rounded-xl transition-colors cursor-pointer">
-                <p class="font-bold text-sm leading-snug text-white">International Relations Office Announces Waterloo
-                    Scholarship Info Session</p>
-                <div class="flex items-center mt-2 space-x-2">
-                    <div class="flex -space-x-1.5">
-                        <div class="w-5 h-5 rounded-full bg-gray-500 border border-xdark"></div>
-                        <div class="w-5 h-5 rounded-full bg-indigo-500 border border-xdark"></div>
-                    </div>
-                    <p class="text-xs text-xmuted">12 hours ago · Academics · 320 posts</p>
-                </div>
-            </div>
+            {{/news}}
         </div>
+
     </div>
 </aside>

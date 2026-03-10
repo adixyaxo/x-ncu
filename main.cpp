@@ -69,6 +69,60 @@ user::user(int targetUserNo)
 
 user::~user() {}
 
+int getuserprofile(const string &username)
+{
+    // search username in users.csv and return the user id if found, else return -1
+    // handle any file errors with -2 and make sure to skip the header row
+
+    ifstream file("database/users.csv");
+    if (!file.is_open())
+    {
+        cerr << "Error: Could not open database/users.csv. Check your file paths." << endl;
+        return -2;
+    }
+
+    string line;
+
+    // 1. Skip the header row
+    if (file.good())
+    {
+        getline(file, line);
+    }
+
+    // 2. Loop through the remaining rows
+    while (getline(file, line))
+    {
+        if (line.empty())
+            continue; // Skip any empty lines
+
+        stringstream ss(line);
+        string idStr, currentUsername;
+
+        // 3. Extract Column 1 (UserID) and Column 2 (Username)
+        getline(ss, idStr, ',');
+        getline(ss, currentUsername, ',');
+
+        // 4. Check if we have a match
+        if (currentUsername == username)
+        {
+            file.close();
+            try
+            {
+                return stoi(idStr); // Convert the ID string to an integer and return it
+            }
+            catch (...)
+            {
+                return -1; // Safety catch in case the ID in the CSV is corrupted/not a number
+            }
+        }
+    }
+
+    file.close();
+
+    // 5. If the loop finishes without returning, the user wasn't found
+    return -1;
+}
+
 int authenticateUser(const string &inputEmail, const string &inputPassword)
 {
     // 1. Open the CSV file
@@ -101,6 +155,7 @@ int authenticateUser(const string &inputEmail, const string &inputPassword)
         getline(ss, bio, ',');
         getline(ss, is_verified, ',');
         getline(ss, created_at, ',');
+
         // Clean up Windows carriage returns (\r) which often corrupt the last column
         if (!storedPassword.empty() && storedPassword.back() == '\r')
         {
@@ -229,9 +284,6 @@ int registerUser(const string &email, const string &fullName, const string &role
         return -2;
     }
 
-    // If the file was completely empty/new, you might want to write the header here.
-    // Assuming the header already exists based on your authenticateUser function.
-
     if (needsNewline)
     {
         outFile << "\n";
@@ -252,6 +304,7 @@ int registerUser(const string &email, const string &fullName, const string &role
 }
 
 user Current_User(global_login_stats);
+
 int main()
 {
     crow::SimpleApp app; // define your crow application
@@ -290,15 +343,16 @@ int main()
             std::vector<crow::mustache::context> news_vector;
             
             // --- PARSE POSTS ---
-            std::ifstream posts_file("database/posts.csv"); // Make sure path matches
+            std::ifstream posts_file("database/posts.csv"); 
             std::string line;
             
             if (posts_file.good()) std::getline(posts_file, line); 
             
             while (std::getline(posts_file, line)) {
                 std::stringstream ss(line);
-                std::string post_id, user_id, content, parent_id, likes_count, retweets_count, created_at;
+                std::string post_id, user_id, content, parent_id, likes_count, retweets_count, created_at, role;
                 
+                // Parse up to the new "role" column
                 std::getline(ss, post_id, ',');
                 std::getline(ss, user_id, ',');
                 std::getline(ss, content, ',');
@@ -306,13 +360,19 @@ int main()
                 std::getline(ss, likes_count, ',');
                 std::getline(ss, retweets_count, ',');
                 std::getline(ss, created_at, ',');
+                std::getline(ss, role, ','); 
+
+                // Clean up carriage returns (\r) just in case
+                if (!role.empty() && role.back() == '\r') {
+                    role.pop_back();
+                }
             
                 crow::mustache::context post_ctx;
                 
                 post_ctx["body"] = content;
                 post_ctx["likes"] = likes_count;
                 post_ctx["reposts"] = retweets_count;
-                post_ctx["replies"] = 0; // Defaulting to 0 since it's not in CSV
+                post_ctx["replies"] = 0; 
                 
                 // Format timestamp string slightly for UI
                 post_ctx["time_ago"] = created_at.substr(0, 10); 
@@ -323,7 +383,9 @@ int main()
                 if(post_author.isFound) {
                     post_ctx["author_name"] = post_author.fullname;
                     post_ctx["author_handle"] = post_author.handle;
-                    post_ctx["author_role"] = post_author.role;
+                    
+                    // Use the role from the post database rather than author lookup
+                    post_ctx["author_role"] = role;
                     post_ctx["is_verified"] = post_author.is_verified;
                     
                     // Generate Author Initials dynamically
@@ -338,10 +400,10 @@ int main()
                     if(author_initials.empty()) author_initials = "U";
                     post_ctx["author_initials"] = author_initials;
 
-                    // Set Boolean flags for CSS role pills
-                    post_ctx["is_user"] = (post_author.role == "Student");
-                    post_ctx["is_prof"] = (post_author.role == "Teacher");
-                    post_ctx["is_staff"] = (post_author.role == "Staff");
+                    // Set Boolean flags for CSS role pills dynamically checking the DB
+                    post_ctx["is_user"] = (role == "student" || role == "Student");
+                    post_ctx["is_prof"] = (role == "teacher" || role == "Teacher");
+                    post_ctx["is_staff"] = (role == "staff" || role == "Staff");
                 }
 
                 posts_vector.push_back(post_ctx); 
@@ -377,6 +439,214 @@ int main()
             auto page = crow::mustache::load("index.html");
             return crow::response(page.render(ctx));
         } });
+
+    // ==========================================
+    // 1. STUDENTS FEED ROUTE
+    // ==========================================
+    CROW_ROUTE(app, "/students")([]()
+                                 {
+        if (global_login_stats <= 0) {
+            crow::response res; res.code = 303; res.set_header("Location", "/login"); return res;
+        }
+
+        crow::mustache::context ctx;
+        ctx["title"] = "Students | X-NCU";
+        
+        user currentUser(global_login_stats);
+        if (currentUser.isFound) {
+            string initials = "U";
+            if (currentUser.fullname.length() >= 2) initials = currentUser.fullname.substr(0, 2);
+            ctx["user_initials"] = initials;
+            ctx["user_name"] = currentUser.fullname;
+            ctx["user_handle"] = currentUser.handle;
+        } 
+
+        std::vector<crow::mustache::context> posts_vector;
+        std::vector<crow::mustache::context> news_vector;
+        
+        // Parse Students CSV
+        std::ifstream posts_file("database/students.csv"); 
+        std::string line;
+        
+        if (posts_file.good()) std::getline(posts_file, line); // Skip header
+        
+        while (std::getline(posts_file, line)) {
+            std::stringstream ss(line);
+            std::string post_id, username, full_name, content, likes_count, created_at;
+            
+            // PostID,Username,FullName,Content,LikesCount,CreatedAt
+            std::getline(ss, post_id, ',');
+            std::getline(ss, username, ',');
+            std::getline(ss, full_name, ',');
+            std::getline(ss, content, ',');
+            std::getline(ss, likes_count, ',');
+            std::getline(ss, created_at, ',');
+        
+            crow::mustache::context post_ctx;
+            post_ctx["body"] = content;
+            post_ctx["likes"] = likes_count;
+            post_ctx["reposts"] = 0; 
+            post_ctx["replies"] = 0; 
+            post_ctx["time_ago"] = created_at.substr(0, 10); 
+            
+            post_ctx["author_name"] = full_name;
+            post_ctx["author_handle"] = username;
+            
+            // Hardcode the role UI for this specific feed
+            post_ctx["author_role"] = "Student";
+            post_ctx["is_user"] = true;
+            post_ctx["is_prof"] = false;
+            post_ctx["is_staff"] = false;
+
+            // Generate Initials
+            string author_initials = "";
+            if (!full_name.empty()) {
+                author_initials += full_name[0];
+                size_t space_pos = full_name.find(' ');
+                if (space_pos != string::npos && space_pos + 1 < full_name.length()) {
+                    author_initials += full_name[space_pos + 1];
+                }
+            }
+            if(author_initials.empty()) author_initials = "U";
+            post_ctx["author_initials"] = author_initials;
+
+            posts_vector.push_back(post_ctx); 
+        }
+        ctx["posts"] = std::move(posts_vector);
+        
+        // --- PARSE NEWS (Reused) ---
+        std::ifstream news_file("database/news.csv");
+        if (news_file.good()) std::getline(news_file, line); 
+        while (std::getline(news_file, line)) {
+            std::stringstream ss(line);
+            std::string id, headline, category, time_ago, post_count;
+            std::getline(ss, id, ','); std::getline(ss, headline, ',');
+            std::getline(ss, category, ','); std::getline(ss, time_ago, ','); std::getline(ss, post_count, ',');
+            crow::mustache::context news_ctx;
+            news_ctx["headline"] = headline; news_ctx["category"] = category;
+            news_ctx["time_ago"] = time_ago; news_ctx["post_count"] = post_count;
+            news_vector.push_back(news_ctx);
+        }
+        ctx["news"] = std::move(news_vector);
+        
+        auto page = crow::mustache::load("index.html");
+        return crow::response(page.render(ctx)); });
+
+    // ==========================================
+    // 2. TEACHERS FEED ROUTE
+    // ==========================================
+    CROW_ROUTE(app, "/teachers")([]()
+                                 {
+        if (global_login_stats <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
+
+        crow::mustache::context ctx; ctx["title"] = "Teachers | X-NCU";
+        user currentUser(global_login_stats);
+        if (currentUser.isFound) {
+            string initials = "U"; if (currentUser.fullname.length() >= 2) initials = currentUser.fullname.substr(0, 2);
+            ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname; ctx["user_handle"] = currentUser.handle;
+        } 
+
+        std::vector<crow::mustache::context> posts_vector;
+        std::vector<crow::mustache::context> news_vector;
+        
+        std::ifstream posts_file("database/teachers.csv"); std::string line;
+        if (posts_file.good()) std::getline(posts_file, line); 
+        
+        while (std::getline(posts_file, line)) {
+            std::stringstream ss(line);
+            std::string post_id, username, full_name, content, likes_count, created_at;
+            std::getline(ss, post_id, ','); std::getline(ss, username, ','); std::getline(ss, full_name, ',');
+            std::getline(ss, content, ','); std::getline(ss, likes_count, ','); std::getline(ss, created_at, ',');
+        
+            crow::mustache::context post_ctx;
+            post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = 0; post_ctx["replies"] = 0; 
+            post_ctx["time_ago"] = created_at.substr(0, 10); post_ctx["author_name"] = full_name; post_ctx["author_handle"] = username;
+            
+            // Hardcode the role UI for Teachers
+            post_ctx["author_role"] = "Teacher";
+            post_ctx["is_user"] = false;
+            post_ctx["is_prof"] = true;
+            post_ctx["is_staff"] = false;
+
+            string author_initials = "";
+            if (!full_name.empty()) {
+                author_initials += full_name[0]; size_t space_pos = full_name.find(' ');
+                if (space_pos != string::npos && space_pos + 1 < full_name.length()) author_initials += full_name[space_pos + 1];
+            }
+            if(author_initials.empty()) author_initials = "U";
+            post_ctx["author_initials"] = author_initials;
+            posts_vector.push_back(post_ctx); 
+        }
+        ctx["posts"] = std::move(posts_vector);
+        
+        std::ifstream news_file("database/news.csv"); if (news_file.good()) std::getline(news_file, line); 
+        while (std::getline(news_file, line)) {
+            std::stringstream ss(line); std::string id, headline, category, time_ago, post_count;
+            std::getline(ss, id, ','); std::getline(ss, headline, ','); std::getline(ss, category, ','); std::getline(ss, time_ago, ','); std::getline(ss, post_count, ',');
+            crow::mustache::context news_ctx; news_ctx["headline"] = headline; news_ctx["category"] = category; news_ctx["time_ago"] = time_ago; news_ctx["post_count"] = post_count;
+            news_vector.push_back(news_ctx);
+        }
+        ctx["news"] = std::move(news_vector);
+        
+        auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
+
+    // ==========================================
+    // 3. STAFF FEED ROUTE
+    // ==========================================
+    CROW_ROUTE(app, "/staff")([]()
+                              {
+        if (global_login_stats <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
+
+        crow::mustache::context ctx; ctx["title"] = "Staff | X-NCU";
+        user currentUser(global_login_stats);
+        if (currentUser.isFound) {
+            string initials = "U"; if (currentUser.fullname.length() >= 2) initials = currentUser.fullname.substr(0, 2);
+            ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname; ctx["user_handle"] = currentUser.handle;
+        } 
+
+        std::vector<crow::mustache::context> posts_vector;
+        std::vector<crow::mustache::context> news_vector;
+        
+        std::ifstream posts_file("database/staff.csv"); std::string line;
+        if (posts_file.good()) std::getline(posts_file, line); 
+        
+        while (std::getline(posts_file, line)) {
+            std::stringstream ss(line);
+            std::string post_id, username, full_name, content, likes_count, created_at;
+            std::getline(ss, post_id, ','); std::getline(ss, username, ','); std::getline(ss, full_name, ',');
+            std::getline(ss, content, ','); std::getline(ss, likes_count, ','); std::getline(ss, created_at, ',');
+        
+            crow::mustache::context post_ctx;
+            post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = 0; post_ctx["replies"] = 0; 
+            post_ctx["time_ago"] = created_at.substr(0, 10); post_ctx["author_name"] = full_name; post_ctx["author_handle"] = username;
+            
+            // Hardcode the role UI for Staff
+            post_ctx["author_role"] = "Staff";
+            post_ctx["is_user"] = false;
+            post_ctx["is_prof"] = false;
+            post_ctx["is_staff"] = true;
+
+            string author_initials = "";
+            if (!full_name.empty()) {
+                author_initials += full_name[0]; size_t space_pos = full_name.find(' ');
+                if (space_pos != string::npos && space_pos + 1 < full_name.length()) author_initials += full_name[space_pos + 1];
+            }
+            if(author_initials.empty()) author_initials = "U";
+            post_ctx["author_initials"] = author_initials;
+            posts_vector.push_back(post_ctx); 
+        }
+        ctx["posts"] = std::move(posts_vector);
+        
+        std::ifstream news_file("database/news.csv"); if (news_file.good()) std::getline(news_file, line); 
+        while (std::getline(news_file, line)) {
+            std::stringstream ss(line); std::string id, headline, category, time_ago, post_count;
+            std::getline(ss, id, ','); std::getline(ss, headline, ','); std::getline(ss, category, ','); std::getline(ss, time_ago, ','); std::getline(ss, post_count, ',');
+            crow::mustache::context news_ctx; news_ctx["headline"] = headline; news_ctx["category"] = category; news_ctx["time_ago"] = time_ago; news_ctx["post_count"] = post_count;
+            news_vector.push_back(news_ctx);
+        }
+        ctx["news"] = std::move(news_vector);
+        
+        auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
     // 2. GET LOGIN PAGE
     CROW_ROUTE(app, "/login")([]()
@@ -421,44 +691,46 @@ int main()
             return res;
         } });
 
-    // 4. GET PROFILE PAGE (Cleaned up formatting)
-    CROW_ROUTE(app, "/profile")([]()
-                                {
-            if (global_login_stats <= 0) 
-            {
-                crow::response res;
-                res.code = 303;
-                res.set_header("Location", "/login");
-                return res; 
-            }
-            else 
-            { 
-                crow::mustache::context ctx;
-                ctx["title"] = Current_User.handle;
-    
-                ctx["user_initials"] = "AD";
-                ctx["user_name"] = "Aditya Dagar";
-                ctx["user_handle"] = "@adixyaxo";
-                
-                ctx["profile_name"] = "Aditya Dagar";
-                ctx["profile_handle"] = "@adixyaxo";
-                ctx["profile_initials"] = "AD";
-                ctx["profile_post_count"] = 0;
-                ctx["profile_bio"] = "Computer Science Undergrad @ NorthCap University. Building cool stuff. 🚀";
-                ctx["profile_location"] = "Gurugram, India";
-                ctx["profile_link"] = "github.com/adixyaxo";
-                ctx["profile_join_date"] = "Jan 2026";
-                ctx["following_count"] = 12;
-                ctx["followers_count"] = 8;
-                
-                ctx["is_own_profile"] = true; 
-                ctx["has_posts"] = false;     
-    
-                auto profile_page = crow::mustache::load("profile.html").render(ctx); 
-                return crow::response(profile_page); 
-            } });
+    // 5. GET PROFILE PAGE
+    CROW_ROUTE(app, "/profile/<string>")([](string username)
+                                         {
+        if (global_login_stats <= 0) 
+        {
+            crow::response res;
+            res.code = 303;
+            res.set_header("Location", "/login");
+            return res; 
+        }
+        else 
+        { 
+            username = "@" + username;
+            crow::mustache::context ctx;
+            ctx["title"] = Current_User.handle;
 
-    // 5. POST AUTHENTICATION DATA
+            ctx["user_initials"] = Current_User.fullname.substr(0, 2);
+            ctx["user_name"] = Current_User.fullname;
+            ctx["user_handle"] = Current_User.handle;
+            
+            ctx["profile_name"] = Current_User.fullname;
+            ctx["profile_handle"] = Current_User.handle;
+            ctx["profile_initials"] = Current_User.fullname.substr(0, 2);
+            ctx["profile_post_count"] = 0;
+            ctx["profile_bio"] = Current_User.bio;
+            ctx["profile_location"] = Current_User.location;
+            ctx["profile_link"] = Current_User.link;
+            ctx["profile_join_date"] = Current_User.join_date;
+            ctx["following_count"] = Current_User.following_count;
+            ctx["followers_count"] = Current_User.followers_count;
+            ctx["is_verified"] = Current_User.is_verified;
+            
+            ctx["is_own_profile"] = true; 
+            ctx["has_posts"] = false;     
+
+            auto profile_page = crow::mustache::load("profile.html").render(ctx); 
+            return crow::response(profile_page); 
+        } });
+
+    // 6. POST AUTHENTICATION DATA
     CROW_ROUTE(app, "/auth").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                              {
         crow::query_string params("?" + req.body);

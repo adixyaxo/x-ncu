@@ -704,27 +704,37 @@ int main()
         else 
         { 
             username = "@" + username;
+            int search_userID = getuserprofile(username);
+            if (search_userID > 0) {
+                Current_User = user(search_userID);
+            }
+            else {
+                auto message_page = crow::mustache::load("message.html");
+                crow::mustache::context ctx({{"error_code", "404"}, {"error_message", "User Not Found"}});
+                return crow::response(404, message_page.render(ctx));
+            }
             crow::mustache::context ctx;
-            ctx["title"] = Current_User.handle;
+            user SEARCH_USER(search_userID);
+            ctx["title"] = SEARCH_USER.fullname + " | X-NCU";
 
             ctx["user_initials"] = Current_User.fullname.substr(0, 2);
             ctx["user_name"] = Current_User.fullname;
             ctx["user_handle"] = Current_User.handle;
             
-            ctx["profile_name"] = Current_User.fullname;
-            ctx["profile_handle"] = Current_User.handle;
-            ctx["profile_initials"] = Current_User.fullname.substr(0, 2);
+            ctx["profile_name"] = SEARCH_USER.fullname;
+            ctx["profile_handle"] = SEARCH_USER.handle;
+            ctx["profile_initials"] = SEARCH_USER.fullname.substr(0, 2);
             ctx["profile_post_count"] = 0;
-            ctx["profile_bio"] = Current_User.bio;
-            ctx["profile_location"] = Current_User.location;
-            ctx["profile_link"] = Current_User.link;
-            ctx["profile_join_date"] = Current_User.join_date;
-            ctx["following_count"] = Current_User.following_count;
-            ctx["followers_count"] = Current_User.followers_count;
-            ctx["is_verified"] = Current_User.is_verified;
-            
-            ctx["is_own_profile"] = true; 
-            ctx["has_posts"] = false;     
+            ctx["profile_bio"] = SEARCH_USER.bio;
+            // ctx["profile_location"] = SEARCH_USER.location;
+            // ctx["profile_link"] = SEARCH_USER.link;
+            // ctx["profile_join_date"] = SEARCH_USER.join_date;
+            // ctx["following_count"] = SEARCH_USER.following_count;
+            // ctx["followers_count"] = SEARCH_USER.followers_count;
+            ctx["is_verified"] = SEARCH_USER.is_verified;
+            if(SEARCH_USER.id == Current_User.id){
+                ctx["is_own_profile"] = true; }
+            ctx["has_posts"] = true;     
 
             auto profile_page = crow::mustache::load("profile.html").render(ctx); 
             return crow::response(profile_page); 

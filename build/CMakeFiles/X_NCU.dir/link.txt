@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/X_NCU.dir/main.cpp.o -o X_NCU 

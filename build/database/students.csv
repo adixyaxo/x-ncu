@@ -1,0 +1,4 @@
+PostID,UserID,Content,ParentID,LikesCount,RetweetsCount,CreatedAt,role
+101,1,Working on my 100 mini Python projects. Just finished the Banking System!,0,45,12,2026-03-08T10:00:00Z,student
+103,1,@priya.sharma Will the evaluation cover Redux?,102,5,0,2026-03-09T09:45:00Z,student
+105,3,Anyone want to team up for GSoC 2026? Looking at CERN-HSF.,0,22,4,2026-03-10T12:30:00Z,student

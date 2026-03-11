@@ -765,6 +765,12 @@ int main()
         
         auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
+    // GET ABOUT PAGE
+    CROW_ROUTE(app, "/about")([]()
+                              { 
+        auto variable_page = crow::mustache::load("about.html"); 
+        return variable_page.render(); });
+
     // GET LOGIN PAGE
     CROW_ROUTE(app, "/login")([]()
                               { 

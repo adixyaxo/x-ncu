@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About X-NCU | The NorthCap Universe</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        xbg: '#0a0b0a',       // Deepest onyx
+                        xcard: '#141614',     // Rich dark forest/onyx blend
+                        xborder: '#2a2e2a',   // Muted olive-grey
+                        xgold: '#c5a059',     // Antique gold
+                        xtext: '#e8e5df',     // Cream/Parchment
+                        xmuted: '#8b8a84'     // Dusty grey
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Performance optimizations and aesthetic refinements */
+        ::selection {
+            background-color: #c5a059;
+            color: #000;
+        }
+
+        body {
+            background-color: #0a0b0a;
+            /* High-performance static noise */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)' opacity='0.04'/%3E%3C/svg%3E");
+            background-attachment: fixed;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hardware-accelerated transitions */
+        .bento-card {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+            will-change: transform, border-color;
+        }
+
+        .bento-card:hover {
+            border-color: #c5a059;
+            transform: translateY(-2px);
+        }
+
+        /* Drop cap for Team Meow */
+        .drop-cap::first-letter {
+            float: left;
+            font-size: 3.5rem;
+            line-height: 0.8;
+            padding-right: 0.5rem;
+            padding-top: 0.2rem;
+            font-family: 'Playfair Display', serif;
+            color: #c5a059;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body
+    class="text-xtext font-sans min-h-screen flex items-center justify-center p-4 lg:p-6 no-scrollbar relative overflow-x-hidden">
+
+    <svg class="fixed top-8 left-8 w-16 h-16 text-xgold opacity-10 pointer-events-none" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="0.5">
+        <path d="M3 21V9l4 4 5-8 5 8 4-4v12H3z" stroke-linejoin="round" />
+    </svg>
+    <svg class="fixed top-8 right-8 w-16 h-16 text-xgold opacity-10 pointer-events-none" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="0.5">
+        <path d="M12 21c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-3.86 3.14-7 7-7"
+            stroke-linecap="round" />
+    </svg>
+    <svg class="fixed bottom-8 left-8 w-12 h-12 text-xgold opacity-10 pointer-events-none" viewBox="0 0 24 24"
+        fill="currentColor">
+        <path
+            d="M12 8.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 3.5 12 3.5 14.5 4.62 14.5 6 13.38 8.5 12 8.5zm-5.5 2c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm11 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM12 21c-3.5 0-6-2.5-6-6s2.5-5 6-5 6 1.5 6 5-2.5 6-6 6z" />
+    </svg>
+    <svg class="fixed bottom-8 right-8 w-16 h-16 text-xgold opacity-10 pointer-events-none" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="0.5">
+        <path d="M2 8h8M2 12h10M2 16h8M22 8h-8M22 12h-10M22 16h-8" stroke-linecap="round" />
+    </svg>
+
+    <main
+        class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 grid-rows-[auto] lg:grid-rows-3 gap-5 w-full max-w-[1400px] min-h-[calc(100vh-3rem)] relative z-10">
+
+        <div
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:p-12 md:col-span-2 lg:col-span-2 lg:row-span-2 flex flex-col justify-between group">
+            <div class="flex justify-between items-start mb-12">
+                <span class="text-xgold text-xs uppercase tracking-[0.3em] font-medium">Institution</span>
+                <span
+                    class="text-xborder group-hover:text-xgold transition-colors duration-500 font-serif italic text-sm">Est.
+                    2026</span>
+            </div>
+
+            <div>
+                <h1 class="font-serif text-5xl lg:text-7xl text-white leading-[1.05] mb-6 font-semibold tracking-tight">
+                    The NorthCap <br>
+                    <span class="text-xgold italic font-normal">Universe.</span>
+                </h1>
+                <p class="text-lg text-xmuted font-light leading-relaxed max-w-md">
+                    An exclusive digital parlor for the students, faculty, and staff of NCU. Connect with distinction,
+                    solve problems with elegance, and converse with grace.
+                </p>
+            </div>
+        </div>
+
+        <div
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:col-span-1 lg:row-span-2 flex flex-col justify-between">
+            <h3 class="font-serif text-2xl text-white mb-8 italic font-light">The Architecture</h3>
+
+            <div class="space-y-6 flex-1 flex flex-col justify-end">
+                <div class="flex justify-between items-end border-b border-xborder/60 pb-3">
+                    <span class="text-xmuted tracking-[0.2em] uppercase text-[0.65rem] font-medium">Foundation</span>
+                    <span class="text-xgold font-serif italic text-lg">C++</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-xborder/60 pb-3">
+                    <span class="text-xmuted tracking-[0.2em] uppercase text-[0.65rem] font-medium">Framework</span>
+                    <span class="text-white font-serif italic text-lg">Crow</span>
+                </div>
+                <div class="flex justify-between items-end border-b border-xborder/60 pb-3">
+                    <span class="text-xmuted tracking-[0.2em] uppercase text-[0.65rem] font-medium">Aesthetic</span>
+                    <span class="text-white font-serif italic text-lg">Tailwind</span>
+                </div>
+                <div class="flex justify-between items-end">
+                    <span class="text-xmuted tracking-[0.2em] uppercase text-[0.65rem] font-medium">Script</span>
+                    <span class="text-white font-serif italic text-lg">Vanilla JS</span>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:col-span-1 lg:row-span-1 flex flex-col justify-between">
+            <div class="text-xgold font-serif text-2xl mb-4 italic">I.</div>
+            <div>
+                <h3 class="font-serif text-xl text-white mb-2 font-medium">Pedigree Required</h3>
+                <p class="text-sm text-xmuted font-light leading-relaxed">Entry is strictly limited to official
+                    university emails. Burner accounts will be escorted off the premises.</p>
+            </div>
+        </div>
+
+        <div
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:col-span-1 lg:row-span-1 flex flex-col justify-between">
+            <div class="text-xgold font-serif text-2xl mb-4 italic">II.</div>
+            <div>
+                <h3 class="font-serif text-xl text-white mb-2 font-medium">Decorum in Zones</h3>
+                <p class="text-sm text-xmuted font-light leading-relaxed">Maintain academic rigor in branch channels.
+                    Keep existential dread confined to the general lounge.</p>
+            </div>
+        </div>
+
+        <div
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:col-span-2 lg:row-span-1 flex flex-col justify-center relative overflow-hidden group">
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-[0.65rem] text-xmuted uppercase tracking-[0.3em] font-medium">The Architects</p>
+                <p class="text-xgold font-serif italic text-sm group-hover:opacity-100 opacity-50 transition-opacity">
+                    Team Meow 🐈</p>
+            </div>
+
+            <p class="drop-cap text-xtext/90 font-light leading-relaxed text-[0.95rem]">
+                Meticulously engineered and woven into existence by the collective brilliance of
+                <span class="font-serif italic text-xgold text-base">Aditya Dagar</span>,
+                <span class="font-serif italic text-xgold text-base">Abhudaya Mishra</span>,
+                <span class="font-serif italic text-xgold text-base">Bhaumika Sharma</span>,
+                <span class="font-serif italic text-xgold text-base">Afsha Gupta</span>, and
+                <span class="font-serif italic text-xgold text-base">Abhishek Upadhyay</span>.
+                This digital sanctum is a testament to raw C++ speed, uncompromising aesthetic standards, and quiet
+                feline grace.
+            </p>
+        </div>
+
+        <div
+            class="bento-card bg-xgold border border-xgold rounded-3xl p-8 lg:col-span-1 lg:row-span-1 flex flex-col justify-center">
+            <h2 class="font-serif text-2xl text-[#141614] mb-5 italic font-semibold">T&C</h2>
+            <ul class="text-[#141614]/85 space-y-3 text-[0.85rem] font-medium leading-tight">
+                <li class="flex gap-2"><span class="opacity-50">✦</span> Subtweeting professors is a segfault offense.
+                </li>
+                <li class="flex gap-2"><span class="opacity-50">✦</span> If the server crashes, we simply forgot to free
+                    memory.</li>
+                <li class="flex gap-2"><span class="opacity-50">✦</span> We claim no liability for GPA drops.</li>
+            </ul>
+        </div>
+
+        <a href="/"
+            class="bento-card bg-[#e8e5df] rounded-3xl p-8 lg:col-span-1 lg:row-span-1 flex flex-col items-center justify-center text-[#141614] hover:bg-white transition-colors group">
+            <div
+                class="w-14 h-14 rounded-full border border-[#141614]/20 flex items-center justify-center mb-5 group-hover:-rotate-45 transition-transform duration-500 ease-out">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+            </div>
+            <h3 class="font-serif text-lg italic font-medium tracking-wide">Return to Login</h3>
+        </a>
+
+    </main>
+
+</body>
+
+</html>

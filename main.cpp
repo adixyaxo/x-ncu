@@ -536,68 +536,43 @@ int main()
     // ==========================================
     CROW_ROUTE(app, "/students")([]()
                                  {
-        if (global_login_stats <= 0) {
-            crow::response res; res.code = 303; res.set_header("Location", "/login"); return res;
-        }
+        if (global_login_stats <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
 
-        crow::mustache::context ctx;
-        ctx["title"] = "Students | X-NCU";
-        
+        crow::mustache::context ctx; ctx["title"] = "Students | X-NCU";
         user currentUser(global_login_stats);
         
         if (currentUser.isFound()) {
-            string initials = "U";
-            if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
-            ctx["user_initials"] = initials;
-            ctx["user_name"] = currentUser.fullname();
-            ctx["user_handle"] = currentUser.handle();
+            string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
+            ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname(); ctx["user_handle"] = currentUser.handle();
         } 
 
         std::vector<crow::mustache::context> posts_vector;
         std::vector<crow::mustache::context> news_vector;
         
-        std::ifstream posts_file("database/students.csv"); 
-        std::string line;
-        
+        std::ifstream posts_file("database/students.csv"); std::string line;
         if (posts_file.good()) std::getline(posts_file, line); 
         
         while (std::getline(posts_file, line)) {
-            if (line.empty()) continue; 
-        
+            if (line.empty()) continue;
+
             std::stringstream ss(line);
             std::string post_id, user_id, content, parent_id, likes_count, retweets_count, created_at, role;
             
-            std::getline(ss, post_id, ',');
-            std::getline(ss, user_id, ',');
-            std::getline(ss, content, ',');
-            std::getline(ss, parent_id, ',');
-            std::getline(ss, likes_count, ',');
-            std::getline(ss, retweets_count, ',');
-            std::getline(ss, created_at, ',');
-            std::getline(ss, role, ','); 
+            std::getline(ss, post_id, ','); std::getline(ss, user_id, ','); std::getline(ss, content, ',');
+            std::getline(ss, parent_id, ','); std::getline(ss, likes_count, ','); std::getline(ss, retweets_count, ',');
+            std::getline(ss, created_at, ','); std::getline(ss, role, ','); 
         
-            if (!role.empty() && role.back() == '\r') {
-                role.pop_back();
-            }
-        
+            if (!role.empty() && role.back() == '\r') role.pop_back();
             if (user_id.empty()) continue;
         
             int safe_user_id = -1;
-            try {
-                safe_user_id = stoi(user_id);
-            } catch (...) {
-                continue; 
-            }
+            try { safe_user_id = stoi(user_id); } catch (...) { continue; }
         
             crow::mustache::context post_ctx;
-            post_ctx["body"] = content;
-            post_ctx["likes"] = likes_count;
-            post_ctx["reposts"] = retweets_count;
-            post_ctx["replies"] = 0; 
-            post_ctx["time_ago"] = created_at.substr(0, 10); 
+            post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = retweets_count;
+            post_ctx["replies"] = 0; post_ctx["time_ago"] = created_at.substr(0, 10); 
             
             user post_author(safe_user_id);
-            
             if(post_author.isFound()) {
                 post_ctx["author_name"] = post_author.fullname();
                 post_ctx["author_handle"] = post_author.handle();
@@ -619,27 +594,20 @@ int main()
                 post_ctx["is_prof"] = (role == "teacher" || role == "Teacher");
                 post_ctx["is_staff"] = (role == "staff" || role == "Staff");
             }
-
             posts_vector.push_back(post_ctx); 
         }
         ctx["posts"] = std::move(posts_vector);
         
-        std::ifstream news_file("database/news.csv");
-        if (news_file.good()) std::getline(news_file, line); 
+        std::ifstream news_file("database/news.csv"); if (news_file.good()) std::getline(news_file, line); 
         while (std::getline(news_file, line)) {
-            std::stringstream ss(line);
-            std::string id, headline, category, time_ago, post_count;
-            std::getline(ss, id, ','); std::getline(ss, headline, ',');
-            std::getline(ss, category, ','); std::getline(ss, time_ago, ','); std::getline(ss, post_count, ',');
-            crow::mustache::context news_ctx;
-            news_ctx["headline"] = headline; news_ctx["category"] = category;
-            news_ctx["time_ago"] = time_ago; news_ctx["post_count"] = post_count;
+            std::stringstream ss(line); std::string id, headline, category, time_ago, post_count;
+            std::getline(ss, id, ','); std::getline(ss, headline, ','); std::getline(ss, category, ','); std::getline(ss, time_ago, ','); std::getline(ss, post_count, ',');
+            crow::mustache::context news_ctx; news_ctx["headline"] = headline; news_ctx["category"] = category; news_ctx["time_ago"] = time_ago; news_ctx["post_count"] = post_count;
             news_vector.push_back(news_ctx);
         }
         ctx["news"] = std::move(news_vector);
         
-        auto page = crow::mustache::load("index.html");
-        return crow::response(page.render(ctx)); });
+        auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
     // ==========================================
     // 3. TEACHERS FEED ROUTE

@@ -1,3 +1,41 @@
+<style>
+    /* Grainy effect overlay */
+    .bg-grain {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .bg-grain::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        /* Inline SVG noise filter */
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 0;
+        mix-blend-mode: overlay;
+        /* Blends nicely with dark backgrounds */
+    }
+
+    /* Show light grain on hover */
+    .bg-grain:hover::after {
+        opacity: 0.12;
+    }
+
+    /* Show heavier grain on the active route */
+    .bg-grain.active::after {
+        opacity: 0.25;
+    }
+
+    /* Ensure text and icons stay above the grain */
+    .bg-grain>* {
+        position: relative;
+        z-index: 10;
+    }
+</style>
+
 <aside class="w-64 border-r border-xborder flex flex-col justify-between h-full hidden md:flex">
     <div class="p-4 overflow-y-auto no-scrollbar">
         <div class="mb-8 px-2">
@@ -15,7 +53,7 @@
                 </h2>
                 <div class="dropdown-content">
                     <a href="/" data-route="home"
-                        class="nav-link flex items-center space-x-3 px-3 py-2 rounded-md transition-colors active">
+                        class="nav-link bg-grain active flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 text-white bg-white/10 shadow-inner">
                         <i class="ph ph-house text-xl"></i>
                         <span>General Feed</span>
                     </a>
@@ -30,19 +68,19 @@
                 <ul class="dropdown-content space-y-1">
                     <li>
                         <a href="/students" data-route="students"
-                            class="nav-link flex items-center space-x-3 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors text-gray-300 active">
+                            class="nav-link bg-grain flex items-center space-x-3 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 text-gray-300 hover:text-white">
                             <i class="ph ph-student text-xl"></i><span>Students</span>
                         </a>
                     </li>
                     <li>
                         <a href="/teachers" data-route="teachers"
-                            class="nav-link flex items-center space-x-3 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors text-gray-300">
+                            class="nav-link bg-grain flex items-center space-x-3 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 text-gray-300 hover:text-white">
                             <i class="ph ph-chalkboard-teacher text-xl"></i><span>Teachers</span>
                         </a>
                     </li>
                     <li>
                         <a href="/staff" data-route="staff"
-                            class="nav-link flex items-center space-x-3 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors text-gray-300">
+                            class="nav-link bg-grain flex items-center space-x-3 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 text-gray-300 hover:text-white">
                             <i class="ph ph-users text-xl"></i><span>Staff</span>
                         </a>
                     </li>
@@ -57,19 +95,19 @@
                 <ul class="dropdown-content space-y-1 text-sm text-gray-300">
                     <li>
                         <a href="/cse" data-route="cse"
-                            class="nav-link flex items-center space-x-2 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors">
+                            class="nav-link bg-grain flex items-center space-x-2 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 hover:text-white">
                             <span class="text-xmuted">&gt;_</span><span>CSE</span>
                         </a>
                     </li>
                     <li>
                         <a href="/ece" data-route="ece"
-                            class="nav-link flex items-center space-x-2 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors">
+                            class="nav-link bg-grain flex items-center space-x-2 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 hover:text-white">
                             <span class="text-xmuted">&gt;_</span><span>ECE</span>
                         </a>
                     </li>
                     <li>
                         <a href="/me" data-route="me"
-                            class="nav-link flex items-center space-x-2 hover:bg-xborder/50 px-3 py-2 rounded-md transition-colors">
+                            class="nav-link bg-grain flex items-center space-x-2 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 hover:text-white">
                             <span class="text-xmuted">&gt;_</span><span>ME</span>
                         </a>
                     </li>
@@ -78,8 +116,7 @@
         </nav>
     </div>
 
-
-    <a id="user-link" href="#" class="block mt-auto border-t border-xborder hover:bg-xborder/30 transition-colors">
+    <a id="user-link" href="#" class="block mt-auto border-t border-xborder hover:bg-white/5 transition-colors">
         <div class="p-4 flex items-center space-x-3">
             <div class="w-10 h-10 rounded-full bg-xborder flex items-center justify-center font-bold">
                 {{user_initials}}
@@ -93,18 +130,14 @@
     </a>
 
     <script>
-        // 2. This script must run AFTER the element exists in the DOM
         (function () {
             const userHandle = '{{user_handle}}';
             const userLink = document.getElementById("user-link");
 
             if (userLink) {
-                // Remove @ and set the href
                 const cleanHandle = userHandle.replace('@', '');
                 userLink.href = `/profile/${cleanHandle}`;
             }
         })();
     </script>
-
-
 </aside>

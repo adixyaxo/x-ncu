@@ -1,5 +1,0 @@
-UserID,Username,Email,FullName,Role,Password,Bio,IsVerified,CreatedAt
-1,@adixyaxo,aditya25csu016@ncuindia.edu,Aditya Dagar,Student,Aditya@130508@x-ncu,Building Project SERA | MERN & AI,TRUE,2025-10-01T10:00:00Z
-2,@priya.sharma,priya.sharma@ncuindia.edu,Dr. Priya Sharma,Teacher,hashed_pw_2,Assistant Professor | Computer Science,TRUE,2024-05-15T09:30:00Z
-3,@arjun.m,arjun.m@gmail.com,Arjun Mehta,Student,hashed_pw_3,B.Tech CSE | Tech Enthusiast,FALSE,2025-11-20T14:45:00Z
-4,@ncu_admin,admin@ncuindia.edu,NCU Admin,Staff,hashed_pw_4,Official Announcements for The NorthCap University,TRUE,2023-01-10T08:00:00Z

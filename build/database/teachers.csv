@@ -1,2 +1,2 @@
-PostID,Username,FullName,Content,LikesCount,CreatedAt
-102,@priya.sharma,Dr. Priya Sharma,Reminder for all CS students: MERN stack lab evaluations begin next week.,89,2026-03-09T09:15:00Z
+PostID,UserID,Content,ParentID,LikesCount,RetweetsCount,CreatedAt,role
+102,2,Reminder for all CS students: MERN stack lab evaluations begin next week.,0,89,30,2026-03-09T09:15:00Z,teacher

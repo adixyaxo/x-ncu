@@ -77,17 +77,34 @@
             </div>
         </nav>
     </div>
-    <a href="/profile/{{user_handle}}">
-        <div href="/profile/{{user_handle}}"
-            class="p-4 hover:bg-xborder/30 cursor-pointer transition-colors mt-auto border-t border-xborder flex items-center space-x-3">
+
+
+    <a id="user-link" href="#" class="block mt-auto border-t border-xborder hover:bg-xborder/30 transition-colors">
+        <div class="p-4 flex items-center space-x-3">
             <div class="w-10 h-10 rounded-full bg-xborder flex items-center justify-center font-bold">
                 {{user_initials}}
             </div>
             <div class="flex-1">
-                <p class="font-bold text-sm">{{user_name}}</p>
+                <p class="font-bold text-sm text-xtext">{{user_name}}</p>
                 <p class="text-xmuted text-sm">{{user_handle}}</p>
             </div>
-            <i class="ph ph-dots-three text-xl"></i>
+            <i class="ph ph-dots-three text-xl text-xmuted"></i>
         </div>
     </a>
+
+    <script>
+        // 2. This script must run AFTER the element exists in the DOM
+        (function () {
+            const userHandle = '{{user_handle}}';
+            const userLink = document.getElementById("user-link");
+
+            if (userLink) {
+                // Remove @ and set the href
+                const cleanHandle = userHandle.replace('@', '');
+                userLink.href = `/profile/${cleanHandle}`;
+            }
+        })();
+    </script>
+
+
 </aside>

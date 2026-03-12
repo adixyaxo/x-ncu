@@ -767,14 +767,14 @@ int main()
 
     // GET ABOUT PAGE
     CROW_ROUTE(app, "/logout")([]()
-                                   global_login_stats = -1;
+                               {global_login_stats = -1;
                                crow::response res;
                                res.code = 303;
                                res.set_header("Location", "/");
-                               return res;)
+                               return res; });
 
-        CROW_ROUTE(app, "/about")([]()
-                                  {
+    CROW_ROUTE(app, "/about")([]()
+                              {
         auto variable_page = crow::mustache::load("index.html");
         return variable_page.render(); });
 

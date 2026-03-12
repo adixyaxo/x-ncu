@@ -6,6 +6,8 @@
 #include <vector>
 #include <iomanip>
 #include <ctime>
+#include <unordered_map>
+#include <algorithm>
 
 using namespace std;
 
@@ -30,7 +32,7 @@ private:
     string link_private = "";
     int following_count_private = 0;
     int followers_count_private = 0;
-    string posts_private = "";
+    int posts_private = 0;
 
 public:
     user();
@@ -49,13 +51,13 @@ public:
     string bio() const { return bio_private; }
     bool is_verified() const { return is_verified_private; }
     bool isFound() const { return isFound_private; }
+    int posts() const { return posts_private; }
 
     // NEW GETTERS
     string location() const { return location_private; }
     string link() const { return link_private; }
     int following_count() const { return following_count_private; }
     int followers_count() const { return followers_count_private; }
-    string posts() const { return posts_private; }
     string created_at() const { return created_at_private; }
     // ==========================================
     // SETTERS
@@ -69,13 +71,13 @@ public:
     void bio(const string &val) { bio_private = val; }
     void is_verified(bool val) { is_verified_private = val; }
     void isFound(bool val) { isFound_private = val; }
+    void posts(int val) { posts_private = val; }
 
     // NEW SETTERS
     void location(const string &val) { location_private = val; }
     void link(const string &val) { link_private = val; }
     void following_count(int val) { following_count_private = val; }
     void followers_count(int val) { followers_count_private = val; }
-    void posts(const string &val) { posts_private = val; }
     void created_at(const string &val) { created_at_private = val; }
 };
 
@@ -119,6 +121,7 @@ user::user(int targetUserNo)
         if (current_id == targetUserNo)
         {
             id_private = targetUserNo;
+
             getline(ss, handle_private, ',');
             getline(ss, email_private, ',');
             getline(ss, fullname_private, ',');
@@ -130,30 +133,21 @@ user::user(int targetUserNo)
             getline(ss, verified_str, ',');
             is_verified_private = (verified_str == "TRUE");
 
-            // NEW COLUMNS PARSING
-            getline(ss, created_at_private, ','); // Skip CreatedAt
-
+            getline(ss, created_at_private, ',');
             getline(ss, location_private, ',');
             getline(ss, link_private, ',');
 
             string following_str;
             getline(ss, following_str, ',');
-            if (!following_str.empty())
-                following_count_private = stoi(following_str);
+            following_count_private = following_str.empty() ? 0 : stoi(following_str);
 
             string followers_str;
             getline(ss, followers_str, ',');
-            if (!followers_str.empty())
-                followers_count_private = stoi(followers_str);
+            followers_count_private = followers_str.empty() ? 0 : stoi(followers_str);
 
-            // Posts list is the last column (read to the end of the line)
-            getline(ss, posts_private);
-
-            // Clean up Windows carriage returns (\r)
-            if (!posts_private.empty() && posts_private.back() == '\r')
-            {
-                posts_private.pop_back();
-            }
+            string posts_str;
+            getline(ss, posts_str);
+            posts_private = posts_str.empty() ? 0 : stoi(posts_str);
 
             isFound_private = true;
             break;
@@ -252,7 +246,8 @@ int authenticateUser(const string &inputEmail, const string &inputPassword)
         getline(ss, link, ',');
         getline(ss, following, ',');
         getline(ss, followers, ',');
-        getline(ss, posts);
+        string posts_str;
+        getline(ss, posts_str);
 
         // 5. Check for a match
         if (email == inputEmail)
@@ -370,7 +365,7 @@ int registerUser(const string &email, const string &fullName, const string &role
     std::ostringstream oss;
 
     // "%d/%m/%Y" gives you DD/MM/YYYY.
-    oss << std::put_time(&tm, "%d/%m/%Y");
+    oss << std::put_time(&tm, "%Y-%m-%dT%H:%M:%SZ");
 
     // Updated to write the complete row maintaining the 14 columns
     outFile << newId << ","
@@ -562,132 +557,148 @@ int main()
     // ==========================================
     // 1. HOME ROUTE
     // ==========================================
-    CROW_ROUTE(app, "/")([]()
-                         {
-        if (global_login_stats <= 0) 
+    CROW_ROUTE(app, "/")
+    ([]()
+     {
+
+    crow::mustache::context ctx;
+    std::vector<crow::mustache::context> posts_vector;
+
+    std::ifstream posts_file("database/posts.csv");
+    std::string line;
+
+    if (!posts_file.is_open())
+        return crow::response(500, "Could not open posts database");
+
+    // Skip header
+    std::getline(posts_file, line);
+
+    struct PostData {
+        int post_id;
+        int user_id;
+        std::string content;
+        int parent_id;
+        int likes;
+        int reposts;
+        std::string created_at;
+        std::string role;
+    };
+
+    std::vector<PostData> posts;
+
+    while (std::getline(posts_file, line))
+    {
+        if (line.empty()) continue;
+
+        std::stringstream ss(line);
+
+        std::string post_id_str;
+        std::string user_id_str;
+        std::string content;
+        std::string parent_id_str;
+        std::string likes_str;
+        std::string reposts_str;
+        std::string created_at;
+        std::string role;
+
+        std::getline(ss, post_id_str, ',');
+        std::getline(ss, user_id_str, ',');
+        std::getline(ss, content, ',');
+        std::getline(ss, parent_id_str, ',');
+        std::getline(ss, likes_str, ',');
+        std::getline(ss, reposts_str, ',');
+        std::getline(ss, created_at, ',');
+        std::getline(ss, role);   // last column (no comma)
+
+        try
         {
-            crow::response res;
-            res.code = 303;
-            res.set_header("Location", "/login");
-            return res;
+            PostData p;
+
+            p.post_id = std::stoi(post_id_str);
+            p.user_id = std::stoi(user_id_str);
+            p.content = content;
+            p.parent_id = std::stoi(parent_id_str);
+            p.likes = std::stoi(likes_str);
+            p.reposts = std::stoi(reposts_str);
+            p.created_at = created_at;
+            p.role = role;
+
+            posts.push_back(p);
         }
-        else
+        catch (...)
         {
-            crow::mustache::context ctx;
-            ctx["title"] = "HOME | X-NCU";
-            
-            user currentUser(global_login_stats);
+            continue;
+        }
+    }
 
-            if (currentUser.isFound()) {
-                string initials = "U";
-                if (currentUser.fullname().length() >= 2) {
-                    initials = currentUser.fullname().substr(0, 2);
-                }
-                ctx["user_initials"] = initials;
-                ctx["user_name"] = currentUser.fullname();
-                ctx["user_handle"] = currentUser.handle();
-            } 
+    posts_file.close();
 
-            std::vector<crow::mustache::context> posts_vector;
-            std::vector<crow::mustache::context> news_vector;
-            
-            std::ifstream posts_file("database/posts.csv"); 
-            std::string line;
-            
-            if (posts_file.good()) std::getline(posts_file, line); 
-            
-            while (std::getline(posts_file, line)) {
-                if (line.empty()) continue; 
+    // Count replies
+    std::unordered_map<int,int> reply_count;
 
-                std::stringstream ss(line);
-                std::string post_id, user_id, content, parent_id, likes_count, retweets_count, created_at, role;
-                
-                std::getline(ss, post_id, ',');
-                std::getline(ss, user_id, ',');
-                std::getline(ss, content, ',');
-                std::getline(ss, parent_id, ',');
-                std::getline(ss, likes_count, ',');
-                std::getline(ss, retweets_count, ',');
-                std::getline(ss, created_at, ',');
-                std::getline(ss, role, ','); 
+    for (auto &p : posts)
+    {
+        if (p.parent_id != 0)
+            reply_count[p.parent_id]++;
+    }
 
-                if (!role.empty() && role.back() == '\r') {
-                    role.pop_back();
-                }
+    // Sort newest first
+    std::sort(posts.begin(), posts.end(),
+        [](const PostData &a, const PostData &b){
+            return a.post_id > b.post_id;
+        });
 
-                if (user_id.empty()) continue;
+    for (auto &p : posts)
+    {
+        crow::mustache::context post_ctx;
 
-                int safe_user_id = -1;
-                try {
-                    safe_user_id = stoi(user_id);
-                } catch (...) {
-                    std::cout << "[DEBUG] Skipped post. Bad user_id: '" << user_id << "' | Full line: " << line << "\n";
-                    continue; 
-                }
-            
-                crow::mustache::context post_ctx;
-                post_ctx["body"] = content;
-                post_ctx["likes"] = likes_count;
-                post_ctx["reposts"] = retweets_count;
-                post_ctx["replies"] = 0; 
-                post_ctx["time_ago"] = created_at.substr(0, 10); 
-                
-                user post_author(safe_user_id);
-                
-                if(post_author.isFound()) {
-                    post_ctx["author_name"] = post_author.fullname();
-                    post_ctx["author_handle"] = post_author.handle();
-                    post_ctx["author_role"] = role;
-                    post_ctx["is_verified"] = post_author.is_verified();
-                    
-                    string author_initials = "";
-                    if (!post_author.fullname().empty()) {
-                        author_initials += post_author.fullname()[0];
-                        size_t space_pos = post_author.fullname().find(' ');
-                        if (space_pos != string::npos && space_pos + 1 < post_author.fullname().length()) {
-                            author_initials += post_author.fullname()[space_pos + 1];
-                        }
-                    }
-                    if(author_initials.empty()) author_initials = "U";
-                    post_ctx["author_initials"] = author_initials;
+        user post_author(p.user_id);
 
-                    post_ctx["is_user"] = (role == "student" || role == "Student");
-                    post_ctx["is_prof"] = (role == "teacher" || role == "Teacher");
-                    post_ctx["is_staff"] = (role == "staff" || role == "Staff");
-                }
+        post_ctx["author_name"] = post_author.fullname();
+        post_ctx["author_handle"] = post_author.handle();
+        post_ctx["author_role"] = p.role;
 
-                posts_vector.push_back(post_ctx); 
-            }
-            
-            ctx["posts"] = std::move(posts_vector);
-            
-            std::ifstream news_file("database/news.csv");
-            if (news_file.good()) std::getline(news_file, line); 
-            
-            while (std::getline(news_file, line)) {
-                std::stringstream ss(line);
-                std::string id, headline, category, time_ago, post_count;
-                
-                std::getline(ss, id, ',');
-                std::getline(ss, headline, ',');
-                std::getline(ss, category, ',');
-                std::getline(ss, time_ago, ',');
-                std::getline(ss, post_count, ',');
-    
-                crow::mustache::context news_ctx;
-                news_ctx["headline"] = headline;
-                news_ctx["category"] = category;
-                news_ctx["time_ago"] = time_ago;
-                news_ctx["post_count"] = post_count;
-                
-                news_vector.push_back(news_ctx);
-            }
+        post_ctx["body"] = p.content;
+        post_ctx["likes"] = p.likes;
+        post_ctx["reposts"] = p.reposts;
 
-            ctx["news"] = std::move(news_vector);
-            
-            auto page = crow::mustache::load("index.html");
-            return crow::response(page.render(ctx));
-        } });
+        post_ctx["replies"] =
+            reply_count.count(p.post_id) ? reply_count[p.post_id] : 0;
+
+        post_ctx["time_ago"] = p.created_at.substr(0,10);
+
+        std::string initials;
+        std::string fullname = post_author.fullname();
+
+        if (!fullname.empty())
+        {
+            initials += fullname[0];
+
+            size_t space = fullname.find(' ');
+            if (space != std::string::npos && space + 1 < fullname.size())
+                initials += fullname[space + 1];
+        }
+
+        post_ctx["author_initials"] = initials;
+
+        post_ctx["is_verified"] = post_author.is_verified();
+
+        post_ctx["is_user"] =
+            (p.role == "student" || p.role == "Student");
+
+        post_ctx["is_prof"] =
+            (p.role == "teacher" || p.role == "Teacher");
+
+        post_ctx["is_staff"] =
+            (p.role == "staff" || p.role == "Staff");
+
+        posts_vector.push_back(post_ctx);
+    }
+
+    ctx["posts"] = posts_vector;
+
+    auto page = crow::mustache::load("feed.html");
+    return crow::response(page.render(ctx)); });
 
     // ==========================================
     // 2. STUDENTS FEED ROUTE
@@ -993,7 +1004,8 @@ int main()
         }
         else
         {
-            username = "@" + username;
+            if(username[0] != '@')
+    username = "@" + username;
             int search_userID = getuserprofile(username);
 
             if (search_userID > 0)

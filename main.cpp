@@ -400,7 +400,7 @@ class post
 private:
     // PostID,UserID,Content,ParentID,LikesCount,RetweetsCount,CreatedAt,role
     int id_private;
-    int user_id_private;
+    int user_id_private = global_login_stats;
     string content_private;
     int parent_id_private;
     int likes_count_private;
@@ -433,8 +433,7 @@ public:
     void isFound(bool val) { isFound_private = val; }
     // CONSTRUCTOR AND DESTRUCTOR
     post();
-    create_post(int user_id, const string &content, int parent_id = -1);
-    ~create_post();
+    post(const string &content, int parent_id = -1);
     ~post();
 };
 
@@ -446,8 +445,31 @@ post::~post()
 {
 }
 
-post::create_post(int user_id, const string &content, int parent_id)
+post::post(const string &content_input, int parent_id)
 {
+    id_private = 0;
+    user_id_private = global_login_stats;
+    parent_id_private = parent_id;
+    likes_count_private = 0;
+    retweets_count_private = 0;
+    created_at_private = "";
+    role_private = "";
+    isFound_private = false;
+
+    // 1. SANITIZE THE INPUT (Crucial for CSV stability)
+    content_private = content_input;
+    for (char &c : content_private)
+    {
+        if (c == '\n' || c == '\r')
+        {
+            c = ' '; // Replace newlines with spaces to prevent row breaks
+        }
+        else if (c == ',')
+        {
+            c = ';'; // Replace commas with semicolons to prevent column shifts
+        }
+    }
+
     string filePath = "database/posts.csv";
     ifstream inFile(filePath);
 
@@ -467,11 +489,7 @@ post::create_post(int user_id, const string &content, int parent_id)
             string idStr, dummy;
 
             getline(ss, idStr, ',');
-            for (int i = 0; i < 7; i++)
-            {
-                getline(ss, dummy, ',');
-            }
-
+            // We just need the ID to find the max, no need to parse the rest
             try
             {
                 int currentId = stoi(idStr);
@@ -489,6 +507,22 @@ post::create_post(int user_id, const string &content, int parent_id)
 
     int newId = maxId + 1;
 
+    // 2. ENSURE FILE ENDS WITH A NEWLINE
+    bool needsNewline = false;
+    {
+        ifstream checkFile(filePath, ios::binary | ios::ate);
+        if (checkFile.is_open() && checkFile.tellg() > 0)
+        {
+            checkFile.seekg(-1, ios::end);
+            char c;
+            checkFile.get(c);
+            if (c != '\n')
+            {
+                needsNewline = true;
+            }
+        }
+    }
+
     ofstream outFile(filePath, ios::app);
     if (!outFile.is_open())
     {
@@ -496,19 +530,25 @@ post::create_post(int user_id, const string &content, int parent_id)
         return;
     }
 
+    if (needsNewline)
+    {
+        outFile << "\n";
+    }
+
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
     std::ostringstream oss;
     oss << std::put_time(&tm, "%d/%m/%Y");
 
+    // 3. WRITE THE SANITIZED CONTENT
     outFile << newId << ","
-            << user_id << ","
-            << content << ","
+            << user_id_private << ","
+            << content_private << "," // Using the cleaned variable
             << parent_id << ","
-            << "0" << ","       // LikesCount
-            << "0" << ","       // RetweetsCount
-            << oss.str() << "," // CreatedAt
-            << "" << "\n";      // Role is left blank for now
+            << "0" << ","         // LikesCount
+            << "0" << ","         // RetweetsCount
+            << oss.str() << ","   // CreatedAt
+            << "Student" << "\n"; // Role is left blank for now
 
     outFile.close();
 }
@@ -1066,8 +1106,7 @@ int main()
             return crow::response(400, message_page.render(ctx));
         }
 
-        post new_post;
-        new_post.create_post(Current_User.id(), content, parent_id);
+        post new_post(content, parent_id);
 
         crow::response res;
         res.code = 303;

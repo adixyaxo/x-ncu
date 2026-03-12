@@ -21,12 +21,12 @@
             </button>
         </header>
 
-        <form id="post-form" class="p-4 border-b border-xborder flex space-x-4" action>
+        <form id="post-form" class="p-4 border-b border-xborder flex space-x-4" action="/post" method="POST">
             <div class="w-10 h-10 rounded-full bg-xborder flex-shrink-0 flex items-center justify-center font-bold">
                 {{user_initials}}
             </div>
             <div class="flex-1">
-                <textarea id="post-input" name="content"
+                <textarea id="content" name="content"
                     class="w-full bg-transparent text-xl placeholder-xmuted outline-none resize-none mt-2" rows="2"
                     placeholder="What's happening at NCU?" required></textarea>
                 <div class="flex justify-between items-center mt-4 border-t border-xborder/50 pt-3">

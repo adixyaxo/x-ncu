@@ -775,7 +775,7 @@ int main()
 
     CROW_ROUTE(app, "/about")([]()
                               {
-        auto variable_page = crow::mustache::load("index.html");
+        auto variable_page = crow::mustache::load("about.html");
         return variable_page.render(); });
 
     // GET LOGIN PAGE

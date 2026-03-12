@@ -59,7 +59,8 @@
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px #0a0b0a inset !important;
+            -webkit-box-shadow: 0 0 0 30px #00000000 inset !important;
+            ;
             -webkit-text-fill-color: #e8e5df !important;
             transition: background-color 5000s ease-in-out 0s;
         }
@@ -93,8 +94,8 @@
 
     <div class="absolute top-8 left-10 z-50">
         <a href="/about"
-            class="group relative inline-flex items-center gap-3 px-6 py-2 border border-xborder rounded-full text-xtext hover:bg-xgold hover:border-xgold hover:text-[#141614] transition-all duration-500 shadow-sm hover:shadow-lg hover:shadow-xgold/10">
-            <span class="font-serif italic text-base tracking-wide">About</span>
+            class="group relative inline-flex items-center gap-3 px-6 py-2 border border-xborder rounded-full text-xtext bg-transparent backdrop-blur-md hover:bg-xgold hover:border-xgold hover:text-[#141614] transition-all duration-500 shadow-sm hover:shadow-lg hover:shadow-xgold/10">
+            <span class="font-serif italic text-base tracking-wide">About </span>
             <svg class="w-4 h-4 transition-transform duration-500 group-hover:-rotate-45" fill="none"
                 stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 5l7 7m0 0l-7 7m7-7H3">
@@ -102,7 +103,6 @@
             </svg>
         </a>
     </div>
-
     <svg class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] lg:w-[520px] lg:h-[520px] text-xgold opacity-[0.08] pointer-events-none z-0 gpu-blur-mask"
         viewBox="0 0 200 200" fill="none" stroke="currentColor">
         <circle cx="100" cy="100" r="90" stroke-width="0.3" stroke-dasharray="2 3" />
@@ -163,10 +163,10 @@
             </div>
 
             <div class="mb-8 inline-block">
-                <span
-                    class="text-xgold text-[10px] uppercase tracking-[0.4em] font-medium border-b border-xborder pb-2">
+                <a href="https://www.ncuindia.edu/" target="_blank"
+                    class="text-xgold text-[10px] uppercase tracking-[0.4em] font-medium border-b border-xborder pb-2 transition-all duration-300 hover:border-xgold hover:text-white hover:drop-shadow-[0_0_5px_rgba(197,160,89,0.5)]">
                     Institution Est. 2026
-                </span>
+                </a>
             </div>
 
             <h1 class="font-serif text-6xl lg:text-7xl mb-6 leading-[1.05] text-white font-semibold">
@@ -180,20 +180,34 @@
             </p>
 
             <ul class="space-y-4 text-xtext/90 font-medium text-sm">
-                <li class="flex items-center gap-3 group">
-                    <span class="text-xgold opacity-70 font-serif italic text-lg leading-none">✦</span>
-                    <span class="font-light tracking-wide opacity-80">Connect using your official university
-                        email</span>
+                <li class="flex items-center gap-3 group cursor-default">
+                    <span
+                        class="text-xgold opacity-70 font-serif italic text-lg leading-none transition-transform group-hover:scale-125">✦</span>
+                    <span class="font-light tracking-wide opacity-60 group-hover:opacity-100 transition-all relative">
+                        Connect using your official university email
+                        <span
+                            class="absolute left-0 -bottom-1 w-0 h-[1px] bg-xgold transition-all duration-500 group-hover:w-full"></span>
+                    </span>
                 </li>
-                <li class="flex items-center gap-3 group">
-                    <span class="text-xgold opacity-70 font-serif italic text-lg leading-none">✦</span>
-                    <span class="font-light tracking-wide opacity-80">Collaborate in dedicated branch & occupation
-                        lounges</span>
+
+                <li class="flex items-center gap-3 group cursor-default">
+                    <span
+                        class="text-xgold opacity-70 font-serif italic text-lg leading-none transition-transform group-hover:scale-125">✦</span>
+                    <span class="font-light tracking-wide opacity-60 group-hover:opacity-100 transition-all relative">
+                        Collaborate in dedicated branch & occupation lounges
+                        <span
+                            class="absolute left-0 -bottom-1 w-0 h-[1px] bg-xgold transition-all duration-500 group-hover:w-full"></span>
+                    </span>
                 </li>
-                <li class="flex items-center gap-3 group">
-                    <span class="text-xgold opacity-70 font-serif italic text-lg leading-none">✦</span>
-                    <span class="font-light tracking-wide opacity-80">Focus on complex problems and elegant
-                        solutions</span>
+
+                <li class="flex items-center gap-3 group cursor-default">
+                    <span
+                        class="text-xgold opacity-70 font-serif italic text-lg leading-none transition-transform group-hover:scale-125">✦</span>
+                    <span class="font-light tracking-wide opacity-60 group-hover:opacity-100 transition-all relative">
+                        Focus on complex problems and elegant solutions
+                        <span
+                            class="absolute left-0 -bottom-1 w-0 h-[1px] bg-xgold transition-all duration-500 group-hover:w-full"></span>
+                    </span>
                 </li>
             </ul>
         </div>
@@ -218,7 +232,13 @@
                             2026</span>
                     </div>
 
-                    <h2 class="font-serif text-3xl mb-8 text-white italic tracking-wide">Join X-NCU</h2>
+                    <h2 class="font-serif text-3xl mb-8 text-xgold italic tracking-wide group cursor-default">
+                        <span class="relative transition-all duration-300 group-hover:text-white">
+                            Join X-NCU
+                            <span
+                                class="absolute left-0 -bottom-1 w-0 h-[1px] bg-xgold transition-all duration-500 group-hover:w-full"></span>
+                        </span>
+                    </h2>
 
                     <form action="/register" method="POST" class="space-y-4">
 

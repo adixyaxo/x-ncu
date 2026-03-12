@@ -766,21 +766,28 @@ int main()
         auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
     // GET ABOUT PAGE
-    CROW_ROUTE(app, "/about")([]()
-                              { 
-        auto variable_page = crow::mustache::load("about.html"); 
+    CROW_ROUTE(app, "/logout")([]()
+                                   global_login_stats = -1;
+                               crow::response res;
+                               res.code = 303;
+                               res.set_header("Location", "/");
+                               return res;)
+
+        CROW_ROUTE(app, "/about")([]()
+                                  {
+        auto variable_page = crow::mustache::load("index.html");
         return variable_page.render(); });
 
     // GET LOGIN PAGE
     CROW_ROUTE(app, "/login")([]()
-                              { 
-        auto variable_page = crow::mustache::load("login.html"); 
+                              {
+        auto variable_page = crow::mustache::load("login.html");
         return variable_page.render(); });
 
     // GET SIGNUP PAGE
     CROW_ROUTE(app, "/signup")([]()
-                               { 
-        auto variable_page = crow::mustache::load("signup.html"); 
+                               {
+        auto variable_page = crow::mustache::load("signup.html");
         return variable_page.render(); });
 
     // POST REGISTER DATA
@@ -793,22 +800,25 @@ int main()
         std::string role = params.get("role") ? params.get("role") : "";
         std::string password = params.get("password") ? params.get("password") : "";
 
-        if (name.empty() || email.empty() || role.empty() || password.empty()) {
+        if (name.empty() || email.empty() || role.empty() || password.empty())
+        {
             return crow::response(400, "Error: All fields are required!");
         }
 
         int signup_status = registerUser(email, name, role, password);
         global_login_stats = signup_status;
 
-        if (signup_status == -1) {
+        if (signup_status == -1)
+        {
             auto message_page = crow::mustache::load("message.html");
             crow::mustache::context ctx({{"error_code", "422"}, {"error_message", "User already exists"}});
             return crow::response(422, message_page.render(ctx));
         }
-        else {
+        else
+        {
             Current_User = user(signup_status);
             crow::response res;
-            res.code = 303; 
+            res.code = 303;
             res.set_header("Location", "/");
             return res;
         } });
@@ -816,22 +826,24 @@ int main()
     // GET PROFILE PAGE
     CROW_ROUTE(app, "/profile/<string>")([](string username)
                                          {
-        if (global_login_stats <= 0) 
+        if (global_login_stats <= 0)
         {
             crow::response res;
             res.code = 303;
             res.set_header("Location", "/login");
-            return res; 
+            return res;
         }
-        else 
-        { 
+        else
+        {
             username = "@" + username;
             int search_userID = getuserprofile(username);
-            
-            if (search_userID > 0) {
+
+            if (search_userID > 0)
+            {
                 Current_User = user(search_userID);
             }
-            else {
+            else
+            {
                 auto message_page = crow::mustache::load("message.html");
                 crow::mustache::context ctx({{"error_code", "404"}, {"error_message", "User Not Found"}});
                 return crow::response(404, message_page.render(ctx));
@@ -839,20 +851,20 @@ int main()
 
             crow::mustache::context ctx;
             user SEARCH_USER(search_userID);
-            
+
             ctx["title"] = SEARCH_USER.fullname() + " | X-NCU";
 
             ctx["user_initials"] = Current_User.fullname().substr(0, 2);
             ctx["user_name"] = Current_User.fullname();
             ctx["user_handle"] = Current_User.handle();
-            
+
             ctx["profile_name"] = SEARCH_USER.fullname();
             ctx["profile_handle"] = SEARCH_USER.handle();
             ctx["profile_initials"] = SEARCH_USER.fullname().substr(0, 2);
             ctx["profile_post_count"] = 0;
             ctx["profile_bio"] = SEARCH_USER.bio();
             ctx["is_verified"] = SEARCH_USER.is_verified();
-            
+
             // NEW VARIABLES ADDED TO THE PROFILE MUSTACHE CONTEXT
             ctx["profile_location"] = SEARCH_USER.location();
             ctx["profile_link"] = SEARCH_USER.link();
@@ -860,14 +872,15 @@ int main()
             ctx["profile_followers"] = SEARCH_USER.followers_count();
             ctx["profile_join_date"] = SEARCH_USER.created_at().substr(0, 10);
             ctx["profile_posts"] = SEARCH_USER.posts();
-            
-            if(SEARCH_USER.id() == Current_User.id()) {
-                ctx["is_own_profile"] = true; 
-            }
-            ctx["has_posts"] = true;    
 
-            auto profile_page = crow::mustache::load("profile.html").render(ctx); 
-            return crow::response(profile_page); 
+            if (SEARCH_USER.id() == Current_User.id())
+            {
+                ctx["is_own_profile"] = true;
+            }
+            ctx["has_posts"] = true;
+
+            auto profile_page = crow::mustache::load("profile.html").render(ctx);
+            return crow::response(profile_page);
         } });
 
     // POST AUTHENTICATION DATA
@@ -876,14 +889,14 @@ int main()
         crow::query_string params("?" + req.body);
         std::string email = params.get("email") ? params.get("email") : "";
         std::string password = params.get("password") ? params.get("password") : "";
-        
+
         int userId = authenticateUser(email, password);
         global_login_stats = userId;
-        
-        if (userId > 0) 
+
+        if (userId > 0)
         {
             crow::response res;
-            res.code = 303; 
+            res.code = 303;
             res.set_header("Location", "/");
             return res;
         }

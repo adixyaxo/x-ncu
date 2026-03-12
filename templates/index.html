@@ -21,33 +21,33 @@
             </button>
         </header>
 
-        <div class="p-4 border-b border-xborder flex space-x-4">
+        <form id="post-form" class="p-4 border-b border-xborder flex space-x-4" action>
             <div class="w-10 h-10 rounded-full bg-xborder flex-shrink-0 flex items-center justify-center font-bold">
                 {{user_initials}}
             </div>
             <div class="flex-1">
-                <textarea id="post-input"
+                <textarea id="post-input" name="content"
                     class="w-full bg-transparent text-xl placeholder-xmuted outline-none resize-none mt-2" rows="2"
-                    placeholder="What's happening at NCU?"></textarea>
+                    placeholder="What's happening at NCU?" required></textarea>
                 <div class="flex justify-between items-center mt-4 border-t border-xborder/50 pt-3">
                     <div class="flex space-x-2 text-xgreen">
-                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors">
+                        <button type="button" class="p-2 hover:bg-xgreen/10 rounded-full transition-colors">
                             <i class="ph ph-image text-xl"></i>
                         </button>
-                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors">
+                        <button type="button" class="p-2 hover:bg-xgreen/10 rounded-full transition-colors">
                             <i class="ph ph-chart-bar text-xl"></i>
                         </button>
-                        <button class="p-2 hover:bg-xgreen/10 rounded-full transition-colors">
+                        <button type="button" class="p-2 hover:bg-xgreen/10 rounded-full transition-colors">
                             <i class="ph ph-smiley text-xl"></i>
                         </button>
                     </div>
-                    <button id="post-btn"
+                    <button type="submit" id="post-btn"
                         class="bg-xgreen text-xblack font-bold py-1.5 px-6 rounded-full hover:bg-opacity-90 transition-colors">
                         Post
                     </button>
                 </div>
             </div>
-        </div>
+        </form>
 
         <div id="feed-container">
             {{#posts}}

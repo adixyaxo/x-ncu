@@ -395,6 +395,124 @@ int registerUser(const string &email, const string &fullName, const string &role
 
 user Current_User(global_login_stats);
 
+class post
+{
+private:
+    // PostID,UserID,Content,ParentID,LikesCount,RetweetsCount,CreatedAt,role
+    int id_private;
+    int user_id_private;
+    string content_private;
+    int parent_id_private;
+    int likes_count_private;
+    int retweets_count_private;
+    string created_at_private;
+    string role_private;
+    bool isFound_private;
+
+public:
+    // GETTERS AND SETTERS
+    // GETTERS
+    int id() const { return id_private; }
+    int user_id() const { return user_id_private; }
+    string content() const { return content_private; }
+    int parent_id() const { return parent_id_private; }
+    int likes_count() const { return likes_count_private; }
+    int retweets_count() const { return retweets_count_private; }
+    string created_at() const { return created_at_private; }
+    string role() const { return role_private; }
+    bool isFound() const { return isFound_private; }
+    // SETTERS
+    void id(int val) { id_private = val; }
+    void user_id(int val) { user_id_private = val; }
+    void content(const string &val) { content_private = val; }
+    void parent_id(int val) { parent_id_private = val; }
+    void likes_count(int val) { likes_count_private = val; }
+    void retweets_count(int val) { retweets_count_private = val; }
+    void created_at(const string &val) { created_at_private = val; }
+    void role(const string &val) { role_private = val; }
+    void isFound(bool val) { isFound_private = val; }
+    // CONSTRUCTOR AND DESTRUCTOR
+    post();
+    create_post(int user_id, const string &content, int parent_id = -1);
+    ~create_post();
+    ~post();
+};
+
+post::post()
+{
+}
+
+post::~post()
+{
+}
+
+post::create_post(int user_id, const string &content, int parent_id)
+{
+    string filePath = "database/posts.csv";
+    ifstream inFile(filePath);
+
+    int maxId = 0;
+
+    if (inFile.is_open())
+    {
+        string line;
+        getline(inFile, line);
+
+        while (getline(inFile, line))
+        {
+            if (line.empty())
+                continue;
+
+            stringstream ss(line);
+            string idStr, dummy;
+
+            getline(ss, idStr, ',');
+            for (int i = 0; i < 7; i++)
+            {
+                getline(ss, dummy, ',');
+            }
+
+            try
+            {
+                int currentId = stoi(idStr);
+                if (currentId > maxId)
+                {
+                    maxId = currentId;
+                }
+            }
+            catch (...)
+            {
+            }
+        }
+        inFile.close();
+    }
+
+    int newId = maxId + 1;
+
+    ofstream outFile(filePath, ios::app);
+    if (!outFile.is_open())
+    {
+        cerr << "Error: Could not open database/posts.csv for writing." << endl;
+        return;
+    }
+
+    auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%d/%m/%Y");
+
+    outFile << newId << ","
+            << user_id << ","
+            << content << ","
+            << parent_id << ","
+            << "0" << ","       // LikesCount
+            << "0" << ","       // RetweetsCount
+            << oss.str() << "," // CreatedAt
+            << "" << "\n";      // Role is left blank for now
+
+    outFile.close();
+}
+
 int main()
 {
     crow::SimpleApp app;
@@ -918,6 +1036,43 @@ int main()
             crow::mustache::context ctx({{"error_code", "401"}, {"error_message", "Wrong password"}});
             return crow::response(401, message_page.render(ctx));
         } });
+
+    // ==========================================
+    // new post route
+    // ==========================================
+    CROW_ROUTE(app, "/post").methods(crow::HTTPMethod::POST)([](const crow::request &req)
+                                                             {
+        if (global_login_stats <= 0) {
+            crow::response res;
+            res.code = 303;
+            res.set_header("Location", "/login");
+            return res;
+        }
+
+        crow::query_string params("?" + req.body);
+        std::string content = params.get("content") ? params.get("content") : "";
+        std::string parent_id_str = params.get("parent_id") ? params.get("parent_id") : "-1";
+
+        int parent_id = -1;
+        try {
+            parent_id = std::stoi(parent_id_str);
+        } catch (...) {
+            parent_id = -1; // Default to -1 if parsing fails
+        }
+
+        if (content.empty()) {
+            auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "400"}, {"error_message", "Content cannot be empty"}});
+            return crow::response(400, message_page.render(ctx));
+        }
+
+        post new_post;
+        new_post.create_post(Current_User.id(), content, parent_id);
+
+        crow::response res;
+        res.code = 303;
+        res.set_header("Location", "/");
+        return res; });
 
     app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }

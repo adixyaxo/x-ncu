@@ -535,15 +535,18 @@ post::post(const string &content_input, int parent_id)
     std::ostringstream oss;
     oss << std::put_time(&tm, "%d/%m/%Y");
 
+    user author(global_login_stats);
+    string role = author.role().empty() ? "Student" : author.role();
+
     // 3. WRITE THE SANITIZED CONTENT
     outFile << newId << ","
             << user_id_private << ","
             << content_private << "," // Using the cleaned variable
             << parent_id << ","
-            << "0" << ","         // LikesCount
-            << "0" << ","         // RetweetsCount
-            << oss.str() << ","   // CreatedAt
-            << "Student" << "\n"; // Role is left blank for now
+            << "0" << ","       // LikesCount
+            << "0" << ","       // RetweetsCount
+            << oss.str() << "," // CreatedAt
+            << role << "\n";
 
     outFile.close();
 }
@@ -557,23 +560,45 @@ int main()
     // ==========================================
     // 1. HOME ROUTE
     // ==========================================
-    CROW_ROUTE(app, "/")
-    ([]()
-     {
+    CROW_ROUTE(app, "/")([]()
+                         {
+    if (global_login_stats <= 0)
+    {
+        crow::response res;
+        res.code = 303;
+        res.set_header("Location", "/login");
+        return res;
+    }
 
     crow::mustache::context ctx;
+    ctx["title"] = "HOME | X-NCU";
+
+    user currentUser(global_login_stats);
+
+    if (currentUser.isFound())
+    {
+        std::string initials = "U";
+        if (currentUser.fullname().length() >= 2)
+            initials = currentUser.fullname().substr(0,2);
+
+        ctx["user_initials"] = initials;
+        ctx["user_name"] = currentUser.fullname();
+        ctx["user_handle"] = currentUser.handle();
+    }
+
     std::vector<crow::mustache::context> posts_vector;
+    std::vector<crow::mustache::context> news_vector;
 
     std::ifstream posts_file("database/posts.csv");
     std::string line;
 
     if (!posts_file.is_open())
-        return crow::response(500, "Could not open posts database");
+        return crow::response(500,"Could not open posts database");
 
-    // Skip header
-    std::getline(posts_file, line);
+    std::getline(posts_file,line); // skip header
 
-    struct PostData {
+    struct PostData
+    {
         int post_id;
         int user_id;
         std::string content;
@@ -586,9 +611,9 @@ int main()
 
     std::vector<PostData> posts;
 
-    while (std::getline(posts_file, line))
+    while(std::getline(posts_file,line))
     {
-        if (line.empty()) continue;
+        if(line.empty()) continue;
 
         std::stringstream ss(line);
 
@@ -601,14 +626,14 @@ int main()
         std::string created_at;
         std::string role;
 
-        std::getline(ss, post_id_str, ',');
-        std::getline(ss, user_id_str, ',');
-        std::getline(ss, content, ',');
-        std::getline(ss, parent_id_str, ',');
-        std::getline(ss, likes_str, ',');
-        std::getline(ss, reposts_str, ',');
-        std::getline(ss, created_at, ',');
-        std::getline(ss, role);   // last column (no comma)
+        std::getline(ss,post_id_str,',');
+        std::getline(ss,user_id_str,',');
+        std::getline(ss,content,',');
+        std::getline(ss,parent_id_str,',');
+        std::getline(ss,likes_str,',');
+        std::getline(ss,reposts_str,',');
+        std::getline(ss,created_at,',');
+        std::getline(ss,role);
 
         try
         {
@@ -625,7 +650,7 @@ int main()
 
             posts.push_back(p);
         }
-        catch (...)
+        catch(...)
         {
             continue;
         }
@@ -636,68 +661,113 @@ int main()
     // Count replies
     std::unordered_map<int,int> reply_count;
 
-    for (auto &p : posts)
+    for(auto &p : posts)
     {
-        if (p.parent_id != 0)
+        if(p.parent_id >= 0)
             reply_count[p.parent_id]++;
     }
 
     // Sort newest first
-    std::sort(posts.begin(), posts.end(),
-        [](const PostData &a, const PostData &b){
+    std::sort(posts.begin(),posts.end(),
+        [](const PostData &a,const PostData &b)
+        {
             return a.post_id > b.post_id;
         });
 
-    for (auto &p : posts)
+    for(auto &p : posts)
     {
         crow::mustache::context post_ctx;
 
         user post_author(p.user_id);
 
-        post_ctx["author_name"] = post_author.fullname();
-        post_ctx["author_handle"] = post_author.handle();
-        post_ctx["author_role"] = p.role;
+        if(post_author.isFound())
+        {
+            post_ctx["author_name"] = post_author.fullname();
+            post_ctx["author_handle"] = post_author.handle();
+            post_ctx["author_role"] = p.role;
+            post_ctx["is_verified"] = post_author.is_verified();
+
+            std::string initials;
+
+            if(!post_author.fullname().empty())
+            {
+                initials += post_author.fullname()[0];
+
+                size_t space = post_author.fullname().find(' ');
+                if(space != std::string::npos && space+1 < post_author.fullname().size())
+                    initials += post_author.fullname()[space+1];
+            }
+
+            if(initials.empty()) initials = "U";
+
+            post_ctx["author_initials"] = initials;
+
+            post_ctx["is_user"] =
+                (p.role=="student" || p.role=="Student");
+
+            post_ctx["is_prof"] =
+                (p.role=="teacher" || p.role=="Teacher");
+
+            post_ctx["is_staff"] =
+                (p.role=="staff" || p.role=="Staff");
+        }
 
         post_ctx["body"] = p.content;
         post_ctx["likes"] = p.likes;
         post_ctx["reposts"] = p.reposts;
 
         post_ctx["replies"] =
-            reply_count.count(p.post_id) ? reply_count[p.post_id] : 0;
+            reply_count.count(p.post_id) ?
+            reply_count[p.post_id] : 0;
 
-        post_ctx["time_ago"] = p.created_at.substr(0,10);
-
-        std::string initials;
-        std::string fullname = post_author.fullname();
-
-        if (!fullname.empty())
-        {
-            initials += fullname[0];
-
-            size_t space = fullname.find(' ');
-            if (space != std::string::npos && space + 1 < fullname.size())
-                initials += fullname[space + 1];
-        }
-
-        post_ctx["author_initials"] = initials;
-
-        post_ctx["is_verified"] = post_author.is_verified();
-
-        post_ctx["is_user"] =
-            (p.role == "student" || p.role == "Student");
-
-        post_ctx["is_prof"] =
-            (p.role == "teacher" || p.role == "Teacher");
-
-        post_ctx["is_staff"] =
-            (p.role == "staff" || p.role == "Staff");
+        if(p.created_at.size() >= 10)
+            post_ctx["time_ago"] = p.created_at.substr(0,10);
+        else
+            post_ctx["time_ago"] = p.created_at;
 
         posts_vector.push_back(post_ctx);
     }
 
-    ctx["posts"] = posts_vector;
+    ctx["posts"] = std::move(posts_vector);
 
-    auto page = crow::mustache::load("feed.html");
+    // NEWS SECTION (kept from old code)
+
+    std::ifstream news_file("database/news.csv");
+
+    if(news_file.good())
+        std::getline(news_file,line);
+
+    while(std::getline(news_file,line))
+    {
+        std::stringstream ss(line);
+
+        std::string id;
+        std::string headline;
+        std::string category;
+        std::string time_ago;
+        std::string post_count;
+
+        std::getline(ss,id,',');
+        std::getline(ss,headline,',');
+        std::getline(ss,category,',');
+        std::getline(ss,time_ago,',');
+        std::getline(ss,post_count,',');
+
+        crow::mustache::context news_ctx;
+
+        news_ctx["headline"] = headline;
+        news_ctx["category"] = category;
+        news_ctx["time_ago"] = time_ago;
+        news_ctx["post_count"] = post_count;
+        
+
+        news_vector.push_back(news_ctx);
+    }
+
+    ctx["news"] = std::move(news_vector);
+
+    auto page = crow::mustache::load("index.html");
+
     return crow::response(page.render(ctx)); });
 
     // ==========================================
@@ -739,7 +809,11 @@ int main()
         
             crow::mustache::context post_ctx;
             post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = retweets_count;
-            post_ctx["replies"] = 0; post_ctx["time_ago"] = created_at.substr(0, 10); 
+            post_ctx["replies"] = 0; 
+            if (created_at.size() >= 10)
+                post_ctx["time_ago"] = created_at.substr(0, 10);
+            else
+                post_ctx["time_ago"] = created_at;
             
             user post_author(safe_user_id);
             if(post_author.isFound()) {
@@ -817,7 +891,11 @@ int main()
         
             crow::mustache::context post_ctx;
             post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = retweets_count;
-            post_ctx["replies"] = 0; post_ctx["time_ago"] = created_at.substr(0, 10); 
+            post_ctx["replies"] = 0; 
+            if (created_at.size() >= 10)
+                post_ctx["time_ago"] = created_at.substr(0, 10);
+            else
+                post_ctx["time_ago"] = created_at;
             
             user post_author(safe_user_id);
             if(post_author.isFound()) {
@@ -895,7 +973,11 @@ int main()
         
             crow::mustache::context post_ctx;
             post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = retweets_count;
-            post_ctx["replies"] = 0; post_ctx["time_ago"] = created_at.substr(0, 10); 
+            post_ctx["replies"] = 0; 
+            if (created_at.size() >= 10)
+                post_ctx["time_ago"] = created_at.substr(0, 10);
+            else
+                post_ctx["time_ago"] = created_at;
             
             user post_author(safe_user_id);
             if(post_author.isFound()) {
@@ -993,65 +1075,80 @@ int main()
         } });
 
     // GET PROFILE PAGE
+    // GET PROFILE PAGE
     CROW_ROUTE(app, "/profile/<string>")([](string username)
                                          {
-        if (global_login_stats <= 0)
+    if (global_login_stats <= 0)
+    {
+        crow::response res;
+        res.code = 303;
+        res.set_header("Location", "/login");
+        return res;
+    }
+
+    if (username[0] != '@')
+        username = "@" + username;
+
+    int search_userID = getuserprofile(username);
+
+    if (search_userID <= 0)
+    {
+        auto message_page = crow::mustache::load("message.html");
+        crow::mustache::context ctx({{"error_code", "404"}, {"error_message", "User Not Found"}});
+        return crow::response(404, message_page.render(ctx));
+    }
+
+    Current_User = user(search_userID);
+
+    crow::mustache::context ctx;
+    user currentUser(global_login_stats);
+
+    if (currentUser.isFound())
+    {
+        string initials = "U";
+
+        if (!currentUser.fullname().empty())
         {
-            crow::response res;
-            res.code = 303;
-            res.set_header("Location", "/login");
-            return res;
+            initials = "";
+            initials += currentUser.fullname()[0];
+
+            size_t space = currentUser.fullname().find(' ');
+            if (space != string::npos && space + 1 < currentUser.fullname().size())
+                initials += currentUser.fullname()[space + 1];
         }
+
+        ctx["user_initials"] = initials;
+        ctx["user_name"] = currentUser.fullname();
+        ctx["user_handle"] = currentUser.handle();
+
+        ctx["profile_name"] = Current_User.fullname();
+        ctx["profile_handle"] = Current_User.handle();
+        string name = Current_User.fullname();
+ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
+        ctx["profile_bio"] = Current_User.bio();
+        ctx["is_verified"] = Current_User.is_verified();
+
+        ctx["profile_location"] = Current_User.location();
+        ctx["profile_link"] = Current_User.link();
+        ctx["profile_following"] = Current_User.following_count();
+        ctx["profile_followers"] = Current_User.followers_count();
+        ctx["profile_posts"] = Current_User.posts();
+
+        if (Current_User.created_at().size() >= 10)
+            ctx["profile_join_date"] = Current_User.created_at().substr(0, 10);
         else
-        {
-            if(username[0] != '@')
-    username = "@" + username;
-            int search_userID = getuserprofile(username);
+            ctx["profile_join_date"] = Current_User.created_at();
 
-            if (search_userID > 0)
-            {
-                Current_User = user(search_userID);
-            }
-            else
-            {
-                auto message_page = crow::mustache::load("message.html");
-                crow::mustache::context ctx({{"error_code", "404"}, {"error_message", "User Not Found"}});
-                return crow::response(404, message_page.render(ctx));
-            }
+        if (Current_User.id() == currentUser.id())
+            ctx["is_own_profile"] = true;
 
-            crow::mustache::context ctx;
-            user SEARCH_USER(search_userID);
+        ctx["has_posts"] = true;
 
-            ctx["title"] = SEARCH_USER.fullname() + " | X-NCU";
+        auto profile_page = crow::mustache::load("profile.html");
+        return crow::response(profile_page.render(ctx));
+    }
 
-            ctx["user_initials"] = Current_User.fullname().substr(0, 2);
-            ctx["user_name"] = Current_User.fullname();
-            ctx["user_handle"] = Current_User.handle();
-
-            ctx["profile_name"] = SEARCH_USER.fullname();
-            ctx["profile_handle"] = SEARCH_USER.handle();
-            ctx["profile_initials"] = SEARCH_USER.fullname().substr(0, 2);
-            ctx["profile_post_count"] = 0;
-            ctx["profile_bio"] = SEARCH_USER.bio();
-            ctx["is_verified"] = SEARCH_USER.is_verified();
-
-            // NEW VARIABLES ADDED TO THE PROFILE MUSTACHE CONTEXT
-            ctx["profile_location"] = SEARCH_USER.location();
-            ctx["profile_link"] = SEARCH_USER.link();
-            ctx["profile_following"] = SEARCH_USER.following_count();
-            ctx["profile_followers"] = SEARCH_USER.followers_count();
-            ctx["profile_join_date"] = SEARCH_USER.created_at().substr(0, 10);
-            ctx["profile_posts"] = SEARCH_USER.posts();
-
-            if (SEARCH_USER.id() == Current_User.id())
-            {
-                ctx["is_own_profile"] = true;
-            }
-            ctx["has_posts"] = true;
-
-            auto profile_page = crow::mustache::load("profile.html").render(ctx);
-            return crow::response(profile_page);
-        } });
+    return crow::response(404); });
 
     // POST AUTHENTICATION DATA
     CROW_ROUTE(app, "/auth").methods(crow::HTTPMethod::POST)([](const crow::request &req)

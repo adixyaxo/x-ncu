@@ -1383,71 +1383,64 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
     CROW_ROUTE(app, "/updatepost")
         .methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
                                                                 {
-        if (global_login_stats <= 0)
-        {
-            crow::response res;
-            res.code = 303;
-            res.set_header("Location", "/login");
-            return res;
-        }
-
-        crow::query_string params("?" + req.body);
-
-        std::string action_str = params.get("action") ? params.get("action") : "";
-        std::string id_str = params.get("id") ? params.get("id") : "";
-        cout << action_str << " " << id_str << endl;
-        int action = -1;
-        int post_id = -1;
-        try
-        {
-            action = std::stoi(action_str);
-        }
-        catch (...)
-        {
-        }
-        try
-        {
-            post_id = std::stoi(id_str);
-        }
-        catch (...)
-        {
-        }
-
-        if (post_id <= 0 || action < 1 || action > 3){
-             auto message_page = crow::mustache::load("message.html");
-            crow::mustache::context ctx({{"error_code", "400"}, {"error_message", "Invalid post_id or action"}});
-            return crow::response(400, message_page.render(ctx));
-        }
-
-        post p = post::getpost(post_id);
-
-        if (!p.isFound())
-            return crow::response(404, "Post not found");
-
-        if (action == 1) // Like
-        {
-            p.likes_count(p.likes_count() + 1); // Increment like count for display purposes
-            p.savepost(p);
-        }
-        else if (action == 2) // Repost
-        {
-            p.retweets_count(p.retweets_count() + 1); // Increment like count for display purposes
-            p.savepost(p);
-        }
-        else if (action == 3) // Reply (not implemented in this snippet)
-        {
-            // Handle reply logic here if needed
-        }
-        else
-        {
-            auto message_page = crow::mustache::load("message.html");
-            crow::mustache::context ctx({{"error_code", "401"}, {"error_message", "Invalid action"}});
-            return crow::response(401, message_page.render(ctx));
-        }
+            if (global_login_stats <= 0)
+            {
                 crow::response res;
                 res.code = 303;
-                res.set_header("Location", "/");
-                return res; });
+                res.set_header("Location", "/login");
+                return res;
+            }
+        
+            std::string action_str = "";
+            std::string id_str = "";
+        
+            if (req.method == crow::HTTPMethod::GET)
+            {
+                action_str = req.url_params.get("action") ? req.url_params.get("action") : "";
+                id_str = req.url_params.get("id") ? req.url_params.get("id") : "";
+            }
+            else if (req.method == crow::HTTPMethod::POST)
+            {
+                crow::query_string params("?" + req.body);
+                action_str = params.get("action") ? params.get("action") : "";
+                id_str = params.get("id") ? params.get("id") : "";
+            }
+        
+            cout << action_str << " " << id_str << endl;
+        
+            int action = -1;
+            int post_id = -1;
+        
+            try { action = stoi(action_str); } catch (...) {}
+            try { post_id = stoi(id_str); } catch (...) {}
+        
+            if (post_id <= 0 || action < 1 || action > 3)
+            {
+                auto message_page = crow::mustache::load("message.html");
+                crow::mustache::context ctx({{"error_code","400"},{"error_message","Invalid post_id or action"}});
+                return crow::response(400, message_page.render(ctx));
+            }
+        
+            post p = post::getpost(post_id);
+        
+            if (!p.isFound())
+                return crow::response(404, "Post not found");
+        
+            if (action == 1)
+            {
+                p.likes_count(p.likes_count() + 1);
+                p.savepost(p);
+            }
+            else if (action == 2)
+            {
+                p.retweets_count(p.retweets_count() + 1);
+                p.savepost(p);
+            }
+        
+            crow::response res;
+            res.code = 303;
+            res.set_header("Location", "/");
+            return res; });
 
     app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }

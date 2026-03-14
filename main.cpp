@@ -709,10 +709,20 @@ void post::savepost(const post &p)
     outFile.close();
 }
 
+//=================================
+// CROW FUNCTIONS
+//=================================
+crow::response requireLogin()
+{
+    crow::response res;
+    res.code = 303;
+    res.set_header("Location", "/login");
+    return res;
+}
+
 int main()
 {
     crow::SimpleApp app;
-
     crow::mustache::set_base(".");
 
     // ==========================================
@@ -720,13 +730,7 @@ int main()
     // ==========================================
     CROW_ROUTE(app, "/")([]()
                          {
-    if (global_login_stats <= 0)
-    {
-        crow::response res;
-        res.code = 303;
-        res.set_header("Location", "/login");
-        return res;
-    }
+    if (global_login_stats <= 0) return requireLogin();
 
     crow::mustache::context ctx;
     ctx["title"] = "HOME | X-NCU";
@@ -1236,7 +1240,7 @@ int main()
     // GET PROFILE PAGE
     CROW_ROUTE(app, "/profile/<string>")([](string username)
                                          {
-    if (global_login_stats <= 0)
+    if (global_login_stats <= 0) return requireLogin();
     {
         crow::response res;
         res.code = 303;

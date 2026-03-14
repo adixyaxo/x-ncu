@@ -77,30 +77,34 @@
 
                     <div class="mt-1 text-[15px] leading-snug whitespace-pre-wrap">{{body}}</div>
 
-                    <div class="flex justify-between items-center mt-3 text-xmuted w-full max-w-md">
-                        <button class="flex items-center space-x-2 hover:text-blue-400 transition-colors group">
+                    <div class=" flex justify-between items-center mt-3
+                        text-xmuted w-full max-w-md">
+                        <a href="/updatepost/?action=3&id={{id}}"
+                            class="flex items-center space-x-2 hover:text-blue-400 transition-colors group">
                             <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full">
                                 <i class="ph ph-chat-circle text-lg"></i>
                             </div>
                             <span class="text-xs">{{replies}}</span>
-                        </button>
-                        <button class="flex items-center space-x-2 hover:text-xgreen transition-colors group">
+                        </a>
+                        <a href="/updatepost/?action=2&id={{id}}"
+                            class="flex items-center space-x-2 hover:text-xgreen transition-colors group">
                             <div class="p-1.5 group-hover:bg-xgreen/10 rounded-full">
                                 <i class="ph ph-arrows-left-right text-lg"></i>
                             </div>
                             <span class="text-xs">{{reposts}}</span>
-                        </button>
-                        <button class="flex items-center space-x-2 hover:text-pink-500 transition-colors group">
+                        </a>
+                        <a href="/updatepost/?action=1&id={{id}}"
+                            class="flex items-center space-x-2 hover:text-pink-500 transition-colors group">
                             <div class="p-1.5 group-hover:bg-pink-500/10 rounded-full">
                                 <i class="ph ph-heart text-lg"></i>
                             </div>
                             <span class="text-xs">{{likes}}</span>
-                        </button>
-                        <button class="flex items-center hover:text-blue-400 transition-colors group">
+                        </a>
+                        <a href="/updatepost/" class="flex items-center hover:text-blue-400 transition-colors group">
                             <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full">
                                 <i class="ph ph-export text-lg"></i>
                             </div>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </article>

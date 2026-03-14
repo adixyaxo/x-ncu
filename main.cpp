@@ -430,6 +430,7 @@ public:
     post();
     post(const string &content, int parent_id = -1);
     ~post();
+    static post getpost(int id);
 };
 
 post::post()
@@ -549,6 +550,77 @@ post::post(const string &content_input, int parent_id)
             << role << "\n";
 
     outFile.close();
+}
+
+post post::getpost(int id)
+{
+    post p;
+    ifstream file("database/posts.csv");
+
+    if (!file.is_open())
+    {
+        cerr << "Error opening posts.csv\n";
+        p.isFound(false);
+        return p;
+    }
+
+    string line;
+    getline(file, line); // skip header
+
+    while (getline(file, line))
+    {
+        if (line.empty())
+            continue;
+
+        stringstream ss(line);
+
+        string post_id_str;
+        string user_id_str;
+        string content;
+        string parent_id_str;
+        string likes_str;
+        string reposts_str;
+        string created_at;
+        string role;
+
+        getline(ss, post_id_str, ',');
+        getline(ss, user_id_str, ',');
+        getline(ss, content, ',');
+        getline(ss, parent_id_str, ',');
+        getline(ss, likes_str, ',');
+        getline(ss, reposts_str, ',');
+        getline(ss, created_at, ',');
+        getline(ss, role);
+
+        try
+        {
+            int post_id = stoi(post_id_str);
+
+            if (post_id == id)
+            {
+                p.id(post_id);
+                p.user_id(stoi(user_id_str));
+                p.content(content);
+                p.parent_id(stoi(parent_id_str));
+                p.likes_count(stoi(likes_str));
+                p.retweets_count(stoi(reposts_str));
+                p.created_at(created_at);
+                p.role(role);
+                p.isFound(true);
+
+                file.close();
+                return p;
+            }
+        }
+        catch (...)
+        {
+            continue;
+        }
+    }
+
+    file.close();
+    p.isFound(false);
+    return p;
 }
 
 int main()
@@ -715,7 +787,7 @@ int main()
         post_ctx["body"] = p.content;
         post_ctx["likes"] = p.likes;
         post_ctx["reposts"] = p.reposts;
-
+        post_ctx["id"] = p.post_id;
         post_ctx["replies"] =
             reply_count.count(p.post_id) ?
             reply_count[p.post_id] : 0;
@@ -1222,5 +1294,105 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
         res.set_header("Location", "/");
         return res; });
 
+    CROW_ROUTE(app, "/updatepost")
+        .methods(crow::HTTPMethod::POST)([](const crow::request &req)
+                                         {
+            if (global_login_stats <= 0)
+            {
+                crow::response res;
+                res.code = 303;
+                res.set_header("Location", "/login");
+                return res;
+            }
+
+            crow::query_string params("?" + req.body);
+
+            std::string action_str = params.get("action") ? params.get("action") : "";
+            std::string id_str = params.get("id") ? params.get("id") : "";
+            cout << action_str << " " << id_str << endl;
+            int action = -1;
+            int post_id = -1;
+            try { action = std::stoi(action_str); } catch (...) {}
+            try { post_id = std::stoi(id_str); } catch (...) {}
+
+            if (post_id <= 0 || action < 1 || action > 3)
+                return crow::response(400, "Invalid post_id or action");
+
+            // Open posts.csv and update the relevant field
+            std::string filePath = "database/posts.csv";
+            std::ifstream inFile(filePath);
+            std::vector<std::string> lines;
+            std::string line;
+            bool updated = false;
+
+            if (!inFile.is_open())
+                return crow::response(500, "Could not open posts database");
+
+            // Read header
+            if (std::getline(inFile, line))
+                lines.push_back(line);
+
+            while (std::getline(inFile, line))
+            {
+                std::stringstream ss(line);
+                std::string post_id_csv, user_id, content, parent_id, likes, reposts, created_at, role;
+                std::getline(ss, post_id_csv, ',');
+                std::getline(ss, user_id, ',');
+                std::getline(ss, content, ',');
+                std::getline(ss, parent_id, ',');
+                std::getline(ss, likes, ',');
+                std::getline(ss, reposts, ',');
+                std::getline(ss, created_at, ',');
+                std::getline(ss, role);
+
+                int pid = -1;
+                try { pid = std::stoi(post_id_csv); } catch (...) {}
+
+                if (pid == post_id)
+                {
+                    if (action == 1) // Like
+                    {
+                        int likes_count = 0;
+                        try { likes_count = std::stoi(likes); } catch (...) {}
+                        likes_count++;
+                        likes = std::to_string(likes_count);
+                        updated = true;
+                    }
+                    else if (action == 2) // Repost
+                    {
+                        int reposts_count = 0;
+                        try { reposts_count = std::stoi(reposts); } catch (...) {}
+                        reposts_count++;
+                        reposts = std::to_string(reposts_count);
+                        updated = true;
+                    }
+                    // action == 3 is for replies, handled elsewhere (posting a reply)
+                }
+
+                // Rebuild line
+                std::ostringstream oss;
+                oss << post_id_csv << "," << user_id << "," << content << "," << parent_id << "," << likes << "," << reposts << "," << created_at << "," << role;
+                lines.push_back(oss.str());
+            }
+            inFile.close();
+
+            // Write back only if updated
+            if (updated)
+            {
+                std::ofstream outFile(filePath, std::ios::trunc);
+                for (size_t i = 0; i < lines.size(); ++i)
+                {
+                    outFile << lines[i];
+                    if (i + 1 < lines.size())
+                        outFile << "\n";
+                }
+                outFile.close();
+            }
+
+            
+                crow::response res;
+                res.code = 303;
+                res.set_header("Location", "/login");
+                return res; });
     app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }

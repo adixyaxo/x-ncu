@@ -778,21 +778,6 @@ void addCurrentUserContext(crow::mustache::context &ctx)
     ctx["user_handle"] = currentUser.handle();
 }
 
-string getInitials(const string &name)
-{
-    if (name.empty())
-        return "U";
-
-    string initials;
-    initials += name[0];
-
-    size_t space = name.find(' ');
-    if (space != string::npos && space + 1 < name.size())
-        initials += name[space + 1];
-
-    return initials;
-}
-
 vector<crow::mustache::context> loadNews()
 {
     vector<crow::mustache::context> news_vector;
@@ -948,8 +933,6 @@ int main()
 
             post_ctx["author_initials"] = getInitials(post_author.fullname());
 
-            post_ctx["author_initials"] = initials;
-
             post_ctx["is_user"] =
                 (p.role=="student" || p.role=="Student");
 
@@ -963,6 +946,7 @@ int main()
         post_ctx["body"] = p.content;
         post_ctx["likes"] = p.likes;
         post_ctx["reposts"] = p.reposts;
+        post_ctx["author_initials"] = getInitials(post_author.fullname());
         post_ctx["id"] = p.post_id;
         post_ctx["replies"] =
             reply_count.count(p.post_id) ?
@@ -1248,6 +1232,7 @@ int main()
     // GET LOGIN PAGE
     CROW_ROUTE(app, "/login")([]()
                               {
+                                requireLogin();
         auto variable_page = crow::mustache::load("login.html");
         return variable_page.render(); });
 
@@ -1294,13 +1279,7 @@ int main()
     // GET PROFILE PAGE
     CROW_ROUTE(app, "/profile/<string>")([](string username)
                                          {
-    if (global_login_stats <= 0) return requireLogin();
-    {
-        crow::response res;
-        res.code = 303;
-        res.set_header("Location", "/login");
-        return res;
-    }
+    if (global_login_stats <= 0) {return requireLogin();}
 
     if (username[0] != '@')
         username = "@" + username;

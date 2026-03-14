@@ -1381,8 +1381,8 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
         return res; });
 
     CROW_ROUTE(app, "/updatepost")
-        .methods(crow::HTTPMethod::POST)([](const crow::request &req)
-                                         {
+        .methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
+                                                                {
         if (global_login_stats <= 0)
         {
             crow::response res;
@@ -1419,19 +1419,19 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
             return crow::response(400, message_page.render(ctx));
         }
 
-        post p = getpost(post_id);
+        post p = post::getpost(post_id);
 
         if (!p.isFound())
             return crow::response(404, "Post not found");
 
         if (action == 1) // Like
         {
-            p.likes_count() += 1; // Increment like count for display purposes
+            p.likes_count(p.likes_count() + 1); // Increment like count for display purposes
             p.savepost(p);
         }
         else if (action == 2) // Repost
         {
-            p.retweets_count() += 1; // Increment like count for display purposes
+            p.retweets_count(p.retweets_count() + 1); // Increment like count for display purposes
             p.savepost(p);
         }
         else if (action == 3) // Reply (not implemented in this snippet)
@@ -1444,11 +1444,9 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
             crow::mustache::context ctx({{"error_code", "401"}, {"error_message", "Invalid action"}});
             return crow::response(401, message_page.render(ctx));
         }
-
-            
                 crow::response res;
                 res.code = 303;
-                res.set_header("Location", "/login");
+                res.set_header("Location", "/");
                 return res; });
 
     app.bindaddr("127.0.0.1").port(18080).multithreaded().run();

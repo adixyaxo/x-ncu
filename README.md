@@ -1,10 +1,11 @@
 # X NCU
+
 **X for The NorthCap University**
 
-X-NCU is a Twitter-inspired social networking platform built exclusively for **The NorthCap University (NCU)** community.  
+X-NCU is a Twitter-inspired social networking platform built exclusively for **The NorthCap University (NCU)** community.
 The platform enables students and faculty to share updates, thoughts, and announcements within a secure, campus-focused environment.
 
-This project is built using **C++ (Crow framework)** for the backend, **MySQL** for database management, and **HTML, CSS, and JavaScript** for the frontend.
+This project is built using **C++ (Crow framework)** for the backend, **CSV sheets** for database management, and **HTML, CSS, and JavaScript** for the frontend.
 
 ---
 
@@ -22,17 +23,20 @@ This project is built using **C++ (Crow framework)** for the backend, **MySQL** 
 ## 🛠️ Tech Stack
 
 ### Backend
+
 - **C++**
 - **Crow Framework** (REST API & routing)
-- **MySQL** (Relational database)
-- **MySQL Connector/C++**
+- Csv as database
+- **CMake**
 
 ### Frontend
+
 - **HTML5**
 - **CSS3**
 - **JavaScript (Vanilla JS)**
 
 ### Tools & Utilities
+
 - Git & GitHub
 - RESTful API architecture
 - MVC-inspired project structure
@@ -42,27 +46,31 @@ This project is built using **C++ (Crow framework)** for the backend, **MySQL** 
 ## ⚙️ Setup Instructions
 
 ### Prerequisites
+
 - C++17 or later
-- MySQL Server
+- wsl or a linux based terminal
 - Crow Framework
-- MySQL Connector for C++
+- CMake
 - A modern web browser
 
-### Backend Setup
+### How to run the webapp
+
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/your-username/X-NCU.git
-   
-2. Configure MySQL credentials in the backend config.
 
+   ```
+2. Open your wsl terminal or linux terminal if on linux
 3. Compile the backend:
+
    ```bash
-     g++ main.cpp -o x-ncu -std=c++17
-  
-5. Run the server:
+   cd ./build
+   cmake ..
+   make
+   ```
+4. Run the server:
+
    ```bash
      ./x-ncu
-   
-  Frontend Setup
-  Open index.html in a browser
-  Or serve it using any local server
+   ```

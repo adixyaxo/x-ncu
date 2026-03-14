@@ -431,6 +431,7 @@ public:
     post(const string &content, int parent_id = -1);
     ~post();
     static post getpost(int id);
+    static void savepost(const post &p);
 };
 
 post::post()
@@ -621,6 +622,91 @@ post post::getpost(int id)
     file.close();
     p.isFound(false);
     return p;
+}
+
+void post::savepost(const post &p)
+{
+    string filePath = "database/posts.csv";
+
+    ifstream inFile(filePath);
+    if (!inFile.is_open())
+    {
+        cerr << "Error: Could not open posts.csv\n";
+        return;
+    }
+
+    vector<string> lines;
+    string line;
+
+    bool found = false;
+
+    // Save header
+    getline(inFile, line);
+    lines.push_back(line);
+
+    while (getline(inFile, line))
+    {
+        if (line.empty())
+        {
+            lines.push_back(line);
+            continue;
+        }
+
+        stringstream ss(line);
+        string idStr;
+
+        getline(ss, idStr, ',');
+
+        try
+        {
+            int currentId = stoi(idStr);
+
+            if (currentId == p.id())
+            {
+                // Replace with new post data
+                stringstream newLine;
+
+                newLine << p.id() << ","
+                        << p.user_id() << ","
+                        << p.content() << ","
+                        << p.parent_id() << ","
+                        << p.likes_count() << ","
+                        << p.retweets_count() << ","
+                        << p.created_at() << ","
+                        << p.role();
+
+                lines.push_back(newLine.str());
+
+                found = true;
+            }
+            else
+            {
+                lines.push_back(line);
+            }
+        }
+        catch (...)
+        {
+            lines.push_back(line);
+        }
+    }
+
+    inFile.close();
+
+    if (!found)
+    {
+        cerr << "Post ID not found\n";
+        return;
+    }
+
+    // Rewrite the entire file
+    ofstream outFile(filePath);
+
+    for (const auto &l : lines)
+    {
+        outFile << l << "\n";
+    }
+
+    outFile.close();
 }
 
 int main()
@@ -1297,102 +1383,73 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
     CROW_ROUTE(app, "/updatepost")
         .methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                          {
-            if (global_login_stats <= 0)
-            {
-                crow::response res;
-                res.code = 303;
-                res.set_header("Location", "/login");
-                return res;
-            }
+        if (global_login_stats <= 0)
+        {
+            crow::response res;
+            res.code = 303;
+            res.set_header("Location", "/login");
+            return res;
+        }
 
-            crow::query_string params("?" + req.body);
+        crow::query_string params("?" + req.body);
 
-            std::string action_str = params.get("action") ? params.get("action") : "";
-            std::string id_str = params.get("id") ? params.get("id") : "";
-            cout << action_str << " " << id_str << endl;
-            int action = -1;
-            int post_id = -1;
-            try { action = std::stoi(action_str); } catch (...) {}
-            try { post_id = std::stoi(id_str); } catch (...) {}
+        std::string action_str = params.get("action") ? params.get("action") : "";
+        std::string id_str = params.get("id") ? params.get("id") : "";
+        cout << action_str << " " << id_str << endl;
+        int action = -1;
+        int post_id = -1;
+        try
+        {
+            action = std::stoi(action_str);
+        }
+        catch (...)
+        {
+        }
+        try
+        {
+            post_id = std::stoi(id_str);
+        }
+        catch (...)
+        {
+        }
 
-            if (post_id <= 0 || action < 1 || action > 3)
-                return crow::response(400, "Invalid post_id or action");
+        if (post_id <= 0 || action < 1 || action > 3){
+             auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "400"}, {"error_message", "Invalid post_id or action"}});
+            return crow::response(400, message_page.render(ctx));
+        }
 
-            // Open posts.csv and update the relevant field
-            std::string filePath = "database/posts.csv";
-            std::ifstream inFile(filePath);
-            std::vector<std::string> lines;
-            std::string line;
-            bool updated = false;
+        post p = getpost(post_id);
 
-            if (!inFile.is_open())
-                return crow::response(500, "Could not open posts database");
+        if (!p.isFound())
+            return crow::response(404, "Post not found");
 
-            // Read header
-            if (std::getline(inFile, line))
-                lines.push_back(line);
-
-            while (std::getline(inFile, line))
-            {
-                std::stringstream ss(line);
-                std::string post_id_csv, user_id, content, parent_id, likes, reposts, created_at, role;
-                std::getline(ss, post_id_csv, ',');
-                std::getline(ss, user_id, ',');
-                std::getline(ss, content, ',');
-                std::getline(ss, parent_id, ',');
-                std::getline(ss, likes, ',');
-                std::getline(ss, reposts, ',');
-                std::getline(ss, created_at, ',');
-                std::getline(ss, role);
-
-                int pid = -1;
-                try { pid = std::stoi(post_id_csv); } catch (...) {}
-
-                if (pid == post_id)
-                {
-                    if (action == 1) // Like
-                    {
-                        int likes_count = 0;
-                        try { likes_count = std::stoi(likes); } catch (...) {}
-                        likes_count++;
-                        likes = std::to_string(likes_count);
-                        updated = true;
-                    }
-                    else if (action == 2) // Repost
-                    {
-                        int reposts_count = 0;
-                        try { reposts_count = std::stoi(reposts); } catch (...) {}
-                        reposts_count++;
-                        reposts = std::to_string(reposts_count);
-                        updated = true;
-                    }
-                    // action == 3 is for replies, handled elsewhere (posting a reply)
-                }
-
-                // Rebuild line
-                std::ostringstream oss;
-                oss << post_id_csv << "," << user_id << "," << content << "," << parent_id << "," << likes << "," << reposts << "," << created_at << "," << role;
-                lines.push_back(oss.str());
-            }
-            inFile.close();
-
-            // Write back only if updated
-            if (updated)
-            {
-                std::ofstream outFile(filePath, std::ios::trunc);
-                for (size_t i = 0; i < lines.size(); ++i)
-                {
-                    outFile << lines[i];
-                    if (i + 1 < lines.size())
-                        outFile << "\n";
-                }
-                outFile.close();
-            }
+        if (action == 1) // Like
+        {
+            p.likes_count() += 1; // Increment like count for display purposes
+            p.savepost(p);
+        }
+        else if (action == 2) // Repost
+        {
+            p.retweets_count() += 1; // Increment like count for display purposes
+            p.savepost(p);
+        }
+        else if (action == 3) // Reply (not implemented in this snippet)
+        {
+            // Handle reply logic here if needed
+        }
+        else
+        {
+            auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "401"}, {"error_message", "Invalid action"}});
+            return crow::response(401, message_page.render(ctx));
+        }
 
             
                 crow::response res;
                 res.code = 303;
                 res.set_header("Location", "/login");
                 return res; });
+
     app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }

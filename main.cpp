@@ -712,12 +712,120 @@ void post::savepost(const post &p)
 //=================================
 // CROW FUNCTIONS
 //=================================
+// Helper function to require login
 crow::response requireLogin()
 {
-    crow::response res;
-    res.code = 303;
-    res.set_header("Location", "/login");
-    return res;
+    if (global_login_stats <= 0)
+    {
+        crow::response res;
+        res.code = 303;
+        res.set_header("Location", "/login");
+        return res;
+    }
+    if (global_login_stats > 0)
+    {
+        crow::response res;
+        res.code = 303;
+        res.set_header("Location", "/");
+        return res;
+    }
+    else
+    {
+        crow::response res;
+        res.code = 500;
+        res.body = "Invalid login state.";
+        return res;
+    }
+}
+
+// Generating user credentials
+string getInitials(const string &name)
+{
+    if (name.empty())
+        return "U";
+
+    string initials;
+    initials += name[0];
+
+    size_t space = name.find(' ');
+    if (space != string::npos && space + 1 < name.size())
+        initials += name[space + 1];
+
+    return initials;
+}
+
+void addCurrentUserContext(crow::mustache::context &ctx)
+{
+    user currentUser(global_login_stats);
+
+    if (!currentUser.isFound())
+        return;
+
+    string initials = "U";
+
+    if (!currentUser.fullname().empty())
+    {
+        initials = "";
+        initials += currentUser.fullname()[0];
+
+        size_t space = currentUser.fullname().find(' ');
+        if (space != string::npos && space + 1 < currentUser.fullname().size())
+            initials += currentUser.fullname()[space + 1];
+    }
+
+    ctx["user_initials"] = initials;
+    ctx["user_name"] = currentUser.fullname();
+    ctx["user_handle"] = currentUser.handle();
+}
+
+string getInitials(const string &name)
+{
+    if (name.empty())
+        return "U";
+
+    string initials;
+    initials += name[0];
+
+    size_t space = name.find(' ');
+    if (space != string::npos && space + 1 < name.size())
+        initials += name[space + 1];
+
+    return initials;
+}
+
+vector<crow::mustache::context> loadNews()
+{
+    vector<crow::mustache::context> news_vector;
+
+    ifstream news_file("database/news.csv");
+    string line;
+
+    if (news_file.good())
+        getline(news_file, line);
+
+    while (getline(news_file, line))
+    {
+        stringstream ss(line);
+
+        string id, headline, category, time_ago, post_count;
+
+        getline(ss, id, ',');
+        getline(ss, headline, ',');
+        getline(ss, category, ',');
+        getline(ss, time_ago, ',');
+        getline(ss, post_count, ',');
+
+        crow::mustache::context news_ctx;
+
+        news_ctx["headline"] = headline;
+        news_ctx["category"] = category;
+        news_ctx["time_ago"] = time_ago;
+        news_ctx["post_count"] = post_count;
+
+        news_vector.push_back(news_ctx);
+    }
+
+    return news_vector;
 }
 
 int main()
@@ -735,18 +843,7 @@ int main()
     crow::mustache::context ctx;
     ctx["title"] = "HOME | X-NCU";
 
-    user currentUser(global_login_stats);
-
-    if (currentUser.isFound())
-    {
-        std::string initials = "U";
-        if (currentUser.fullname().length() >= 2)
-            initials = currentUser.fullname().substr(0,2);
-
-        ctx["user_initials"] = initials;
-        ctx["user_name"] = currentUser.fullname();
-        ctx["user_handle"] = currentUser.handle();
-    }
+    addCurrentUserContext(ctx);
 
     std::vector<crow::mustache::context> posts_vector;
     std::vector<crow::mustache::context> news_vector;
@@ -849,18 +946,7 @@ int main()
             post_ctx["author_role"] = p.role;
             post_ctx["is_verified"] = post_author.is_verified();
 
-            std::string initials;
-
-            if(!post_author.fullname().empty())
-            {
-                initials += post_author.fullname()[0];
-
-                size_t space = post_author.fullname().find(' ');
-                if(space != std::string::npos && space+1 < post_author.fullname().size())
-                    initials += post_author.fullname()[space+1];
-            }
-
-            if(initials.empty()) initials = "U";
+            post_ctx["author_initials"] = getInitials(post_author.fullname());
 
             post_ctx["author_initials"] = initials;
 
@@ -894,39 +980,7 @@ int main()
 
     // NEWS SECTION (kept from old code)
 
-    std::ifstream news_file("database/news.csv");
-
-    if(news_file.good())
-        std::getline(news_file,line);
-
-    while(std::getline(news_file,line))
-    {
-        std::stringstream ss(line);
-
-        std::string id;
-        std::string headline;
-        std::string category;
-        std::string time_ago;
-        std::string post_count;
-
-        std::getline(ss,id,',');
-        std::getline(ss,headline,',');
-        std::getline(ss,category,',');
-        std::getline(ss,time_ago,',');
-        std::getline(ss,post_count,',');
-
-        crow::mustache::context news_ctx;
-
-        news_ctx["headline"] = headline;
-        news_ctx["category"] = category;
-        news_ctx["time_ago"] = time_ago;
-        news_ctx["post_count"] = post_count;
-        
-
-        news_vector.push_back(news_ctx);
-    }
-
-    ctx["news"] = std::move(news_vector);
+    ctx["news"] = loadNews();
 
     auto page = crow::mustache::load("index.html");
 

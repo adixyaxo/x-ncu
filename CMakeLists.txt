@@ -27,4 +27,7 @@ add_custom_command(TARGET X_NCU POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/database
         ${CMAKE_CURRENT_BINARY_DIR}/database
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/ngrok.exe
+        ${CMAKE_CURRENT_BINARY_DIR}/ngrok.exe
 )

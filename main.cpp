@@ -1479,5 +1479,36 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
             res.set_header("Location", "/");
             return res; });
 
+    CROW_ROUTE(app, "/editprofile").methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
+                                                                                           {
+        if (global_login_stats <= 0)
+        {
+            return requireLogin();
+        }
+
+        user currentUser(global_login_stats);
+
+        if (!currentUser.isFound())
+        {
+            return crow::response(404, "User not found");
+        }
+
+        if (req.method == crow::HTTPMethod::GET)
+        {
+            crow::mustache::context ctx;
+            string initials = "U";
+
+            initials = getInitials(currentUser.fullname());
+
+            addCurrentUserContext(ctx);
+
+            ctx["profile_name"] = currentUser.fullname();
+            ctx["profile_handle"] = currentUser.handle();
+            string name = currentUser.fullname();
+            auto profile_page = crow::mustache::load("edit_profile.html");
+            return crow::response(profile_page.render(ctx));
+
+           
+        } return crow::response(200, "Profile updated successfully"); });
     app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
 }

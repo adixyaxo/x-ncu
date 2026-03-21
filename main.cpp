@@ -1293,48 +1293,49 @@ int main()
         return crow::response(404, message_page.render(ctx));
     }
 
-    Current_User = user(search_userID);
+    
 
     crow::mustache::context ctx;
-    user currentUser(global_login_stats);
+    ctx["news"] = loadNews();
+    user SearchUser(search_userID);
 
-    if (currentUser.isFound())
+    if (SearchUser.isFound())
     {
         string initials = "U";
 
-        if (!currentUser.fullname().empty())
+        if (!SearchUser.fullname().empty())
         {
             initials = "";
-            initials += currentUser.fullname()[0];
+            initials += SearchUser.fullname()[0];
 
-            size_t space = currentUser.fullname().find(' ');
-            if (space != string::npos && space + 1 < currentUser.fullname().size())
-                initials += currentUser.fullname()[space + 1];
+            size_t space = SearchUser.fullname().find(' ');
+            if (space != string::npos && space + 1 < SearchUser.fullname().size())
+                initials += SearchUser.fullname()[space + 1];
         }
 
         ctx["user_initials"] = initials;
-        ctx["user_name"] = currentUser.fullname();
-        ctx["user_handle"] = currentUser.handle();
+        ctx["user_name"] = SearchUser.fullname();
+        ctx["user_handle"] = SearchUser.handle();
 
-        ctx["profile_name"] = Current_User.fullname();
-        ctx["profile_handle"] = Current_User.handle();
-        string name = Current_User.fullname();
+        ctx["profile_name"] = SearchUser.fullname();
+        ctx["profile_handle"] = SearchUser.handle();
+        string name = SearchUser.fullname();
         ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
-        ctx["profile_bio"] = Current_User.bio();
-        ctx["is_verified"] = Current_User.is_verified();
+        ctx["profile_bio"] = SearchUser.bio();
+        ctx["is_verified"] = SearchUser.is_verified();
 
-        ctx["profile_location"] = Current_User.location();
-        ctx["profile_link"] = Current_User.link();
-        ctx["profile_following"] = Current_User.following_count();
-        ctx["profile_followers"] = Current_User.followers_count();
-        ctx["profile_posts"] = Current_User.posts();
+        ctx["profile_location"] = SearchUser.location();
+        ctx["profile_link"] = SearchUser.link();
+        ctx["profile_following"] = SearchUser.following_count();
+        ctx["profile_followers"] = SearchUser.followers_count();
+        ctx["profile_posts"] = SearchUser.posts();
 
-        if (Current_User.created_at().size() >= 10)
-            ctx["profile_join_date"] = Current_User.created_at().substr(0, 10);
+        if (SearchUser.created_at().size() >= 10)
+            ctx["profile_join_date"] = SearchUser.created_at().substr(0, 10);
         else
-            ctx["profile_join_date"] = Current_User.created_at();
+            ctx["profile_join_date"] = SearchUser.created_at();
 
-        if (Current_User.id() == currentUser.id())
+        if (search_userID == global_login_stats)
             ctx["is_own_profile"] = true;
 
         ctx["has_posts"] = true;

@@ -90,7 +90,7 @@
     </style>
 </head>
 
-<body class="text-xtext font-sans antialiased h-screen w-screen overflow-hidden flex flex-col relative">
+<body class="text-xtext font-sans antialiased min-h-screen w-full overflow-x-hidden flex flex-col relative">
 
     <div class="absolute top-8 left-10 z-50">
         <a href="/about"
@@ -154,9 +154,9 @@
             d="M48 45c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm-4.5-2.5c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5zm9 0c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5zm-4.5-3.5c-2.8 0-4.8 2-4.8 4.8 0 2.6 2 4 4.8 4s4.8-1.4 4.8-4c0-2.8-2-4.8-4.8-4.8z" />
     </svg>
 
-    <main class="flex-1 w-full max-w-[1250px] mx-auto px-8 flex flex-row items-center justify-between z-10 relative">
+    <main class="flex-1 w-full max-w-[1250px] mx-auto px-0 sm:px-4 lg:px-8 flex flex-col lg:flex-row items-center justify-center lg:justify-between z-10 relative py-12 lg:py-0 gap-12 lg:gap-0">
 
-        <div class="flex-1 max-w-xl text-left relative hidden md:block">
+        <div class="flex-1 max-w-xl text-left relative hidden lg:block">
 
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 backdrop-blur-md pointer-events-none select-none gpu-blur-mask"
                 style="-webkit-mask-image: radial-gradient(circle at center, black 0%, black 20%, transparent 65%); mask-image: radial-gradient(circle at center, black 0%, black 20%, transparent 65%);">
@@ -212,27 +212,27 @@
             </ul>
         </div>
 
-        <div class="w-full max-w-[420px] mx-auto md:mx-0 relative translate-y-[30px] translate-x-[40px]">
+        <div class="w-full max-w-[420px] mx-auto my-auto lg:my-0 relative lg:translate-y-[30px] lg:translate-x-[40px] z-10 self-center">
 
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 backdrop-blur-lg pointer-events-none select-none gpu-blur-mask"
                 style="-webkit-mask-image: radial-gradient(circle at center, black 10%, black 30%, transparent 70%); mask-image: radial-gradient(circle at center, black 10%, black 30%, transparent 70%);">
             </div>
 
             <div
-                class="bg-[#0f100f]/80 backdrop-blur-xl border border-xborder/60 rounded-[2rem] shadow-2xl relative overflow-hidden group">
+                class="bg-transparent lg:bg-[#0f100f]/80 lg:backdrop-blur-xl border-transparent border lg:border-xborder/60 rounded-none lg:rounded-[2rem] shadow-none lg:shadow-2xl relative overflow-hidden group w-full">
 
-                <div class="absolute inset-0 pointer-events-none opacity-[0.06] z-0"
+                <div class="hidden lg:block absolute inset-0 pointer-events-none opacity-[0.06] z-0"
                     style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%221.5%22 numOctaves=%221%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E'); mix-blend-mode: overlay;">
                 </div>
 
-                <div class="relative z-10 p-10">
+                <div class="relative z-10 px-8 py-2 sm:p-10 w-full">
 
-                    <div class="md:hidden mb-8 text-center border-b border-xborder pb-4">
-                        <span class="text-xgold text-xs uppercase tracking-[0.4em] font-medium">Institution Est.
-                            2026</span>
+                    <div class="lg:hidden mb-12 text-center flex flex-col items-center justify-center mt-6">
+                        <h1 class="font-serif text-5xl text-white font-bold mb-3 tracking-tighter">X-NCU</h1>
+                        <span class="text-xgold text-[10px] uppercase tracking-[0.4em] font-medium border-b border-xborder/40 pb-2">Institution Est. 2026</span>
                     </div>
 
-                    <h2 class="font-serif text-3xl mb-8 text-xgold italic tracking-wide group cursor-default">
+                    <h2 class="font-serif text-3xl mb-8 text-xgold italic tracking-wide group cursor-default inline-block w-full text-center lg:w-auto lg:text-left">
                         <span class="relative transition-all duration-300 group-hover:text-white">
                             Join X-NCU
                             <span

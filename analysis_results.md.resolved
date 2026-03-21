@@ -1,0 +1,53 @@
+# Project Analysis: X-NCU
+
+## 📊 Overview
+X-NCU is a C++ backend MVC application designed as a Twitter-like platform for a university. It relies on the Crow framework for HTTP routing and rendering Mustache-style templates. The database is entirely file-based, utilizing raw CSV files to store users, posts, and news.
+
+## 📁 Project Structure
+- **Backend**: [main.cpp](file:///c:/Users/adity/Desktop/x-ncu/main.cpp) (Crow App), [CMakeLists.txt](file:///c:/Users/adity/Desktop/x-ncu/CMakeLists.txt) (Build definition utilizing local `boost` & `Crow` headers).
+- **Frontend**: `templates/` (HTML files utilizing Mustache template bindings), `static/` (CSS/JS files).
+- **Database**: `database/*.csv` (Manual file-store for `users`, [posts](file:///c:/Users/adity/Desktop/x-ncu/main.cpp#54-55), `news`, `students`, `teachers`, `staff`).
+
+---
+
+## 🛑 Critical Mistakes & Bugs Identified
+
+1. **Global Shared State for Login (CRITICAL SECURITY FLAW)**
+   - **File:** [main.cpp](file:///c:/Users/adity/Desktop/x-ncu/main.cpp), Line 14: `int global_login_stats = -1;`
+   - **Issue:** The application uses a single global variable to track the currently logged-in user. Since Crow is multithreaded and works simultaneously for multiple clients, if User A logs in, User B will also be considered logged in as User A. The backend cannot distinguish between sessions. 
+   - **Fix:** Implement proper session management (e.g., JWT tokens, browser cookies).
+
+2. **Plain-Text Passwords (CRITICAL SECURITY FLAW)**
+   - **Issue:** User passwords are saved directly into [users.csv](file:///c:/Users/adity/Desktop/x-ncu/database/users.csv) without hashing (e.g., bcrypt or SHA-256).
+   - **Fix:** Hash passwords before storing them and compare hashes during `/auth`.
+
+3. **Inefficient O(N) Database Operations**
+   - **Issue:** Every single API request re-opens, reads line-by-line, and parses the entire [.csv](file:///c:/Users/adity/Desktop/x-ncu/database/news.csv) files (users, posts, etc.). The server will lock up or slow down tremendously as data grows.
+   - **Fix:** Migrate to a real database (SQLite is highly recommended for this scale and easy to integrate in C++).
+
+4. **Poor Data Sanitization for CSV**
+   - **Issue:** When a user enters a comma or newline in a post, the code arbitrarily changes commas to semicolons and newlines to spaces to prevent CSV breakage. This corrupts user text.
+   - **Fix:** Use a proper CSV escaping mechanism, or primarily, switch to an SQL/NoSQL database.
+
+5. **Massive Code Duplication in Feed Routes**
+   - **Issue:** Look at `/students`, `/teachers`, and `/staff` routes. They identically duplicate ~100 lines of template context loading.
+   - **Fix:** Extract the feed rendering logic into a reusable C++ function that accepts a "role" parameter.
+
+---
+
+## 🛠 Features Pending Implementation (TODOs)
+
+1. **Working Edit Profile (`/editprofile`)**
+   - Currently, the POST route for `/editprofile` is a dummy block. It instantly returns `200 "Profile updated successfully"` but does not capture any posted form fields or write anything back to the [users.csv](file:///c:/Users/adity/Desktop/x-ncu/database/users.csv) database.
+
+2. **Database Segregation vs. Single Source of Truth**
+   - There are separate CSV files for [posts.csv](file:///c:/Users/adity/Desktop/x-ncu/database/posts.csv), [students.csv](file:///c:/Users/adity/Desktop/x-ncu/database/students.csv), [teachers.csv](file:///c:/Users/adity/Desktop/x-ncu/database/teachers.csv), etc., but realistically, all posts should live in one table with a "Category/Role" identifier. Managing parallel CSV copies inherently leads to desyncs.
+
+3. **Session Cookies Verification**
+   - Currently, UI restricts access based on backend global state. No cookies are being sent from the client. Proper Crow middleware needs to be injected.
+
+4. **Timezone Handling**
+   - Timestamps rely on server-local `std::localtime`, which could cause mismatched post times depending on server location.
+
+5. **Proper Error Handling**
+   - Several `try-catch (...)` blocks swallow database parsing errors silently via `continue;`, leading to "missing" data on the client side without server logs.

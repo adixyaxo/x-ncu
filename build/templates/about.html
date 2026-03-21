@@ -107,12 +107,12 @@
 </head>
 
 <body
-    class="text-xtext font-sans min-h-screen flex items-center justify-center p-4 lg:p-6 no-scrollbar relative overflow-x-hidden">
+    class="text-xtext font-sans min-h-screen flex flex-col py-10 px-4 lg:p-6 lg:justify-center lg:items-center no-scrollbar relative overflow-x-hidden">
     <!-- Extra Cat Symbols positioned only on edges -->
 
 
     <!-- mid left edge -->
-    <svg class="fixed top-1/2 left-10 w-10 h-10 text-xgold opacity-10 pointer-events-none animate-subtle-3"
+    <svg class="fixed hidden lg:block top-1/2 left-10 w-10 h-10 text-xgold opacity-10 pointer-events-none animate-subtle-3"
         viewBox="0 0 24 24" fill="currentColor">
         <circle cx="7" cy="7" r="2" />
         <circle cx="17" cy="7" r="2" />
@@ -123,25 +123,25 @@
 
 
     <!-- mid right edge -->
-    <svg class="fixed top-1/2 right-10 w-12 h-12 text-xgold opacity-10 pointer-events-none animate-subtle-4"
+    <svg class="fixed hidden lg:block top-1/2 right-10 w-12 h-12 text-xgold opacity-10 pointer-events-none animate-subtle-4"
         viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 11c2.5 0 4 1.5 4 3.5S14.5 19 12 19s-4-2-4-4.5S9.5 11 12 11z" />
     </svg>
-    <svg class="fixed top-8 left-8 w-16 h-16 text-xgold opacity-10 pointer-events-none animate-subtle-1"
+    <svg class="fixed hidden lg:block top-8 left-8 w-16 h-16 text-xgold opacity-10 pointer-events-none animate-subtle-1"
         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
         <path d="M3 21V9l4 4 5-8 5 8 4-4v12H3z" stroke-linejoin="round" />
     </svg>
-    <svg class="fixed top-8 right-8 w-16 h-16 text-xgold opacity-10 pointer-events-none animate-subtle-2"
+    <svg class="fixed hidden lg:block top-8 right-8 w-16 h-16 text-xgold opacity-10 pointer-events-none animate-subtle-2"
         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
         <path d="M12 21c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-3.86 3.14-7 7-7"
             stroke-linecap="round" />
     </svg>
-    <svg class="fixed bottom-8 left-8 w-12 h-12 text-xgold opacity-10 pointer-events-none animate-subtle-1"
+    <svg class="fixed hidden lg:block bottom-8 left-8 w-12 h-12 text-xgold opacity-10 pointer-events-none animate-subtle-1"
         viewBox="0 0 24 24" fill="currentColor">
         <path
             d="M12 8.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 3.5 12 3.5 14.5 4.62 14.5 6 13.38 8.5 12 8.5zm-5.5 2c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm11 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM12 21c-3.5 0-6-2.5-6-6s2.5-5 6-5 6 1.5 6 5-2.5 6-6 6z" />
     </svg>
-    <svg class="fixed bottom-8 right-8 w-16 h-16 text-xgold opacity-10 pointer-events-none animate-subtle-2"
+    <svg class="fixed hidden lg:block bottom-8 right-8 w-16 h-16 text-xgold opacity-10 pointer-events-none animate-subtle-2"
         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
         <path d="M2 8h8M2 12h10M2 16h8M22 8h-8M22 12h-10M22 16h-8" stroke-linecap="round" />
     </svg>
@@ -150,7 +150,7 @@
         class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 grid-rows-[auto] lg:grid-rows-3 gap-5 w-full max-w-[1400px] min-h-[calc(100vh-3rem)] relative z-10">
 
         <div
-            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:p-12 md:col-span-2 lg:col-span-2 lg:row-span-2 flex flex-col justify-between group">
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-6 sm:p-8 lg:p-12 md:col-span-2 lg:col-span-2 lg:row-span-2 flex flex-col justify-between group">
             <div class="flex justify-between items-start mb-12">
                 <span class="text-xgold text-xs uppercase tracking-[0.3em] font-medium">Institution</span>
                 <span
@@ -159,7 +159,7 @@
             </div>
 
             <div>
-                <h1 class="font-serif text-5xl lg:text-7xl text-white leading-[1.05] mb-6 font-semibold tracking-tight">
+                <h1 class="font-serif text-4xl md:text-5xl lg:text-7xl text-white leading-[1.05] mb-6 font-semibold tracking-tight">
                     X-NCU <br>
                     <span class="text-xgold italic font-light tracking-wide"><sup class="text-[0.5em]">twitter
                             for</sup><sub class="text-[0.5em] font-bold">The NorthCap</sub></span>
@@ -172,7 +172,7 @@
         </div>
 
         <div
-            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:col-span-1 lg:row-span-2 flex flex-col justify-between">
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-6 sm:p-8 lg:col-span-1 lg:row-span-2 flex flex-col justify-between">
             <h3 class="font-serif text-2xl text-white mb-8 italic font-light">The Architecture</h3>
 
             <div class="space-y-6 flex-1 flex flex-col justify-end">
@@ -196,7 +196,7 @@
         </div>
 
         <div
-            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:col-span-1 lg:row-span-1 flex flex-col justify-between">
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-6 sm:p-8 lg:col-span-1 lg:row-span-1 flex flex-col justify-between">
             <div class="text-xgold font-serif text-2xl mb-4 italic">I.</div>
             <div>
                 <h3 class="font-serif text-xl text-white mb-2 font-medium">Pedigree Required</h3>
@@ -206,7 +206,7 @@
         </div>
 
         <div
-            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:col-span-1 lg:row-span-1 flex flex-col justify-between">
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-6 sm:p-8 lg:col-span-1 lg:row-span-1 flex flex-col justify-between">
             <div class="text-xgold font-serif text-2xl mb-4 italic">II.</div>
             <div>
                 <h3 class="font-serif text-xl text-white mb-2 font-medium">Decorum in Zones</h3>
@@ -216,7 +216,7 @@
         </div>
 
         <div
-            class="bento-card bg-xcard border border-xborder rounded-3xl p-8 lg:col-span-2 lg:row-span-1 flex flex-col justify-center relative overflow-hidden group">
+            class="bento-card bg-xcard border border-xborder rounded-3xl p-6 sm:p-8 lg:col-span-2 lg:row-span-1 flex flex-col justify-center relative overflow-hidden group">
             <div class="flex justify-between items-center mb-4">
                 <p class="text-[0.65rem] text-xmuted uppercase tracking-[0.3em] font-medium">The Architects</p>
                 <p class="text-xgold font-serif italic text-sm group-hover:opacity-100 opacity-50 transition-opacity">
@@ -236,7 +236,7 @@
         </div>
 
         <div
-            class="bento-card bg-xgold border border-xgold rounded-3xl p-8 lg:col-span-1 lg:row-span-1 flex flex-col justify-center">
+            class="bento-card bg-xgold border border-xgold rounded-3xl p-6 sm:p-8 lg:col-span-1 lg:row-span-1 flex flex-col justify-center">
             <h2 class="font-serif text-2xl text-[#141614] mb-5 italic font-semibold">T&C</h2>
             <ul class="text-[#141614]/85 space-y-3 text-[0.85rem] font-medium leading-tight">
                 <li class="flex gap-2"><span class="opacity-50">✦</span> Subtweeting professors is a segfault offense.
@@ -248,7 +248,7 @@
         </div>
 
         <a href="/"
-            class="bento-card bg-[#e8e5df] rounded-3xl p-8 lg:col-span-1 lg:row-span-1 flex flex-col items-center justify-center text-[#141614] hover:bg-white transition-colors group">
+            class="bento-card bg-[#e8e5df] rounded-3xl p-6 sm:p-8 lg:col-span-1 lg:row-span-1 flex flex-col items-center justify-center text-[#141614] hover:bg-white transition-colors group">
             <div
                 class="w-14 h-14 rounded-full border border-[#141614]/20 flex items-center justify-center mb-5 group-hover:-rotate-45 transition-transform duration-500 ease-out">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -821,8 +821,8 @@ int main()
     // ==========================================
     // 1. HOME ROUTE
     // ==========================================
-    CROW_ROUTE(app, "/")([]()
-                         {
+    CROW_ROUTE(app, "/")([]() 
+    {
     if (global_login_stats <= 0) return requireLogin();
 
     crow::mustache::context ctx;
@@ -1319,7 +1319,7 @@ int main()
         ctx["profile_name"] = Current_User.fullname();
         ctx["profile_handle"] = Current_User.handle();
         string name = Current_User.fullname();
-ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
+        ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
         ctx["profile_bio"] = Current_User.bio();
         ctx["is_verified"] = Current_User.is_verified();
 

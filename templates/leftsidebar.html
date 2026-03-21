@@ -56,7 +56,7 @@
     }
 </style>
 
-<aside class="w-64 border-r border-xborder flex flex-col justify-between h-full hidden md:flex">
+<aside id="left-sidebar" class="fixed md:relative top-0 left-0 bottom-0 z-50 w-64 bg-xblack border-r border-xborder flex flex-col justify-between h-full transition-transform duration-300 -translate-x-full md:translate-x-0">
     <div class="p-4 overflow-y-auto no-scrollbar">
         <a href="/about" class="block mb-8 px-2 hover:opacity-80 transition-opacity">
             <h1 class="text-xl font-bold tracking-wider">
@@ -201,8 +201,7 @@
 
         if (profileNavigateBtn) {
             profileNavigateBtn.addEventListener('click', () => {
-                const cleanHandle = userHandle.replace('@', '');
-                window.location.href = `/profile/${cleanHandle}`;
+                window.location.href = `/profile/${userHandle}`;
             });
         }
 

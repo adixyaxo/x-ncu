@@ -156,7 +156,16 @@
     </svg>
 
     <main
-        class="flex-1 w-full max-w-[1250px] mx-auto px-0 sm:px-4 lg:px-8 flex flex-col lg:flex-row items-center justify-center lg:justify-between z-10 relative py-12 lg:py-0 gap-12 lg:gap-0">
+        class="flex-1 w-full max-w-[1250px] mx-auto px-0 sm:px-4 lg:px-8 flex flex-col justify-end lg:flex-row lg:items-center lg:justify-between z-10 relative pb-0 pt-16 lg:py-0 gap-0 lg:gap-0 min-h-[100dvh] lg:min-h-0 lg:h-full">
+
+        <!-- Mobile Top Branding -->
+        <div class="lg:hidden flex flex-col items-center justify-start flex-grow pt-8 pb-4">
+            <a href="/about" class="cursor-pointer transition-transform hover:scale-105 duration-300 relative group/logo inline-block">
+                <h1 class="font-serif text-6xl text-white font-bold mb-3 tracking-tighter drop-shadow-2xl">X-NCU</h1>
+                <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-xgold transition-all duration-500 group-hover/logo:w-full opacity-70"></div>
+            </a>
+            <span class="text-xgold text-[11px] uppercase tracking-[0.4em] font-medium opacity-90 tracking-widest text-center px-4 mt-2 border-b border-xborder/40 pb-2">Register. Tweet. Connect.</span>
+        </div>
 
         <div class="flex-1 max-w-xl text-left relative hidden lg:block">
 
@@ -215,50 +224,48 @@
         </div>
 
         <div
-            class="w-full max-w-[420px] mx-auto my-auto lg:my-0 relative lg:translate-y-[30px] lg:translate-x-[40px] z-10 self-center">
+            class="w-full max-w-[420px] mx-auto mt-auto lg:my-0 relative lg:translate-y-[30px] lg:translate-x-[40px] z-10 lg:self-center">
 
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 backdrop-blur-lg pointer-events-none select-none gpu-blur-mask"
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 backdrop-blur-lg pointer-events-none select-none gpu-blur-mask hidden lg:block"
                 style="-webkit-mask-image: radial-gradient(circle at center, black 10%, black 30%, transparent 70%); mask-image: radial-gradient(circle at center, black 10%, black 30%, transparent 70%);">
             </div>
 
             <div
-                class="bg-[#0f100f]/80 backdrop-blur-xl border border-xborder/60 rounded-[2rem] shadow-2xl relative overflow-hidden group w-full mx-4 lg:mx-0">
+                class="bg-[#0f100f]/85 lg:bg-[#0f100f]/80 backdrop-blur-2xl lg:backdrop-blur-xl border-t border-xborder/40 lg:border lg:border-xborder/60 rounded-t-[2.5rem] lg:rounded-[2rem] shadow-[0_-15px_40px_rgba(0,0,0,0.8)] lg:shadow-2xl relative overflow-hidden group w-full lg:mx-0 pb-12 pt-2 lg:p-0">
 
                 <div class="hidden lg:block absolute inset-0 pointer-events-none opacity-[0.06] z-0"
                     style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%221.5%22 numOctaves=%221%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E'); mix-blend-mode: overlay;">
                 </div>
 
-                <div class="relative z-10 px-6 sm:px-8 py-8 sm:p-10 w-full">
-                    <div class="lg:hidden mb-12 text-center flex flex-col items-center justify-center mt-2">
-                        <a href="/about" class="cursor-pointer transition-transform hover:scale-105 duration-300">
-                            <h1 class="font-serif text-5xl text-white font-bold mb-3 tracking-tighter">X-NCU</h1>
-                        </a>
-                        <span class="text-xgold text-[10px] uppercase tracking-[0.4em] font-medium border-b border-xborder/40 pb-2">Institution Est. 2026</span>
-                    </div>
+                <!-- Mobile Drawer Handle -->
+                <div class="lg:hidden w-12 h-1.5 bg-xborder/30 rounded-full mx-auto mt-2 mb-4"></div>
 
-                    <h2 class="font-serif text-3xl mb-8 text-xgold italic tracking-wide group cursor-default inline-block w-full text-center lg:w-auto lg:text-left">
-                        <span class="relative transition-all duration-300 group-hover:text-white">
+                <div class="relative z-10 px-8 py-2 sm:p-10 w-full">
+
+                    <h2 class="font-serif text-[26px] sm:text-3xl mb-8 mt-2 lg:mt-0 text-white lg:text-xgold italic tracking-wide group cursor-default inline-block w-full text-center lg:w-auto lg:text-left">
+                        <span class="block text-sm text-xmuted font-sans font-light not-italic tracking-normal mt-2 lg:hidden mb-2">Formalize your digital presence.</span>
+                        <span class="relative transition-all duration-300 group-hover:text-white lg:opacity-60 opacity-80">
                             Join X-NCU
                             <span class="absolute left-0 -bottom-1 w-0 h-[1px] bg-xgold transition-all duration-500 group-hover:w-full"></span>
                         </span>
                     </h2>
 
-                    <form action="/register" method="POST" class="space-y-4">
+                    <form action="/register" method="POST" class="space-y-4 sm:space-y-4">
 
                         <div class="space-y-2">
                             <input type="text" name="name" placeholder="Full Name" required
-                                class="w-full bg-[#0a0b0a]/60 border border-xborder/80 rounded-2xl px-5 py-3.5 text-sm text-xtext placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/70 focus:ring-1 focus:ring-xgold/70 transition-all">
+                                class="w-full bg-[#0a0b0a]/70 lg:bg-[#0a0b0a]/60 border border-xborder/80 rounded-2xl px-5 py-3.5 text-[16px] lg:text-sm text-xtext placeholder-xmuted/60 lg:placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all">
                         </div>
 
                         <div class="space-y-2">
                             <input type="email" name="email" placeholder="University Email (@ncuindia.edu)" required
                                 pattern=".+@ncuindia\.edu" title="Please use your official NCU email"
-                                class="w-full bg-[#0a0b0a]/60 border border-xborder/80 rounded-2xl px-5 py-3.5 text-sm text-xtext placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/70 focus:ring-1 focus:ring-xgold/70 transition-all">
+                                class="w-full bg-[#0a0b0a]/70 lg:bg-[#0a0b0a]/60 border border-xborder/80 rounded-2xl px-5 py-3.5 text-[16px] lg:text-sm text-xtext placeholder-xmuted/60 lg:placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all">
                         </div>
 
                         <div class="space-y-2">
                             <select name="role" required
-                                class="w-full bg-[#0a0b0a]/60 border border-xborder/80 rounded-2xl px-5 py-3.5 text-sm text-xmuted/80 font-light focus:outline-none focus:border-xgold/70 focus:ring-1 focus:ring-xgold/70 transition-all cursor-pointer">
+                                class="w-full bg-[#0a0b0a]/70 lg:bg-[#0a0b0a]/60 border border-xborder/80 rounded-2xl px-5 py-3.5 text-[16px] lg:text-sm text-xmuted/80 font-light focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all cursor-pointer">
                                 <option value="" disabled selected>Select your designation</option>
                                 <option value="student">Student</option>
                                 <option value="teacher">Faculty</option>
@@ -268,19 +275,19 @@
 
                         <div class="space-y-2">
                             <input type="password" name="password" placeholder="Create Password" required minlength="6"
-                                class="w-full bg-[#0a0b0a]/60 border border-xborder/80 rounded-2xl px-5 py-3.5 text-sm text-xtext placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/70 focus:ring-1 focus:ring-xgold/70 transition-all">
+                                class="w-full bg-[#0a0b0a]/70 lg:bg-[#0a0b0a]/60 border border-xborder/80 rounded-2xl px-5 py-3.5 text-[16px] lg:text-sm text-xtext placeholder-xmuted/60 lg:placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all">
                         </div>
 
                         <button type="submit"
-                            class="w-full bg-xgold text-[#141614] font-serif italic text-xl py-3.5 rounded-full hover:bg-[#e8e5df] transition-colors duration-300 mt-2 shadow-lg shadow-xgold/10">
-                            Create Account
+                            class="w-full bg-xgold text-[#141614] font-serif italic text-lg sm:text-xl py-3.5 sm:py-4 rounded-full hover:bg-white transition-all duration-300 mt-2 sm:mt-4 shadow-[0_0_15px_rgba(197,160,89,0.2)] hover:shadow-[0_0_20px_rgba(197,160,89,0.4)]">
+                            Begin
                         </button>
                     </form>
 
-                    <div class="mt-8 text-center text-xs text-xmuted font-light tracking-wide">
+                    <div class="mt-8 text-center text-[13px] sm:text-xs text-xmuted font-light tracking-wide">
                         Already hold credentials?
                         <a href="/login"
-                            class="text-xgold italic font-serif text-sm ml-1 hover:text-white transition-colors">Sign In</a>
+                            class="text-xgold italic font-serif text-[15px] sm:text-sm ml-1 hover:text-white transition-colors drop-shadow-sm">Sign In</a>
                     </div>
 
                     <p

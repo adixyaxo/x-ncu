@@ -13,7 +13,7 @@ X-NCU is a C++ backend MVC application designed as a Twitter-like platform for a
 ## 🛑 Critical Mistakes & Bugs Identified
 
 1. **Global Shared State for Login (CRITICAL SECURITY FLAW)**
-   - **File:** [main.cpp](file:///c:/Users/adity/Desktop/x-ncu/main.cpp), Line 14: `int global_login_stats = -1;`
+   - **File:** [main.cpp](file:///c:/Users/adity/Desktop/x-ncu/main.cpp), Line 14: `int verify_token() = -1;`
    - **Issue:** The application uses a single global variable to track the currently logged-in user. Since Crow is multithreaded and works simultaneously for multiple clients, if User A logs in, User B will also be considered logged in as User A. The backend cannot distinguish between sessions. 
    - **Fix:** Implement proper session management (e.g., JWT tokens, browser cookies).
 

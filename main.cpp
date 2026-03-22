@@ -8,10 +8,9 @@
 #include <ctime>
 #include <unordered_map>
 #include <algorithm>
+#include <jwt-cpp/jwt.h>
 
 using namespace std;
-
-int global_login_stats = -1;
 
 class user
 {
@@ -388,14 +387,14 @@ int registerUser(const string &email, const string &fullName, const string &role
     return newId;
 }
 
-user Current_User(global_login_stats);
+user Current_User(verify_token());
 
 class post
 {
 private:
     // PostID,UserID,Content,ParentID,LikesCount,RetweetsCount,CreatedAt,role
     int id_private;
-    int user_id_private = global_login_stats;
+    int user_id_private = verify_token();
     string content_private;
     int parent_id_private;
     int likes_count_private;
@@ -445,7 +444,7 @@ post::~post()
 post::post(const string &content_input, int parent_id)
 {
     id_private = 0;
-    user_id_private = global_login_stats;
+    user_id_private = verify_token();
     parent_id_private = parent_id;
     likes_count_private = 0;
     retweets_count_private = 0;
@@ -537,7 +536,7 @@ post::post(const string &content_input, int parent_id)
     std::ostringstream oss;
     oss << std::put_time(&tm, "%d/%m/%Y");
 
-    user author(global_login_stats);
+    user author(verify_token());
     string role = author.role().empty() ? "Student" : author.role();
 
     // 3. WRITE THE SANITIZED CONTENT
@@ -715,14 +714,14 @@ void post::savepost(const post &p)
 // Helper function to require login
 crow::response requireLogin()
 {
-    if (global_login_stats <= 0)
+    if (verify_token() <= 0)
     {
         crow::response res;
         res.code = 303;
         res.set_header("Location", "/login");
         return res;
     }
-    if (global_login_stats > 0)
+    if (verify_token() > 0)
     {
         crow::response res;
         res.code = 303;
@@ -756,7 +755,7 @@ string getInitials(const string &name)
 
 void addCurrentUserContext(crow::mustache::context &ctx)
 {
-    user currentUser(global_login_stats);
+    user currentUser(verify_token());
 
     if (!currentUser.isFound())
         return;
@@ -813,6 +812,38 @@ vector<crow::mustache::context> loadNews()
     return news_vector;
 }
 
+// verify function
+
+int verify_token(const crow::request &req)
+{
+    auto auth_header = req.get_header_value("Authorization");
+
+    if (auth_header.size() < 8 || auth_header.substr(0, 7) != "Bearer ")
+        return -1;
+
+    std::string token = auth_header.substr(7);
+
+    try
+    {
+        auto decoded = jwt::decode(token);
+
+        jwt::verify()
+            .allow_algorithm(jwt::algorithm::hs256{"meetthemakeraditya"})
+            .with_issuer("x-ncu")
+            .verify(decoded);
+
+        // safer check
+        if (!decoded.has_payload_claim("user_id"))
+            return -1;
+
+        return std::stoi(decoded.get_payload_claim("user_id").as_string());
+    }
+    catch (const std::exception &e)
+    {
+        return -1;
+    }
+}
+
 int main()
 {
     crow::SimpleApp app;
@@ -823,7 +854,7 @@ int main()
     // ==========================================
     CROW_ROUTE(app, "/")([]()
                          {
-    if (global_login_stats <= 0) return requireLogin();
+    if (verify_token() <= 0) return requireLogin();
 
     crow::mustache::context ctx;
     ctx["title"] = "HOME | X-NCU";
@@ -975,10 +1006,10 @@ int main()
     // ==========================================
     CROW_ROUTE(app, "/students")([]()
                                  {
-        if (global_login_stats <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
+        if (verify_token() <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
 
         crow::mustache::context ctx; ctx["title"] = "Students | X-NCU";
-        user currentUser(global_login_stats);
+        user currentUser(verify_token());
         
         if (currentUser.isFound()) {
             string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
@@ -1057,10 +1088,10 @@ int main()
     // ==========================================
     CROW_ROUTE(app, "/teachers")([]()
                                  {
-        if (global_login_stats <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
+        if (verify_token() <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
 
         crow::mustache::context ctx; ctx["title"] = "Teachers | X-NCU";
-        user currentUser(global_login_stats);
+        user currentUser(verify_token());
         
         if (currentUser.isFound()) {
             string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
@@ -1139,10 +1170,10 @@ int main()
     // ==========================================
     CROW_ROUTE(app, "/staff")([]()
                               {
-        if (global_login_stats <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
+        if (verify_token() <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
 
         crow::mustache::context ctx; ctx["title"] = "Staff | X-NCU";
-        user currentUser(global_login_stats);
+        user currentUser(verify_token());
         
         if (currentUser.isFound()) {
             string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
@@ -1218,7 +1249,7 @@ int main()
 
     // GET ABOUT PAGE
     CROW_ROUTE(app, "/logout")([]()
-                               {global_login_stats = -1;
+                               {verify_token() = -1;
                                crow::response res;
                                res.code = 303;
                                res.set_header("Location", "/");
@@ -1258,7 +1289,7 @@ int main()
         }
 
         int signup_status = registerUser(email, name, role, password);
-        global_login_stats = signup_status;
+        verify_token() = signup_status;
 
         if (signup_status == -1)
         {
@@ -1279,7 +1310,7 @@ int main()
     // GET PROFILE PAGE
     CROW_ROUTE(app, "/profile/<string>")([](string username)
                                          {
-    if (global_login_stats <= 0) {return requireLogin();}
+    if (verify_token() <= 0) {return requireLogin();}
 
     if (username[0] != '@')
         username = "@" + username;
@@ -1296,7 +1327,7 @@ int main()
     Current_User = user(search_userID);
 
     crow::mustache::context ctx;
-    user currentUser(global_login_stats);
+    user currentUser(verify_token());
 
     if (currentUser.isFound())
     {
@@ -1353,7 +1384,7 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
         std::string password = params.get("password") ? params.get("password") : "";
 
         int userId = authenticateUser(email, password);
-        global_login_stats = userId;
+        verify_token() = userId;
 
         if (userId > 0)
         {
@@ -1386,7 +1417,7 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
     // ==========================================
     CROW_ROUTE(app, "/post").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                              {
-        if (global_login_stats <= 0) {
+        if (verify_token() <= 0) {
             crow::response res;
             res.code = 303;
             res.set_header("Location", "/login");
@@ -1420,7 +1451,7 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
     CROW_ROUTE(app, "/updatepost")
         .methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
                                                                 {
-            if (global_login_stats <= 0)
+            if (verify_token() <= 0)
             {
                 crow::response res;
                 res.code = 303;
@@ -1481,12 +1512,12 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
 
     CROW_ROUTE(app, "/editprofile").methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
                                                                                            {
-        if (global_login_stats <= 0)
+        if (verify_token() <= 0)
         {
             return requireLogin();
         }
 
-        user currentUser(global_login_stats);
+        user currentUser(verify_token());
 
         if (!currentUser.isFound())
         {

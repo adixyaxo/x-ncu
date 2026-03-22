@@ -1249,10 +1249,12 @@ int main()
 
     // GET ABOUT PAGE
     CROW_ROUTE(app, "/logout")([]()
-                               {verify_token() = -1;
+                               {
                                crow::response res;
-                               res.code = 303;
-                               res.set_header("Location", "/");
+                               // loading logout html page
+                                auto variable_page = crow::mustache::load("logout.html");
+                            res.body = variable_page.render();
+
                                return res; });
 
     CROW_ROUTE(app, "/about")([]()

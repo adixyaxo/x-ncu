@@ -1,9 +1,9 @@
 # Ignore database files
-database/
-build/database/
+# database/
+# build/database/
 
 # Ignore all CSV files anywhere
-*.csv
+# *.csv
 
 # Ignore build artifacts
 build/

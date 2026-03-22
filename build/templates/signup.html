@@ -93,9 +93,9 @@
 
 <body class="text-xtext font-sans antialiased min-h-screen w-full max-w-[100vw] overflow-x-hidden flex flex-col relative">
 
-    <div class="absolute top-8 left-10 z-50">
+    <div class="absolute top-6 left-6 lg:top-8 lg:left-10 z-50">
         <a href="/about"
-            class="group relative inline-flex items-center gap-3 px-6 py-2 border border-xborder rounded-full text-xtext bg-transparent backdrop-blur-md hover:bg-xgold hover:border-xgold hover:text-[#141614] transition-all duration-500 shadow-sm hover:shadow-lg hover:shadow-xgold/10">
+            class="group relative inline-flex items-center gap-2 lg:gap-3 px-5 lg:px-6 py-2 border border-xborder rounded-full text-xtext bg-transparent backdrop-blur-md hover:bg-xgold hover:border-xgold hover:text-[#141614] transition-all duration-500 shadow-sm hover:shadow-lg hover:shadow-xgold/20">
             <span class="font-serif italic text-base tracking-wide">About </span>
             <svg class="w-4 h-4 transition-transform duration-500 group-hover:-rotate-45" fill="none"
                 stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -222,44 +222,47 @@
             </div>
 
             <div
-                class="bg-transparent lg:bg-[#0f100f]/80 lg:backdrop-blur-xl border-transparent border lg:border-xborder/60 rounded-none lg:rounded-[2rem] shadow-none lg:shadow-2xl relative overflow-hidden group w-full">
+                class="bg-[#0f100f]/60 lg:bg-[#0f100f]/80 backdrop-blur-2xl border border-xborder/40 lg:border-xborder/60 rounded-[2rem] shadow-[0_8px_32px_rgba(0,0,0,0.6)] lg:shadow-2xl relative overflow-hidden group w-full mx-4 lg:mx-0">
 
                 <div class="hidden lg:block absolute inset-0 pointer-events-none opacity-[0.06] z-0"
                     style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%221.5%22 numOctaves=%221%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E'); mix-blend-mode: overlay;">
                 </div>
 
-                <div class="relative z-10 px-6 lg:px-8 py-4 lg:py-2 sm:p-10 w-full">
+                <div class="relative z-10 px-8 py-8 lg:py-2 sm:p-10 w-full">
 
-                    <!-- Mobile X-style Header -->
-                    <div class="lg:hidden mb-6 flex justify-center mt-2">
-                        <span class="text-white text-3xl font-sans font-bold tracking-tighter">X<span class="text-xmuted ml-1 text-xl font-normal opacity-80">-NCU</span></span>
+                    <!-- Premium Mobile Header -->
+                    <div class="lg:hidden mb-10 flex flex-col items-center justify-center mt-2">
+                        <a href="/about" class="cursor-pointer hover:scale-105 transition-transform duration-500 relative group/logo inline-block">
+                            <h1 class="font-serif text-5xl text-white font-bold mb-2 tracking-tighter drop-shadow-md">X-NCU</h1>
+                            <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-xgold transition-all duration-500 group-hover/logo:w-full opacity-70"></div>
+                        </a>
+                        <span class="text-xgold text-[9px] uppercase tracking-[0.4em] font-medium border-b border-xborder/50 pb-1 mt-1">Institution Est. 2026</span>
                     </div>
 
-                    <h2 class="font-sans font-bold text-[28px] mb-8 text-white w-full text-left lg:font-serif lg:text-3xl lg:mb-8 lg:text-xgold lg:italic lg:tracking-wide lg:inline-block cursor-default transition-all duration-300 group">
-                        <span class="lg:hidden tracking-tight">Create your account</span>
-                        <span class="hidden lg:inline relative transition-all duration-300 group-hover:text-white">
+                    <h2 class="font-serif text-3xl mb-8 text-xgold italic tracking-wide group cursor-default inline-block w-full text-center lg:text-left">
+                        <span class="relative transition-all duration-300 group-hover:text-white">
                             Join X-NCU
                             <span class="absolute left-0 -bottom-1 w-0 h-[1px] bg-xgold transition-all duration-500 group-hover:w-full"></span>
                         </span>
                     </h2>
 
-                    <form action="/register" method="POST" class="space-y-4 lg:space-y-4">
+                    <form action="/register" method="POST" class="space-y-4">
 
                         <div class="space-y-2">
-                            <input type="text" name="name" placeholder="Name" required
-                                class="w-full bg-transparent lg:bg-[#0a0b0a]/60 border border-xborder/80 lg:border-xborder/80 rounded-md lg:rounded-2xl px-4 lg:px-5 py-4 lg:py-3.5 text-base lg:text-sm text-white lg:text-xtext placeholder-xmuted/70 lg:placeholder-xmuted/50 font-sans lg:font-light focus:outline-none focus:border-blue-500 lg:focus:border-xgold/70 focus:ring-1 focus:ring-blue-500 lg:focus:ring-xgold/70 transition-all">
+                            <input type="text" name="name" placeholder="Full Name" required
+                                class="w-full bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl px-5 py-3.5 text-sm text-xtext placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/70 focus:ring-1 focus:ring-xgold/70 transition-all shadow-inner hover:border-xborder">
                         </div>
 
                         <div class="space-y-2">
-                            <input type="email" name="email" placeholder="Email (@ncuindia.edu)" required
+                            <input type="email" name="email" placeholder="University Email (@ncuindia.edu)" required
                                 pattern=".+@ncuindia\.edu" title="Please use your official NCU email"
-                                class="w-full bg-transparent lg:bg-[#0a0b0a]/60 border border-xborder/80 lg:border-xborder/80 rounded-md lg:rounded-2xl px-4 lg:px-5 py-4 lg:py-3.5 text-base lg:text-sm text-white lg:text-xtext placeholder-xmuted/70 lg:placeholder-xmuted/50 font-sans lg:font-light focus:outline-none focus:border-blue-500 lg:focus:border-xgold/70 focus:ring-1 focus:ring-blue-500 lg:focus:ring-xgold/70 transition-all">
+                                class="w-full bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl px-5 py-3.5 text-sm text-xtext placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/70 focus:ring-1 focus:ring-xgold/70 transition-all shadow-inner hover:border-xborder">
                         </div>
 
                         <div class="space-y-2">
                             <select name="role" required
-                                class="w-full bg-transparent lg:bg-[#0a0b0a]/60 border border-xborder/80 lg:border-xborder/80 rounded-md lg:rounded-2xl px-4 lg:px-5 py-4 lg:py-3.5 text-base lg:text-sm text-white lg:text-xmuted/80 font-sans lg:font-light focus:outline-none focus:border-blue-500 lg:focus:border-xgold/70 focus:ring-1 focus:ring-blue-500 lg:focus:ring-xgold/70 transition-all cursor-pointer">
-                                <option value="" disabled selected class="text-xmuted">Select designation</option>
+                                class="w-full bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl px-5 py-3.5 text-sm text-xmuted/80 font-light focus:outline-none focus:border-xgold/70 focus:ring-1 focus:ring-xgold/70 transition-all cursor-pointer shadow-inner hover:border-xborder">
+                                <option value="" disabled selected>Select your designation</option>
                                 <option value="student">Student</option>
                                 <option value="teacher">Faculty</option>
                                 <option value="staff">Staff</option>
@@ -267,20 +270,20 @@
                         </div>
 
                         <div class="space-y-2">
-                            <input type="password" name="password" placeholder="Password" required minlength="6"
-                                class="w-full bg-transparent lg:bg-[#0a0b0a]/60 border border-xborder/80 lg:border-xborder/80 rounded-md lg:rounded-2xl px-4 lg:px-5 py-4 lg:py-3.5 text-base lg:text-sm text-white lg:text-xtext placeholder-xmuted/70 lg:placeholder-xmuted/50 font-sans lg:font-light focus:outline-none focus:border-blue-500 lg:focus:border-xgold/70 focus:ring-1 focus:ring-blue-500 lg:focus:ring-xgold/70 transition-all">
+                            <input type="password" name="password" placeholder="Create Password" required minlength="6"
+                                class="w-full bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl px-5 py-3.5 text-sm text-xtext placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/70 focus:ring-1 focus:ring-xgold/70 transition-all shadow-inner hover:border-xborder">
                         </div>
 
                         <button type="submit"
-                            class="w-full bg-white lg:bg-xgold text-black lg:text-[#141614] font-sans font-bold lg:font-serif lg:italic lg:font-normal text-[17px] lg:text-xl py-3.5 lg:py-3.5 rounded-full hover:bg-gray-200 lg:hover:bg-[#e8e5df] transition-colors duration-300 mt-6 lg:mt-2 shadow-none lg:shadow-lg lg:shadow-xgold/10">
-                            Create account
+                            class="w-full bg-gradient-to-r from-xgold to-[#d4b475] text-[#141614] font-serif italic text-[1.15rem] py-4 rounded-full hover:from-[white] hover:to-[#e8e5df] transition-all duration-500 mt-4 shadow-[0_0_15px_rgba(197,160,89,0.15)] hover:shadow-[0_0_25px_rgba(197,160,89,0.35)] transform hover:-translate-y-0.5">
+                            Create Account
                         </button>
                     </form>
 
-                    <div class="mt-8 text-left lg:text-center text-[15px] lg:text-xs text-xmuted lg:font-light tracking-wide font-sans">
-                        Have an account already?
+                    <div class="mt-8 text-center text-[13px] text-xmuted font-light tracking-wide">
+                        Already hold credentials?
                         <a href="/login"
-                            class="text-blue-400 font-bold lg:font-normal lg:text-xgold lg:italic lg:font-serif text-[15px] lg:text-sm ml-1 hover:text-blue-300 lg:hover:text-white transition-colors">Log in</a>
+                            class="text-xgold italic font-serif text-[15px] ml-1 hover:text-white transition-colors">Sign In</a>
                     </div>
 
                     <p

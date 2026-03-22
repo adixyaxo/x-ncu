@@ -1,1 +1,1 @@
-/usr/bin/c++ CMakeFiles/X_NCU.dir/main.cpp.o -o X_NCU 
+/usr/bin/c++ CMakeFiles/X_NCU.dir/main.cpp.o -o X_NCU  /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so 

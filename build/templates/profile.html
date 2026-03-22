@@ -127,6 +127,12 @@
     {{>rightsidebar.html}}
 
     <script src="/static/script.js"></script>
+    <script>
+        if (!localStorage.getItem("token")) {
+            window.location.href = "/login";
+        }
+    </script>
+
 </body>
 
 </html>

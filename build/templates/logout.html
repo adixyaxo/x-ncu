@@ -79,11 +79,11 @@
         <div class="flex flex-col items-center text-center">
 
             <h1 class="text-[120px] md:text-[180px] font-black tracking-tighter leading-none text-outline mb-4">
-                {{error_code}}
+                Logout Successful!
             </h1>
 
             <h2 class="text-xl md:text-2xl font-bold text-xtext mb-2 tracking-wide">
-                {{error_message}}
+                You have been logged out.
             </h2>
 
             <a href="/login"
@@ -101,6 +101,11 @@
             <path d="M20 50 C 20 60, 80 60, 80 50" stroke="currentColor" stroke-width="4" />
         </svg>
     </div>
+    <script>
+        function logout() {
+            localStorage.removeItem("token");
+        }
+    </script>
 
 </body>
 

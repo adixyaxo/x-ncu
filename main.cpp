@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <jwt-cpp/jwt.h>
+#include "sha256.h"
 
 using namespace std;
 
@@ -251,7 +252,7 @@ int authenticateUser(const string &inputEmail, const string &inputPassword)
         // 5. Check for a match
         if (email == inputEmail)
         {
-            if (storedPassword == inputPassword)
+            if (storedPassword == sha256(inputPassword))
             {
                 // Match found! Convert the string ID to an integer and return it
                 return stoi(idStr);
@@ -372,7 +373,7 @@ int registerUser(const string &email, const string &fullName, const string &role
             << email << ","
             << fullName << ","
             << role << ","
-            << password << ","
+            << sha256(password) << ","
             << "" << ","        // Bio
             << "FALSE" << ","   // IsVerified
             << oss.str() << "," // CreatedAt
@@ -386,8 +387,6 @@ int registerUser(const string &email, const string &fullName, const string &role
 
     return newId;
 }
-
-user Current_User(-1);
 
 class post
 {
@@ -427,7 +426,7 @@ public:
     void isFound(bool val) { isFound_private = val; }
     // CONSTRUCTOR AND DESTRUCTOR
     post();
-    post(const string &content, int parent_id = -1);
+    post(const string &content, int user_id, int parent_id = -1);
     ~post();
     static post getpost(int id);
     static void savepost(const post &p);
@@ -441,10 +440,10 @@ post::~post()
 {
 }
 
-post::post(const string &content_input, int parent_id)
+post::post(const string &content_input, int user_id, int parent_id)
 {
     id_private = 0;
-    user_id_private = verify_token();
+    user_id_private = user_id;
     parent_id_private = parent_id;
     likes_count_private = 0;
     retweets_count_private = 0;
@@ -536,7 +535,7 @@ post::post(const string &content_input, int parent_id)
     std::ostringstream oss;
     oss << std::put_time(&tm, "%d/%m/%Y");
 
-    user author(verify_token());
+    user author(user_id_private);
     string role = author.role().empty() ? "Student" : author.role();
 
     // 3. WRITE THE SANITIZED CONTENT
@@ -711,8 +710,11 @@ void post::savepost(const post &p)
 //=================================
 // CROW FUNCTIONS
 //=================================
+
+int verify_token(const crow::request &req);
+
 // Helper function to require login
-crow::response requireLogin()
+crow::response requireLogin(const crow::request &req)
 {
     if (verify_token(req) <= 0)
     {
@@ -728,13 +730,11 @@ crow::response requireLogin()
         res.set_header("Location", "/");
         return res;
     }
-    else
-    {
-        crow::response res;
-        res.code = 500;
-        res.body = "Invalid login state.";
-        return res;
-    }
+    
+    crow::response res;
+    res.code = 500;
+    res.body = "Invalid login state.";
+    return res;
 }
 
 // Generating user credentials
@@ -753,9 +753,9 @@ string getInitials(const string &name)
     return initials;
 }
 
-void addCurrentUserContext(crow::mustache::context &ctx)
+void addCurrentUserContext(crow::mustache::context &ctx, int user_id)
 {
-    user currentUser(verify_token());
+    user currentUser(user_id);
 
     if (!currentUser.isFound())
         return;
@@ -816,12 +816,22 @@ vector<crow::mustache::context> loadNews()
 
 int verify_token(const crow::request &req)
 {
-    auto auth_header = req.get_header_value("Authorization");
-
-    if (auth_header.size() < 8 || auth_header.substr(0, 7) != "Bearer ")
-        return -1;
-
-    std::string token = auth_header.substr(7);
+    std::string token;
+    auto cookie_header = req.get_header_value("Cookie");
+    size_t pos = cookie_header.find("token=");
+    
+    if (pos != std::string::npos) {
+        size_t end = cookie_header.find(';', pos);
+        if (end == std::string::npos) end = cookie_header.length();
+        token = cookie_header.substr(pos + 6, end - (pos + 6));
+    } else {
+        auto auth_header = req.get_header_value("Authorization");
+        if (auth_header.size() >= 8 && auth_header.substr(0, 7) == "Bearer ") {
+            token = auth_header.substr(7);
+        } else {
+            return -1;
+        }
+    }
 
     try
     {
@@ -854,12 +864,12 @@ int main()
     // ==========================================
     CROW_ROUTE(app, "/")([](const crow::request &req)
                          {
-    if (verify_token(req)<= 0) return requireLogin();
+    if (verify_token(req)<= 0) return requireLogin(req);
 
     crow::mustache::context ctx;
     ctx["title"] = "HOME | X-NCU";
 
-    addCurrentUserContext(ctx);
+    addCurrentUserContext(ctx, verify_token(req));
 
     std::vector<crow::mustache::context> posts_vector;
     std::vector<crow::mustache::context> news_vector;
@@ -1170,12 +1180,13 @@ int main()
     // ==========================================
     // 4. STAFF FEED ROUTE
     // ==========================================
-    CROW_ROUTE(app, "/staff")([]()
+    CROW_ROUTE(app, "/staff")([](const crow::request &req)
                               {
-        if (verify_token(req)<= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
+        int userID = verify_token(req);
+        if (userID<= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
 
         crow::mustache::context ctx; ctx["title"] = "Staff | X-NCU";
-        user currentUser(verify_token());
+        user currentUser(userID);
         
         if (currentUser.isFound()) {
             string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
@@ -1252,29 +1263,30 @@ int main()
     // GET ABOUT PAGE
     CROW_ROUTE(app, "/logout")([]()
                                {
-                               crow::response res;
-                               // loading logout html page
-                                auto variable_page = crow::mustache::load("logout.html");
-                                res.body = variable_page.render();
+                                crow::response res;
+                                res.set_header("Set-Cookie", "token=; HttpOnly; Path=/; Max-Age=0");
+                                res.code = 303;
+                                res.set_header("Location", "/login");
                                return res; });
 
-    CROW_ROUTE(app, "/about")([]()
+    CROW_ROUTE(app, "/about")([](const crow::request &req)
                               {
         auto variable_page = crow::mustache::load("about.html");
         return variable_page.render(); });
 
     // GET LOGIN PAGE
-    CROW_ROUTE(app, "/login")([]()
+    CROW_ROUTE(app, "/login")([](const crow::request &req)
                               {
-                                requireLogin();
+        if (verify_token(req) > 0) { crow::response res; res.code = 303; res.set_header("Location", "/"); return res; }
         auto variable_page = crow::mustache::load("login.html");
-        return variable_page.render(); });
+        return crow::response(variable_page.render()); });
 
     // GET SIGNUP PAGE
-    CROW_ROUTE(app, "/signup")([]()
+    CROW_ROUTE(app, "/signup")([](const crow::request &req)
                                {
+        if (verify_token(req) > 0) { crow::response res; res.code = 303; res.set_header("Location", "/"); return res; }
         auto variable_page = crow::mustache::load("signup.html");
-        return variable_page.render(); });
+        return crow::response(variable_page.render()); });
 
     // POST REGISTER DATA
     CROW_ROUTE(app, "/register").methods(crow::HTTPMethod::POST)([](const crow::request &req)
@@ -1303,23 +1315,23 @@ int main()
         }
         else
         {
-            Current_User = user(userId);
             std::string token = jwt::create()
     .set_issuer("x-ncu")
     .set_payload_claim("user_id", jwt::claim(std::to_string(userId)))
     .set_expires_at(std::chrono::system_clock::now() + std::chrono::hours(24))
     .sign(jwt::algorithm::hs256{"meetthemakeraditya"});
-    crow::json::wvalue res;
-res["token"] = token;
+            
+            crow::response res;
+            res.code = 303;
+            res.set_header("Set-Cookie", "token=" + token + "; HttpOnly; Path=/");
             res.set_header("Location", "/");
-            return crow::response(res);
+            return res;
         } });
 
     // GET PROFILE PAGE
-    // GET PROFILE PAGE
-    CROW_ROUTE(app, "/profile/<string>")([](string username)
+    CROW_ROUTE(app, "/profile/<string>")([](const crow::request &req, string username)
                                          {
-    if (verify_token(req)<= 0) {return requireLogin();}
+    if (verify_token(req)<= 0) {return requireLogin(req);}
 
     if (username[0] != '@')
         username = "@" + username;
@@ -1333,10 +1345,10 @@ res["token"] = token;
         return crow::response(404, message_page.render(ctx));
     }
 
-    Current_User = user(search_userID);
+    user profileUser(search_userID);
 
     crow::mustache::context ctx;
-    user currentUser(verify_token());
+    user currentUser(verify_token(req));
 
     if (currentUser.isFound())
     {
@@ -1356,25 +1368,25 @@ res["token"] = token;
         ctx["user_name"] = currentUser.fullname();
         ctx["user_handle"] = currentUser.handle();
 
-        ctx["profile_name"] = Current_User.fullname();
-        ctx["profile_handle"] = Current_User.handle();
-        string name = Current_User.fullname();
-ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
-        ctx["profile_bio"] = Current_User.bio();
-        ctx["is_verified"] = Current_User.is_verified();
+        ctx["profile_name"] = profileUser.fullname();
+        ctx["profile_handle"] = profileUser.handle();
+        string name = profileUser.fullname();
+        ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
+        ctx["profile_bio"] = profileUser.bio();
+        ctx["is_verified"] = profileUser.is_verified();
 
-        ctx["profile_location"] = Current_User.location();
-        ctx["profile_link"] = Current_User.link();
-        ctx["profile_following"] = Current_User.following_count();
-        ctx["profile_followers"] = Current_User.followers_count();
-        ctx["profile_posts"] = Current_User.posts();
+        ctx["profile_location"] = profileUser.location();
+        ctx["profile_link"] = profileUser.link();
+        ctx["profile_following"] = profileUser.following_count();
+        ctx["profile_followers"] = profileUser.followers_count();
+        ctx["profile_posts"] = profileUser.posts();
 
-        if (Current_User.created_at().size() >= 10)
-            ctx["profile_join_date"] = Current_User.created_at().substr(0, 10);
+        if (profileUser.created_at().size() >= 10)
+            ctx["profile_join_date"] = profileUser.created_at().substr(0, 10);
         else
-            ctx["profile_join_date"] = Current_User.created_at();
+            ctx["profile_join_date"] = profileUser.created_at();
 
-        if (Current_User.id() == currentUser.id())
+        if (profileUser.id() == currentUser.id())
             ctx["is_own_profile"] = true;
 
         ctx["has_posts"] = true;
@@ -1402,10 +1414,11 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
         .set_expires_at(std::chrono::system_clock::now() + std::chrono::hours(24))
         .sign(jwt::algorithm::hs256{"meetthemakeraditya"});
 
-    crow::json::wvalue res;
-    res["token"] = token;
-    res.set_header("Location", "/");
-    return crow::response(res);
+            crow::response res;
+            res.code = 303;
+            res.set_header("Set-Cookie", "token=" + token + "; HttpOnly; Path=/");
+            res.set_header("Location", "/");
+            return res;
         }
         else if (userId == -2)
         {
@@ -1455,7 +1468,7 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
             return crow::response(400, message_page.render(ctx));
         }
 
-        post new_post(content, parent_id);
+        post new_post(content, verify_token(req), parent_id);
 
         crow::response res;
         res.code = 303;
@@ -1528,10 +1541,10 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
                                                                                            {
         if (verify_token(req)<= 0)
         {
-            return requireLogin();
+            return requireLogin(req);
         }
 
-        user currentUser(verify_token());
+        user currentUser(verify_token(req));
 
         if (!currentUser.isFound())
         {
@@ -1545,7 +1558,7 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
 
             initials = getInitials(currentUser.fullname());
 
-            addCurrentUserContext(ctx);
+            addCurrentUserContext(ctx, verify_token(req));
 
             ctx["profile_name"] = currentUser.fullname();
             ctx["profile_handle"] = currentUser.handle();

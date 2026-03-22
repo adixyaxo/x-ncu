@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DCROW_USE_BOOST
 
-CXX_INCLUDES = -I/mnt/c/Users/adity/Desktop/x-ncu/boost_1_90_0 -I/mnt/c/Users/adity/Desktop/x-ncu/Crow-1.3.1/include
+CXX_INCLUDES = -I/mnt/c/Users/adity/Desktop/x-ncu/boost_1_90_0 -I/mnt/c/Users/adity/Desktop/x-ncu/Crow-1.3.1/include -I/mnt/c/Users/adity/Desktop/x-ncu/jwt-cpp/include
 
 CXX_FLAGS = 
 

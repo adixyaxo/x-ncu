@@ -92,6 +92,8 @@ X_NCU_EXTERNAL_OBJECTS =
 
 X_NCU: CMakeFiles/X_NCU.dir/main.cpp.o
 X_NCU: CMakeFiles/X_NCU.dir/build.make
+X_NCU: /usr/lib/x86_64-linux-gnu/libssl.so
+X_NCU: /usr/lib/x86_64-linux-gnu/libcrypto.so
 X_NCU: CMakeFiles/X_NCU.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/mnt/c/Users/adity/Desktop/x-ncu/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable X_NCU"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/X_NCU.dir/link.txt --verbose=$(VERBOSE)

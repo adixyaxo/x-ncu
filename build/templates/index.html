@@ -5,20 +5,24 @@
     {{>leftsidebar.html}}
 
     <!-- Mobile Sidebar Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300 opacity-0" onclick="closeSidebars()"></div>
+    <div id="sidebar-overlay"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300 opacity-0"
+        onclick="closeSidebars()"></div>
 
     <main class="flex-1 md:border-r border-xborder h-full overflow-y-auto no-scrollbar relative w-full">
-        
+
         <div class="sticky top-0 z-30 bg-xblack/90 backdrop-blur-md border-b border-xborder">
             <!-- Mobile Top Nav (Hidden on Desktop) -->
             <div class="md:hidden flex justify-between items-center px-4 py-3">
-                <button onclick="toggleLeftSidebar()" class="text-white p-1 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center">
+                <button onclick="toggleLeftSidebar()"
+                    class="text-white p-1 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center">
                     <i class="ph ph-list text-2xl"></i>
                 </button>
                 <div class="font-serif text-2xl font-bold flex items-center">
                     <span class="text-xgold italic">X</span><span class="text-white">-NCU</span>
                 </div>
-                <button onclick="toggleRightSidebar()" class="text-xmuted hover:text-xgold transition-colors p-1 hover:bg-white/10 rounded-full flex items-center justify-center">
+                <button onclick="toggleRightSidebar()"
+                    class="text-xmuted hover:text-xgold transition-colors p-1 hover:bg-white/10 rounded-full flex items-center justify-center">
                     <i class="ph ph-star text-2xl"></i>
                 </button>
             </div>
@@ -28,11 +32,16 @@
                 <button
                     class="feed-tab flex-1 py-4 text-center hover:bg-xborder/30 transition-colors relative text-white font-bold">
                     For you
-                    <div class="tab-underline absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-xgreen rounded-full"></div>
+                    <div
+                        class="tab-underline absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-xgreen rounded-full">
+                    </div>
                 </button>
-                <button class="feed-tab flex-1 py-4 text-center text-xmuted hover:bg-xborder/30 transition-colors relative">
+                <button
+                    class="feed-tab flex-1 py-4 text-center text-xmuted hover:bg-xborder/30 transition-colors relative">
                     Following
-                    <div class="tab-underline absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-xgreen rounded-full hidden"></div>
+                    <div
+                        class="tab-underline absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-xgreen rounded-full hidden">
+                    </div>
                 </button>
             </header>
         </div>
@@ -137,7 +146,7 @@
         function toggleLeftSidebar() {
             const left = document.getElementById('left-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-            if(left.classList.contains('-translate-x-full')) {
+            if (left.classList.contains('-translate-x-full')) {
                 left.classList.remove('-translate-x-full');
                 overlay.classList.remove('hidden');
                 requestAnimationFrame(() => overlay.classList.remove('opacity-0'));
@@ -149,7 +158,7 @@
         function toggleRightSidebar() {
             const right = document.getElementById('right-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-            if(right.classList.contains('translate-x-full')) {
+            if (right.classList.contains('translate-x-full')) {
                 right.classList.remove('translate-x-full');
                 overlay.classList.remove('hidden');
                 requestAnimationFrame(() => overlay.classList.remove('opacity-0'));
@@ -161,16 +170,20 @@
         function closeSidebars() {
             const left = document.getElementById('left-sidebar');
             if (left) left.classList.add('-translate-x-full');
-            
+
             const right = document.getElementById('right-sidebar');
             if (right) right.classList.add('translate-x-full');
-            
+
             const overlay = document.getElementById('sidebar-overlay');
             if (overlay) {
                 overlay.classList.add('opacity-0');
                 setTimeout(() => overlay.classList.add('hidden'), 300);
             }
         }
+    </script>
+    <script>
+        apiFetch("/")
+            .then(data => console.log(data));
     </script>
 </body>
 

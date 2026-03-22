@@ -387,14 +387,14 @@ int registerUser(const string &email, const string &fullName, const string &role
     return newId;
 }
 
-user Current_User(verify_token());
+user Current_User(-1);
 
 class post
 {
 private:
     // PostID,UserID,Content,ParentID,LikesCount,RetweetsCount,CreatedAt,role
     int id_private;
-    int user_id_private = verify_token();
+    int user_id_private = -1;
     string content_private;
     int parent_id_private;
     int likes_count_private;
@@ -714,14 +714,14 @@ void post::savepost(const post &p)
 // Helper function to require login
 crow::response requireLogin()
 {
-    if (verify_token() <= 0)
+    if (verify_token(req) <= 0)
     {
         crow::response res;
         res.code = 303;
         res.set_header("Location", "/login");
         return res;
     }
-    if (verify_token() > 0)
+    if (verify_token(req) > 0)
     {
         crow::response res;
         res.code = 303;
@@ -852,9 +852,9 @@ int main()
     // ==========================================
     // 1. HOME ROUTE
     // ==========================================
-    CROW_ROUTE(app, "/")([]()
+    CROW_ROUTE(app, "/")([](const crow::request &req)
                          {
-    if (verify_token() <= 0) return requireLogin();
+    if (verify_token(req)<= 0) return requireLogin();
 
     crow::mustache::context ctx;
     ctx["title"] = "HOME | X-NCU";
@@ -1004,12 +1004,13 @@ int main()
     // ==========================================
     // 2. STUDENTS FEED ROUTE
     // ==========================================
-    CROW_ROUTE(app, "/students")([]()
+    CROW_ROUTE(app, "/students")([](const crow::request &req)
                                  {
-        if (verify_token() <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
+                                    int userID = verify_token(req);
+        if (userID <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
 
         crow::mustache::context ctx; ctx["title"] = "Students | X-NCU";
-        user currentUser(verify_token());
+        user currentUser(userID);
         
         if (currentUser.isFound()) {
             string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
@@ -1086,12 +1087,13 @@ int main()
     // ==========================================
     // 3. TEACHERS FEED ROUTE
     // ==========================================
-    CROW_ROUTE(app, "/teachers")([]()
+    CROW_ROUTE(app, "/teachers")([](const crow::request &req)
                                  {
-        if (verify_token() <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
+                                    int userID = verify_token(req);
+        if (userID<= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
 
         crow::mustache::context ctx; ctx["title"] = "Teachers | X-NCU";
-        user currentUser(verify_token());
+        user currentUser(userID);
         
         if (currentUser.isFound()) {
             string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
@@ -1170,7 +1172,7 @@ int main()
     // ==========================================
     CROW_ROUTE(app, "/staff")([]()
                               {
-        if (verify_token() <= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
+        if (verify_token(req)<= 0) { crow::response res; res.code = 303; res.set_header("Location", "/login"); return res; }
 
         crow::mustache::context ctx; ctx["title"] = "Staff | X-NCU";
         user currentUser(verify_token());
@@ -1253,8 +1255,7 @@ int main()
                                crow::response res;
                                // loading logout html page
                                 auto variable_page = crow::mustache::load("logout.html");
-                            res.body = variable_page.render();
-
+                                res.body = variable_page.render();
                                return res; });
 
     CROW_ROUTE(app, "/about")([]()
@@ -1291,9 +1292,10 @@ int main()
         }
 
         int signup_status = registerUser(email, name, role, password);
-        verify_token() = signup_status;
+        int userId = signup_status;
+        
 
-        if (signup_status == -1)
+        if (userId == -1)
         {
             auto message_page = crow::mustache::load("message.html");
             crow::mustache::context ctx({{"error_code", "422"}, {"error_message", "User already exists"}});
@@ -1301,18 +1303,23 @@ int main()
         }
         else
         {
-            Current_User = user(signup_status);
-            crow::response res;
-            res.code = 303;
+            Current_User = user(userId);
+            std::string token = jwt::create()
+    .set_issuer("x-ncu")
+    .set_payload_claim("user_id", jwt::claim(std::to_string(userId)))
+    .set_expires_at(std::chrono::system_clock::now() + std::chrono::hours(24))
+    .sign(jwt::algorithm::hs256{"meetthemakeraditya"});
+    crow::json::wvalue res;
+res["token"] = token;
             res.set_header("Location", "/");
-            return res;
+            return crow::response(res);
         } });
 
     // GET PROFILE PAGE
     // GET PROFILE PAGE
     CROW_ROUTE(app, "/profile/<string>")([](string username)
                                          {
-    if (verify_token() <= 0) {return requireLogin();}
+    if (verify_token(req)<= 0) {return requireLogin();}
 
     if (username[0] != '@')
         username = "@" + username;
@@ -1386,14 +1393,19 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
         std::string password = params.get("password") ? params.get("password") : "";
 
         int userId = authenticateUser(email, password);
-        verify_token() = userId;
 
         if (userId > 0)
         {
-            crow::response res;
-            res.code = 303;
-            res.set_header("Location", "/");
-            return res;
+            std::string token = jwt::create()
+        .set_issuer("x-ncu")
+        .set_payload_claim("user_id", jwt::claim(std::to_string(userId)))
+        .set_expires_at(std::chrono::system_clock::now() + std::chrono::hours(24))
+        .sign(jwt::algorithm::hs256{"meetthemakeraditya"});
+
+    crow::json::wvalue res;
+    res["token"] = token;
+    res.set_header("Location", "/");
+    return crow::response(res);
         }
         else if (userId == -2)
         {
@@ -1419,7 +1431,7 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
     // ==========================================
     CROW_ROUTE(app, "/post").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                              {
-        if (verify_token() <= 0) {
+        if (verify_token(req)<= 0) {
             crow::response res;
             res.code = 303;
             res.set_header("Location", "/login");
@@ -1453,7 +1465,7 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
     CROW_ROUTE(app, "/updatepost")
         .methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
                                                                 {
-            if (verify_token() <= 0)
+            if (verify_token(req)<= 0)
             {
                 crow::response res;
                 res.code = 303;
@@ -1514,7 +1526,7 @@ ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
 
     CROW_ROUTE(app, "/editprofile").methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
                                                                                            {
-        if (verify_token() <= 0)
+        if (verify_token(req)<= 0)
         {
             return requireLogin();
         }

@@ -155,11 +155,11 @@
     </svg>
 
     <main
-        class="flex-1 w-full max-w-[1250px] mx-auto px-0 sm:px-4 lg:px-8 flex flex-col justify-end lg:flex-row lg:items-center lg:justify-between z-10 relative pb-0 pt-16 lg:py-0 gap-0 lg:gap-0 min-h-[100dvh] lg:min-h-0 lg:h-full">
+        class="flex-1 w-full max-w-[1250px] mx-auto px-0 sm:px-4 lg:px-8 flex flex-col lg:flex-row lg:items-center lg:justify-between z-10 relative pb-0 pt-0 lg:py-0 gap-0 lg:gap-0 min-h-[100dvh] lg:min-h-0 lg:h-full">
 
-        <!-- Mobile Top Branding -->
-        <div class="lg:hidden flex flex-col items-center justify-start flex-grow pt-8 pb-4 opacity-0 animate-float-in" style="animation-delay: 0.1s;">
-            <a href="/about" class="cursor-pointer transition-transform hover:scale-105 duration-300 relative group/logo inline-block">
+        <!-- Mobile Top Branding (Fixed Parallax Background) -->
+        <div class="lg:hidden fixed top-0 left-0 w-full h-[65vh] flex flex-col items-center justify-center pt-8 pb-4 opacity-0 animate-float-in z-0 pointer-events-none" style="animation-delay: 0.1s;">
+            <a href="/about" class="cursor-pointer transition-transform hover:scale-105 duration-300 relative group/logo inline-block pointer-events-auto">
                 <h1 class="font-serif text-6xl text-white font-bold mb-3 tracking-tighter drop-shadow-2xl">X-NCU</h1>
                 <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-xgold transition-all duration-500 group-hover/logo:w-full opacity-70"></div>
             </a>
@@ -222,14 +222,14 @@
         </div>
 
         <div
-            class="w-full max-w-[420px] mx-auto mt-auto lg:my-0 relative lg:translate-y-[30px] lg:translate-x-[30px] z-10 lg:self-center">
+            class="w-full max-w-[420px] mx-auto mt-[50vh] lg:mt-0 relative lg:translate-y-[30px] lg:translate-x-[30px] z-10 lg:self-center">
 
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 backdrop-blur-lg pointer-events-none select-none gpu-blur-mask hidden lg:block"
                 style="-webkit-mask-image: radial-gradient(circle at center, black 10%, black 30%, transparent 70%); mask-image: radial-gradient(circle at center, black 10%, black 30%, transparent 70%);">
             </div>
 
             <div
-                class="bg-[#0f100f]/85 lg:bg-[#0f100f]/80 backdrop-blur-2xl lg:backdrop-blur-xl border-t border-xborder/40 lg:border lg:border-xborder/60 rounded-t-[2.5rem] lg:rounded-[2rem] shadow-[0_-15px_40px_rgba(0,0,0,0.8)] lg:shadow-2xl relative overflow-hidden group w-full lg:mx-0 pb-12 pt-2 lg:p-0 opacity-0 animate-slide-up-drawer lg:animate-none lg:!opacity-100 lg:!translate-y-0" style="animation-delay: 0.25s;">
+                class="bg-[#0f100f]/85 lg:bg-[#0f100f]/80 backdrop-blur-2xl lg:backdrop-blur-xl border-t border-xborder/40 lg:border lg:border-xborder/60 rounded-t-[2.5rem] lg:rounded-[2rem] shadow-[0_-15px_40px_rgba(0,0,0,0.8)] lg:shadow-2xl relative overflow-hidden group w-full lg:mx-0 pb-12 pt-2 lg:p-0 opacity-0 animate-[floatIn_0.8s_cubic-bezier(0.16,1,0.3,1)_forwards] lg:animate-none lg:!opacity-100 lg:!translate-y-0" style="animation-delay: 0.15s;">
 
                 <div class="hidden lg:block absolute inset-0 pointer-events-none opacity-[0.06] z-0"
                     style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%221.5%22 numOctaves=%221%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E'); mix-blend-mode: overlay;">

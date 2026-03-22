@@ -1,6 +1,6 @@
 UserID,Username,Email,FullName,Role,Password,Bio,IsVerified,CreatedAt,location,link,following_count,followers_count,posts
-1,@adixyaxo,aditya25csu016@ncuindia.edu,Aditya Dagar,Student,Aditya@130508@x-ncu,Meet the maker,TRUE,2025-10-01T10:00:00Z,India,https://example.com/adixyaxo,0,100000,1
-2,@priya.sharma,priya.sharma@ncuindia.edu,Dr. Priya Sharma,Teacher,hashed_pw_2,Assistant Professor | Computer Science,TRUE,2024-05-15T09:30:00Z,Delhi,https://example.com/priya.sharma,200,500,120
-3,@arjun.m,arjun.m@gmail.com,Arjun Mehta,Student,hashed_pw_3,B.Tech CSE | Tech Enthusiast,FALSE,2025-11-20T14:45:00Z,Mumbai,https://example.com/arjun.m,80,150,25
-4,@ncu_admin,admin@ncuindia.edu,NCU Admin,Staff,hashed_pw_4,Official Announcements for The NorthCap University,TRUE,2023-01-10T08:00:00Z,Gurgaon,https://example.com/ncu_admin,500,5000,300
-5,@testing2,testing2@ncuindia.edu,testing2,Student,Password,Official Announcements for The NorthCap University,TRUE,2023-01-10T08:00:00Z,Gurgaon,https://example.com/ncu_admin,500,5000,300
+1,@adixyaxo,aditya25csu016@ncuindia.edu,Aditya Dagar,Student,caa44a367134b4f954636c44877ecb99c2f56ce2115f068ad4e4ee95d36d520e,Meet the maker,TRUE,2025-10-01T10:00:00Z,India,https://example.com/adixyaxo,0,100000,1
+2,@priya.sharma,priya.sharma@ncuindia.edu,Dr. Priya Sharma,Teacher,b8e293705f64e2ebf4e52ef845f6651bec8be204df9440a5e6c703751d737df3,Assistant Professor | Computer Science,TRUE,2024-05-15T09:30:00Z,Delhi,https://example.com/priya.sharma,200,500,120
+3,@arjun.m,arjun.m@gmail.com,Arjun Mehta,Student,53b49101bde26f00d5baf98f4c624a5c9d23dd55908896f17f45e819d2e985a0,B.Tech CSE | Tech Enthusiast,FALSE,2025-11-20T14:45:00Z,Mumbai,https://example.com/arjun.m,80,150,25
+4,@ncu_admin,admin@ncuindia.edu,NCU Admin,Staff,f049523cc9c0146e38547084be4e957d87e2c239eb422a1a7918b5669259a7be,Official Announcements for The NorthCap University,TRUE,2023-01-10T08:00:00Z,Gurgaon,https://example.com/ncu_admin,500,5000,300
+5,@testing2,testing2@ncuindia.edu,testing2,Student,e7cf3ef4f17c3999a94f2c6f612e8a888e5b1026878e4e19398b23bd38ec221a,Official Announcements for The NorthCap University,TRUE,2023-01-10T08:00:00Z,Gurgaon,https://example.com/ncu_admin,500,5000,300

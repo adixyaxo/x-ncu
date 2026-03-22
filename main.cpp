@@ -821,8 +821,8 @@ int main()
     // ==========================================
     // 1. HOME ROUTE
     // ==========================================
-    CROW_ROUTE(app, "/")([]() 
-    {
+    CROW_ROUTE(app, "/")([]()
+                         {
     if (global_login_stats <= 0) return requireLogin();
 
     crow::mustache::context ctx;
@@ -1293,49 +1293,48 @@ int main()
         return crow::response(404, message_page.render(ctx));
     }
 
-    
+    Current_User = user(search_userID);
 
     crow::mustache::context ctx;
-    ctx["news"] = loadNews();
-    user SearchUser(search_userID);
+    user currentUser(global_login_stats);
 
-    if (SearchUser.isFound())
+    if (currentUser.isFound())
     {
         string initials = "U";
 
-        if (!SearchUser.fullname().empty())
+        if (!currentUser.fullname().empty())
         {
             initials = "";
-            initials += SearchUser.fullname()[0];
+            initials += currentUser.fullname()[0];
 
-            size_t space = SearchUser.fullname().find(' ');
-            if (space != string::npos && space + 1 < SearchUser.fullname().size())
-                initials += SearchUser.fullname()[space + 1];
+            size_t space = currentUser.fullname().find(' ');
+            if (space != string::npos && space + 1 < currentUser.fullname().size())
+                initials += currentUser.fullname()[space + 1];
         }
 
         ctx["user_initials"] = initials;
-        ctx["user_name"] = SearchUser.fullname();
-        ctx["user_handle"] = SearchUser.handle();
+        ctx["user_name"] = currentUser.fullname();
+        ctx["user_handle"] = currentUser.handle();
 
-        ctx["profile_name"] = SearchUser.fullname();
-        ctx["profile_handle"] = SearchUser.handle();
-        string name = SearchUser.fullname();
-        ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
-        ctx["profile_bio"] = SearchUser.bio();
-        ctx["is_verified"] = SearchUser.is_verified();
+        ctx["profile_name"] = Current_User.fullname();
+        ctx["profile_handle"] = Current_User.handle();
+        string name = Current_User.fullname();
+ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
+        ctx["profile_bio"] = Current_User.bio();
+        ctx["is_verified"] = Current_User.is_verified();
 
-        ctx["profile_location"] = SearchUser.location();
-        ctx["profile_link"] = SearchUser.link();
-        ctx["profile_following"] = SearchUser.following_count();
-        ctx["profile_followers"] = SearchUser.followers_count();
-        ctx["profile_posts"] = SearchUser.posts();
+        ctx["profile_location"] = Current_User.location();
+        ctx["profile_link"] = Current_User.link();
+        ctx["profile_following"] = Current_User.following_count();
+        ctx["profile_followers"] = Current_User.followers_count();
+        ctx["profile_posts"] = Current_User.posts();
 
-        if (SearchUser.created_at().size() >= 10)
-            ctx["profile_join_date"] = SearchUser.created_at().substr(0, 10);
+        if (Current_User.created_at().size() >= 10)
+            ctx["profile_join_date"] = Current_User.created_at().substr(0, 10);
         else
-            ctx["profile_join_date"] = SearchUser.created_at();
+            ctx["profile_join_date"] = Current_User.created_at();
 
-        if (search_userID == global_login_stats)
+        if (Current_User.id() == currentUser.id())
             ctx["is_own_profile"] = true;
 
         ctx["has_posts"] = true;
@@ -1511,5 +1510,6 @@ int main()
 
            
         } return crow::response(200, "Profile updated successfully"); });
-    app.bindaddr("127.0.0.1").port(18080).multithreaded().run();
+
+    app.bindaddr("0.0.0.0").port(18080).run();
 }

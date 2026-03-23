@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <jwt-cpp/jwt.h>
 #include "sha256.h"
+#include "otp_service.h"
 
 using namespace std;
 
@@ -1282,6 +1283,18 @@ int main()
         auto variable_page = crow::mustache::load("signup.html");
         return crow::response(variable_page.render()); });
 
+    // POST SEND OTP
+    CROW_ROUTE(app, "/send-otp").methods(crow::HTTPMethod::POST)([](const crow::request &req)
+                                                                 {
+        crow::query_string params("?" + req.body);
+        std::string email = params.get("email") ? params.get("email") : "";
+        if (email.empty()) return crow::response(400, "Email required");
+        if (otp::OTPService::getInstance().generateAndSendOTP(email)) {
+            return crow::response(200, "OTP Sent");
+        }
+        return crow::response(500, "Failed to send OTP");
+    });
+
     // POST REGISTER DATA
     CROW_ROUTE(app, "/register").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                                  {
@@ -1291,10 +1304,17 @@ int main()
         std::string email = params.get("email") ? params.get("email") : "";
         std::string role = params.get("role") ? params.get("role") : "";
         std::string password = params.get("password") ? params.get("password") : "";
+        std::string otp_val = params.get("otp") ? params.get("otp") : "";
 
-        if (name.empty() || email.empty() || role.empty() || password.empty())
+        if (name.empty() || email.empty() || role.empty() || password.empty() || otp_val.empty())
         {
             return crow::response(400, "Error: All fields are required!");
+        }
+
+        if (!otp::OTPService::getInstance().verifyOTP(email, otp_val)) {
+            auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "401"}, {"error_message", "Invalid or Expired OTP"}});
+            return crow::response(401, message_page.render(ctx));
         }
 
         int signup_status = registerUser(email, name, role, password);

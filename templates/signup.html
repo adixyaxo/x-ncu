@@ -272,10 +272,110 @@
                         </div>
 
                         <div class="space-y-2">
-                            <input type="email" name="email" placeholder="University Email (@ncuindia.edu)" required
+                            <input type="email" name="email" id="emailInput" placeholder="University Email (@ncuindia.edu)" required
                                 pattern=".+@ncuindia\.edu" title="Please use your official NCU email"
                                 class="w-full bg-[#0a0b0a]/70 lg:bg-[#0a0b0a]/60 border border-xborder/80 rounded-2xl px-5 py-3.5 text-[16px] lg:text-sm text-xtext placeholder-xmuted/60 lg:placeholder-xmuted/50 font-light focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all">
                         </div>
+
+                        <div class="space-y-2 pt-1">
+                            <div class="flex justify-between items-center gap-1 sm:gap-2 w-full">
+                                <input type="text" maxlength="1" oninput="handleOtpInput(this, 0)" onkeydown="handleOtpBackspace(event, 0)" class="otp-box w-[15%] aspect-square bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl sm:rounded-xl text-center text-xl text-xtext focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all font-mono">
+                                <input type="text" maxlength="1" oninput="handleOtpInput(this, 1)" onkeydown="handleOtpBackspace(event, 1)" class="otp-box w-[15%] aspect-square bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl sm:rounded-xl text-center text-xl text-xtext focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all font-mono">
+                                <input type="text" maxlength="1" oninput="handleOtpInput(this, 2)" onkeydown="handleOtpBackspace(event, 2)" class="otp-box w-[15%] aspect-square bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl sm:rounded-xl text-center text-xl text-xtext focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all font-mono">
+                                <input type="text" maxlength="1" oninput="handleOtpInput(this, 3)" onkeydown="handleOtpBackspace(event, 3)" class="otp-box w-[15%] aspect-square bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl sm:rounded-xl text-center text-xl text-xtext focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all font-mono">
+                                <input type="text" maxlength="1" oninput="handleOtpInput(this, 4)" onkeydown="handleOtpBackspace(event, 4)" class="otp-box w-[15%] aspect-square bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl sm:rounded-xl text-center text-xl text-xtext focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all font-mono">
+                                <input type="text" maxlength="1" oninput="handleOtpInput(this, 5)" onkeydown="handleOtpBackspace(event, 5)" class="otp-box w-[15%] aspect-square bg-[#0a0b0a]/70 border border-xborder/80 rounded-2xl sm:rounded-xl text-center text-xl text-xtext focus:outline-none focus:border-xgold/80 focus:ring-1 focus:ring-xgold/80 transition-all font-mono">
+                            </div>
+                            <input type="hidden" name="otp" id="fullOtpInput" required minlength="6" maxlength="6">
+                            
+                            <div class="flex justify-between items-center px-2 pt-1">
+                                <button type="button" id="resendOtpBtn" onclick="sendOTP()" class="text-[12px] text-xmuted hover:text-xgold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Send OTP</button>
+                                <span id="otpTimer" class="text-[12px] text-xgold font-mono opacity-0 transition-opacity">05:00</span>
+                            </div>
+                        </div>
+
+                        <script>
+                            function handleOtpInput(element, index) {
+                                element.value = element.value.replace(/[^0-9]/g, '');
+                                updateHiddenOtp();
+                                if (element.value !== '' && index < 5) {
+                                    document.querySelectorAll('.otp-box')[index + 1].focus();
+                                }
+                            }
+
+                            function handleOtpBackspace(event, index) {
+                                if (event.key === 'Backspace' && event.target.value === '' && index > 0) {
+                                    document.querySelectorAll('.otp-box')[index - 1].focus();
+                                }
+                            }
+
+                            function updateHiddenOtp() {
+                                const boxes = document.querySelectorAll('.otp-box');
+                                let val = '';
+                                boxes.forEach(b => val += b.value);
+                                document.getElementById('fullOtpInput').value = val;
+                            }
+
+                            let timerInterval;
+
+                            function startTimer(duration) {
+                                let timer = duration, minutes, seconds;
+                                const timerDisplay = document.getElementById('otpTimer');
+                                const btn = document.getElementById('resendOtpBtn');
+                                
+                                timerDisplay.classList.remove('opacity-0');
+                                btn.disabled = true;
+                                btn.innerText = 'Sent';
+
+                                clearInterval(timerInterval);
+                                timerInterval = setInterval(function () {
+                                    minutes = parseInt(timer / 60, 10);
+                                    seconds = parseInt(timer % 60, 10);
+
+                                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                                    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                                    timerDisplay.textContent = minutes + ":" + seconds;
+
+                                    if (--timer < 0) {
+                                        clearInterval(timerInterval);
+                                        btn.disabled = false;
+                                        btn.innerText = 'Resend OTP';
+                                    }
+                                }, 1000);
+                            }
+
+                            function sendOTP() {
+                                const email = document.getElementById('emailInput').value;
+                                if (!email || !email.includes('@ncuindia.edu')) {
+                                    alert('Please enter a valid official NCU email first.');
+                                    return;
+                                }
+                                
+                                const btn = document.getElementById('resendOtpBtn');
+                                btn.innerText = 'Sending...';
+                                btn.disabled = true;
+
+                                fetch('/send-otp', {
+                                    method: 'POST',
+                                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                                    body: 'email=' + encodeURIComponent(email)
+                                })
+                                .then(response => {
+                                    if (response.ok) {
+                                        startTimer(300); // 5 minutes = 300 seconds
+                                    } else {
+                                        btn.innerText = 'Error';
+                                        btn.disabled = false;
+                                        alert('Failed to send OTP. Try again.');
+                                    }
+                                })
+                                .catch(err => {
+                                    btn.innerText = 'Error';
+                                    btn.disabled = false;
+                                });
+                            }
+                        </script>
 
                         <div class="space-y-2">
                             <select name="role" required

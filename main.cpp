@@ -716,18 +716,12 @@ int verify_token(const crow::request &req);
 // Helper function to require login
 crow::response requireLogin(const crow::request &req)
 {
-    if (verify_token(req) <= 0)
+    int userID = verify_token(req);
+    if (userID <= 0)
     {
         crow::response res;
         res.code = 303;
         res.set_header("Location", "/login");
-        return res;
-    }
-    if (verify_token(req) > 0)
-    {
-        crow::response res;
-        res.code = 303;
-        res.set_header("Location", "/");
         return res;
     }
     
@@ -1331,7 +1325,9 @@ int main()
     // GET PROFILE PAGE
     CROW_ROUTE(app, "/profile/<string>")([](const crow::request &req, string username)
                                          {
-    if (verify_token(req)<= 0) {return requireLogin(req);}
+
+    requireLogin(req);
+    int userID = verify_token(req);
 
     if (username[0] != '@')
         username = "@" + username;
@@ -1348,7 +1344,7 @@ int main()
     user profileUser(search_userID);
 
     crow::mustache::context ctx;
-    user currentUser(verify_token(req));
+    user currentUser(userID);
 
     if (currentUser.isFound())
     {

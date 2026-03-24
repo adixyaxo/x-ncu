@@ -85,7 +85,7 @@ public:
 user::user() {}
 
 // Updated constructor to populate the private variables
-user::user(int targetUserNo)
+user::user(int targetUserNo) // constructor -- read data from user.csv ya fir user database --- store krke ek class banaega 
 {
     ifstream file("database/users.csv");
 
@@ -867,7 +867,6 @@ int main()
     addCurrentUserContext(ctx, verify_token(req));
 
     std::vector<crow::mustache::context> posts_vector;
-    std::vector<crow::mustache::context> news_vector;
 
     std::ifstream posts_file("database/posts.csv");
     std::string line;
@@ -1346,7 +1345,7 @@ int main()
     CROW_ROUTE(app, "/profile/<string>")([](const crow::request &req, string username)
                                          {
 
-    requireLogin(req);
+    // requireLogin(req);
     int userID = verify_token(req);
 
     if (username[0] != '@')
@@ -1406,6 +1405,7 @@ int main()
             ctx["is_own_profile"] = true;
 
         ctx["has_posts"] = true;
+        ctx["news"] = loadNews();
 
         auto profile_page = crow::mustache::load("profile.html");
         return crow::response(profile_page.render(ctx));

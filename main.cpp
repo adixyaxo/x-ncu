@@ -85,7 +85,7 @@ public:
 user::user() {}
 
 // Updated constructor to populate the private variables
-user::user(int targetUserNo) // constructor -- read data from user.csv ya fir user database --- store krke ek class banaega 
+user::user(int targetUserNo) // constructor -- read data from user.csv ya fir user database --- store krke ek class banaega
 {
     ifstream file("database/users.csv");
 
@@ -725,7 +725,7 @@ crow::response requireLogin(const crow::request &req)
         res.set_header("Location", "/login");
         return res;
     }
-    
+
     crow::response res;
     res.code = 500;
     res.body = "Invalid login state.";
@@ -814,16 +814,23 @@ int verify_token(const crow::request &req)
     std::string token;
     auto cookie_header = req.get_header_value("Cookie");
     size_t pos = cookie_header.find("token=");
-    
-    if (pos != std::string::npos) {
+
+    if (pos != std::string::npos)
+    {
         size_t end = cookie_header.find(';', pos);
-        if (end == std::string::npos) end = cookie_header.length();
+        if (end == std::string::npos)
+            end = cookie_header.length();
         token = cookie_header.substr(pos + 6, end - (pos + 6));
-    } else {
+    }
+    else
+    {
         auto auth_header = req.get_header_value("Authorization");
-        if (auth_header.size() >= 8 && auth_header.substr(0, 7) == "Bearer ") {
+        if (auth_header.size() >= 8 && auth_header.substr(0, 7) == "Bearer ")
+        {
             token = auth_header.substr(7);
-        } else {
+        }
+        else
+        {
             return -1;
         }
     }
@@ -1291,8 +1298,7 @@ int main()
         if (otp::OTPService::getInstance().generateAndSendOTP(email)) {
             return crow::response(200, "OTP Sent");
         }
-        return crow::response(500, "Failed to send OTP");
-    });
+        return crow::response(500, "Failed to send OTP"); });
 
     // POST REGISTER DATA
     CROW_ROUTE(app, "/register").methods(crow::HTTPMethod::POST)([](const crow::request &req)

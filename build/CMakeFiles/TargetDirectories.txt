@@ -1,3 +1,0 @@
-/mnt/c/Users/adity/Desktop/x-ncu/build/CMakeFiles/X_NCU.dir
-/mnt/c/Users/adity/Desktop/x-ncu/build/CMakeFiles/edit_cache.dir
-/mnt/c/Users/adity/Desktop/x-ncu/build/CMakeFiles/rebuild_cache.dir

@@ -1359,7 +1359,7 @@ int main()
 
     int search_userID = getuserprofile(username);
 
-    if (search_userID <= 0)
+    if (!search_userID)
     {
         auto message_page = crow::mustache::load("message.html");
         crow::mustache::context ctx({{"error_code", "404"}, {"error_message", "User Not Found"}});
@@ -1591,5 +1591,5 @@ int main()
            
         } return crow::response(200, "Profile updated successfully"); });
 
-    app.bindaddr("0.0.0.0").port(18080).run();
+    app.bindaddr("127.0.0.1").port(18080).run();
 }

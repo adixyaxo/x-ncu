@@ -80,6 +80,8 @@ public:
     void following_count(int val) { following_count_private = val; }
     void followers_count(int val) { followers_count_private = val; }
     void created_at(const string &val) { created_at_private = val; }
+
+    void updateUserInCSV();
 };
 
 user::user() {}
@@ -157,6 +159,62 @@ user::user(int targetUserNo) // constructor -- read data from user.csv ya fir us
 }
 
 user::~user() {}
+
+void user::updateUserInCSV()
+{
+    ifstream file("database/users.csv");
+    if (!file.is_open())
+        return;
+
+    vector<string> lines;
+    string line;
+    getline(file, line);
+    lines.push_back(line); // Header
+
+    bool found = false;
+    while (getline(file, line))
+    {
+        if (line.empty())
+            continue;
+        stringstream ss(line);
+        string idStr;
+        getline(ss, idStr, ',');
+
+        if (!idStr.empty() && stoi(idStr) == id_private)
+        {
+            stringstream updated;
+            updated << id_private << ","
+                    << handle_private << ","
+                    << email_private << ","
+                    << fullname_private << ","
+                    << role_private << ","
+                    << password_private << ","
+                    << bio_private << ","
+                    << (is_verified_private ? "TRUE" : "FALSE") << ","
+                    << created_at_private << ","
+                    << location_private << ","
+                    << link_private << ","
+                    << following_count_private << ","
+                    << followers_count_private << ","
+                    << posts_private;
+            lines.push_back(updated.str());
+            found = true;
+        }
+        else
+        {
+            lines.push_back(line);
+        }
+    }
+    file.close();
+
+    if (found)
+    {
+        ofstream outFile("database/users.csv");
+        for (const auto &l : lines)
+            outFile << l << "\n";
+        outFile.close();
+    }
+}
 
 int getuserprofile(const string &username)
 {
@@ -1590,6 +1648,47 @@ int main()
 
            
         } return crow::response(200, "Profile updated successfully"); });
+
+    CROW_ROUTE(app, "/updateprofile").methods(crow::HTTPMethod::POST, crow::HTTPMethod::GET)([](const crow::request &req)
+                                                                                             {
+        if (verify_token(req)<= 0)
+        {
+            return requireLogin(req);
+        }
+
+        user currentUser(verify_token(req));
+
+        if (!currentUser.isFound())
+        {
+            return crow::response(404, "User not found");
+        }
+
+        crow::query_string params("?" + req.body);
+
+        std::string fullname = params.get("fullname") ? params.get("fullname") : "";
+        std::string bio = params.get("bio") ? params.get("bio") : "";
+        std::string location = params.get("location") ? params.get("location") : "";
+        std::string link = params.get("link") ? params.get("link") : "";
+
+        currentUser.fullname(fullname);
+        currentUser.bio(bio);
+        currentUser.location(location);
+        currentUser.link(link);
+        currentUser.updateUserInCSV();
+
+        if (currentUser.fullname()==fullname && currentUser.bio()==bio && currentUser.location()==location && currentUser.link()==link)
+        {
+            crow::response res;
+            res.code = 303;
+            res.set_header("Location", "/profile/" + currentUser.handle());
+            return res;
+        }
+        else
+        {
+            auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "500"}, {"error_message", "Failed to update profile"}});
+            return crow::response(500, message_page.render(ctx));
+        } });
 
     app.bindaddr("127.0.0.1").port(18080).run();
 }

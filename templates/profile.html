@@ -119,6 +119,72 @@
 
         {{#has_posts}}
         <div id="profile-feed-container">
+            {{#posts}}
+            <article
+                class="p-4 border-b border-xborder hover:bg-xborder/10 transition-colors cursor-pointer flex space-x-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-xborder flex-shrink-0 flex items-center justify-center text-sm font-bold mt-1">
+                    {{author_initials}}
+                </div>
+
+                <div class="flex-1">
+                    <div class="flex items-center space-x-1 text-sm">
+                        <a href="/profile/{{author_handle}}" class="font-bold hover:underline">{{author_name}}</a>
+                        {{#is_verified}}
+                        <i class="ph-fill ph-seal-check text-[#1DA1F2] text-[16px] ml-0.5" title="Verified"></i>
+                        {{/is_verified}}
+
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded border ml-1
+                            {{#is_user}}text-xgreen border-xgreen/30 bg-xgreen/10{{/is_user}}
+                            {{#is_prof}}text-blue-400 border-blue-400/30 bg-blue-400/10{{/is_prof}}
+                            {{#is_staff}}text-orange-400 border-orange-400/30 bg-orange-400/10{{/is_staff}}">
+                            {{author_role}}
+                        </span>
+
+                        <span class="text-xmuted ml-1">{{author_handle}} · {{time_ago}}</span>
+                    </div>
+
+                    <div class="mt-1 text-[15px] leading-snug whitespace-pre-wrap">{{body}}</div>
+
+                    <div class="flex justify-between items-center mt-3 text-xmuted w-full max-w-md">
+                        <a href="/updatepost?action=3&id={{id}}"
+                            class="flex items-center space-x-2 hover:text-blue-400 transition-colors group">
+                            <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full">
+                                <i class="ph ph-chat-circle text-lg"></i>
+                            </div>
+                            <span class="text-xs">{{replies}}</span>
+                        </a>
+                        <a href="/updatepost?action=2&id={{id}}"
+                            class="flex items-center space-x-2 hover:text-xgreen transition-colors group">
+                            <div class="p-1.5 group-hover:bg-xgreen/10 rounded-full">
+                                <i class="ph ph-arrows-left-right text-lg"></i>
+                            </div>
+                            <span class="text-xs">{{reposts}}</span>
+                        </a>
+                        <a href="/updatepost?action=1&id={{id}}"
+                            class="flex items-center space-x-2 hover:text-pink-500 transition-colors group">
+                            <div class="p-1.5 group-hover:bg-pink-500/10 rounded-full">
+                                <i class="ph ph-heart text-lg"></i>
+                            </div>
+                            <span class="text-xs">{{likes}}</span>
+                        </a>
+                        {{#can_delete}}
+                        <a href="/deletepost?id={{id}}"
+                            class="flex items-center hover:text-red-500 transition-colors group">
+                            <div class="p-1.5 group-hover:bg-red-500/10 rounded-full">
+                                <i class="ph ph-trash text-lg"></i>
+                            </div>
+                        </a>
+                        {{/can_delete}}
+                        <a href="/updatepost/" class="flex items-center hover:text-blue-400 transition-colors group">
+                            <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full">
+                                <i class="ph ph-export text-lg"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {{/posts}}
         </div>
         {{/has_posts}}
 

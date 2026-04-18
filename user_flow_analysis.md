@@ -31,12 +31,22 @@ All main feeds render using `index.html`, dynamically injecting context based on
 ### 3. Profile Pages
 - **Route: `/profile/<@username>`** (renders `profile.html`)
   - **Features:** Displays a user's public identity. Includes their Name, Handle (`@username`), Bio, verification status, join date, location, personal link, followers count, following count, and total posts. It contextually realizes if the viewing user owns the profile.
-- **Route: `/editprofile`** (renders `edit_profile.html`)
-  - **Features:** A dedicated surface for users to update their profile picture, bio, name, and other personal identifiers.
+- **Route: `/editprofile`** (GET - renders `edit_profile.html`)
+  - **Features:** A dedicated surface for users to update their profile. Form displays pre-filled data: Name, Bio, Location, and Website Link.
+  - **Form Fields:** All profile information is auto-populated from the database before editing.
+- **Route: `/updateprofile`** (POST - processes form submission)
+  - **Features:** Backend endpoint that processes profile updates. Accepts POST requests with form data (fullname, bio, location, link).
+  - **Validation:** Verifies user is logged in and updates their information in the CSV database.
+  - **Redirect:** Upon success, redirects to the user's profile page (`/profile/@handle`).
 
 ### 4. Interactions and Actions (Invisible Routes)
 - **Route: `/post` (POST)**: Endpoint handling the creation of new posts and replies (threads).
 - **Route: `/updatepost` (GET/POST)**: Action endpoint for engaging with existing posts. `action=1` adds a **Like**, while `action=2` triggers a **Retweet**.
+- **Route: `/deletepost` (GET/POST)**: Action endpoint for deleting posts. Only the post owner can delete their own posts.
+  - **Query Parameter:** `id={post_id}` specifies which post to delete.
+  - **Authorization:** Verifies the logged-in user is the post creator before allowing deletion.
+  - **Response:** Returns 403 Forbidden if user is not the post owner. Returns 404 if post doesn't exist.
+  - **Success:** Redirects to home feed (`/`) after deletion.
 - **Route: `/logout`**: Clears the JWT session cookie and gracefully logs the user out.
 
 ---
@@ -60,10 +70,85 @@ All main feeds render using `index.html`, dynamically injecting context based on
 ### Phase 3: Identity & Extensibility
 1. They encounter an interesting user on the feed and click their handle. This routes them to **`/profile/@username`**.
 2. They view the user's bio and follower count. 
-3. Returning to their own profile, they decide to update their profile information and transition to **`/editprofile`** to tweak their displayed data.
-4. Ending their session, they click the exit/logout button triggering **`/logout`**, destroying their session cookie and returning them to the **Login** screen.
+3. Returning to their own profile, they decide to update their profile information and transition to **`/editprofile`** to modify their displayed data.
+   - The form auto-populates with their current Name, Bio, Location, and Website Link.
+   - They make changes and click "Save", submitting a POST request to **`/updateprofile`**.
+   - The backend validates and updates their information in the database, then redirects back to their profile.
+4. While browsing their posts, they decide to delete an old post. They click the delete button, which sends a request to **`/deletepost?id={post_id}`**.
+   - The backend verifies they own the post and removes it from the database.
+   - Upon successful deletion, they are redirected to the home feed.
+5. Ending their session, they click the exit/logout button triggering **`/logout`**, destroying their session cookie and returning them to the **Login** screen.
+
+---
+
+## 📋 Complete Feature Set
+
+### Authentication & User Management
+- ✅ User Registration with Email OTP verification
+- ✅ User Login with JWT token-based sessions
+- ✅ User Logout with session clearing
+- ✅ Role-based access (Student, Teacher, Staff)
+
+### Profile Management
+- ✅ View Public Profiles with user statistics
+- ✅ Edit Profile with all fields pre-populated
+- ✅ Update Profile Information (Name, Bio, Location, Website)
+- ✅ Display Profile Metadata (Join date, Followers, Following, Posts count)
+
+### Post Management
+- ✅ Create Posts (with sanitization for CSV stability)
+- ✅ View Posts on multiple feeds (Home, Students, Teachers, Staff)
+- ✅ Like Posts (with like counter)
+- ✅ Retweet Posts (with retweet counter)
+- ✅ Delete Posts (with ownership verification)
+- ✅ Reply/Thread Support (via parent_id relationships)
+
+### Feed Management
+- ✅ Home Feed (all posts from all users)
+- ✅ Students-only Feed (filtered by role)
+- ✅ Teachers-only Feed (filtered by role)
+- ✅ Staff-only Feed (filtered by role)
+- ✅ Trending News/Sidebar (dynamic content from news.csv)
+
+---
+
+## 🔐 Security Features
+
+### Authorization
+- ✅ JWT-based session management
+- ✅ Login requirement for all authenticated routes
+- ✅ Post deletion restricted to post owner
+- ✅ Profile editing restricted to own profile
+
+### Data Protection
+- ✅ Password hashing using SHA256
+- ✅ Email validation via OTP
+- ✅ Input sanitization (CSV injection prevention)
+- ✅ HTTPOnly cookies for JWT storage
+
+---
+
+## 🐛 Recent Fixes & Improvements
+
+### Profile Update System (Fixed)
+- **Issue:** Profile form using GET method, data not persisting
+- **Fix:** Changed form to POST method, implemented proper `/updateprofile` endpoint
+- **Result:** All profile fields (name, bio, location, link) now persist correctly
+
+### Edit Profile Form (Fixed)
+- **Issue:** Form displaying blank with no pre-filled data
+- **Fix:** Added context variables for bio, location, link in `/editprofile` GET handler
+- **Result:** Form auto-populates with user's current information
+
+### Delete Post Feature (Implemented)
+- **Route:** `/deletepost` with query parameter `id={post_id}`
+- **Security:** Ownership verification - only post creator can delete
+- **Validation:** Returns 403 Forbidden if user doesn't own the post
+- **Result:** Users can now manage their own content
 
 ---
 
 > [!NOTE]
 > Database interactions across the ecosystem are handled predominantly by manipulating `.csv` files natively in C++. For instance, interactions (`likes`, `posts`, `students/teacher/staff feeds`) read and rewrite lines in real-time when actions occur.
+>
+> **Known Limitation:** The likes system currently has no duplicate-prevention mechanism. Users can like the same post multiple times. This can be addressed by implementing a `post_likes.csv` tracking system.

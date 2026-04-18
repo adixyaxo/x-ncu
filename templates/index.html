@@ -125,6 +125,14 @@
                             </div>
                             <span class="text-xs">{{likes}}</span>
                         </a>
+                        {{#can_delete}}
+                        <a href="/deletepost?id={{id}}"
+                            class="flex items-center hover:text-red-500 transition-colors group">
+                            <div class="p-1.5 group-hover:bg-red-500/10 rounded-full">
+                                <i class="ph ph-trash text-lg"></i>
+                            </div>
+                        </a>
+                        {{/can_delete}}
                         <a href="/updatepost/" class="flex items-center hover:text-blue-400 transition-colors group">
                             <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full">
                                 <i class="ph ph-export text-lg"></i>

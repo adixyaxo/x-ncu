@@ -1124,6 +1124,11 @@ int main()
             reply_count.count(p.post_id) ?
             reply_count[p.post_id] : 0;
 
+        // Add delete button flag if current user is post owner
+        int currentUserID = verify_token(req);
+        if (currentUserID > 0 && p.user_id == currentUserID)
+            post_ctx["can_delete"] = true;
+
         if(p.created_at.size() >= 10)
             post_ctx["time_ago"] = p.created_at.substr(0,10);
         else
@@ -1169,32 +1174,36 @@ int main()
 
             std::stringstream ss(line);
             std::string post_id, user_id, content, parent_id, likes_count, retweets_count, created_at, role;
-            
+
             std::getline(ss, post_id, ','); std::getline(ss, user_id, ','); std::getline(ss, content, ',');
             std::getline(ss, parent_id, ','); std::getline(ss, likes_count, ','); std::getline(ss, retweets_count, ',');
-            std::getline(ss, created_at, ','); std::getline(ss, role, ','); 
-        
+            std::getline(ss, created_at, ','); std::getline(ss, role, ',');
+
             if (!role.empty() && role.back() == '\r') role.pop_back();
             if (user_id.empty()) continue;
-        
+
             int safe_user_id = -1;
             try { safe_user_id = stoi(user_id); } catch (...) { continue; }
-        
+
+            int post_id_int = -1;
+            try { post_id_int = stoi(post_id); } catch (...) { continue; }
+
             crow::mustache::context post_ctx;
+            post_ctx["id"] = post_id_int;
             post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = retweets_count;
-            post_ctx["replies"] = 0; 
+            post_ctx["replies"] = 0;
             if (created_at.size() >= 10)
                 post_ctx["time_ago"] = created_at.substr(0, 10);
             else
                 post_ctx["time_ago"] = created_at;
-            
+
             user post_author(safe_user_id);
             if(post_author.isFound()) {
                 post_ctx["author_name"] = post_author.fullname();
                 post_ctx["author_handle"] = post_author.handle();
                 post_ctx["author_role"] = role;
                 post_ctx["is_verified"] = post_author.is_verified();
-                
+
                 string author_initials = "";
                 if (!post_author.fullname().empty()) {
                     author_initials += post_author.fullname()[0];
@@ -1210,6 +1219,11 @@ int main()
                 post_ctx["is_prof"] = (role == "teacher" || role == "Teacher");
                 post_ctx["is_staff"] = (role == "staff" || role == "Staff");
             }
+
+            // Add delete button flag if current user is post owner
+            if (userID > 0 && safe_user_id == userID)
+                post_ctx["can_delete"] = true;
+
             posts_vector.push_back(post_ctx); 
         }
         ctx["posts"] = std::move(posts_vector);
@@ -1252,32 +1266,36 @@ int main()
 
             std::stringstream ss(line);
             std::string post_id, user_id, content, parent_id, likes_count, retweets_count, created_at, role;
-            
+
             std::getline(ss, post_id, ','); std::getline(ss, user_id, ','); std::getline(ss, content, ',');
             std::getline(ss, parent_id, ','); std::getline(ss, likes_count, ','); std::getline(ss, retweets_count, ',');
-            std::getline(ss, created_at, ','); std::getline(ss, role, ','); 
-        
+            std::getline(ss, created_at, ','); std::getline(ss, role, ',');
+
             if (!role.empty() && role.back() == '\r') role.pop_back();
             if (user_id.empty()) continue;
-        
+
             int safe_user_id = -1;
             try { safe_user_id = stoi(user_id); } catch (...) { continue; }
-        
+
+            int post_id_int = -1;
+            try { post_id_int = stoi(post_id); } catch (...) { continue; }
+
             crow::mustache::context post_ctx;
+            post_ctx["id"] = post_id_int;
             post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = retweets_count;
-            post_ctx["replies"] = 0; 
+            post_ctx["replies"] = 0;
             if (created_at.size() >= 10)
                 post_ctx["time_ago"] = created_at.substr(0, 10);
             else
                 post_ctx["time_ago"] = created_at;
-            
+
             user post_author(safe_user_id);
             if(post_author.isFound()) {
                 post_ctx["author_name"] = post_author.fullname();
                 post_ctx["author_handle"] = post_author.handle();
                 post_ctx["author_role"] = role;
                 post_ctx["is_verified"] = post_author.is_verified();
-                
+
                 string author_initials = "";
                 if (!post_author.fullname().empty()) {
                     author_initials += post_author.fullname()[0];
@@ -1293,6 +1311,11 @@ int main()
                 post_ctx["is_prof"] = (role == "teacher" || role == "Teacher");
                 post_ctx["is_staff"] = (role == "staff" || role == "Staff");
             }
+
+            // Add delete button flag if current user is post owner
+            if (userID > 0 && safe_user_id == userID)
+                post_ctx["can_delete"] = true;
+
             posts_vector.push_back(post_ctx); 
         }
         ctx["posts"] = std::move(posts_vector);
@@ -1335,32 +1358,36 @@ int main()
 
             std::stringstream ss(line);
             std::string post_id, user_id, content, parent_id, likes_count, retweets_count, created_at, role;
-            
+
             std::getline(ss, post_id, ','); std::getline(ss, user_id, ','); std::getline(ss, content, ',');
             std::getline(ss, parent_id, ','); std::getline(ss, likes_count, ','); std::getline(ss, retweets_count, ',');
-            std::getline(ss, created_at, ','); std::getline(ss, role, ','); 
-        
+            std::getline(ss, created_at, ','); std::getline(ss, role, ',');
+
             if (!role.empty() && role.back() == '\r') role.pop_back();
             if (user_id.empty()) continue;
-        
+
             int safe_user_id = -1;
             try { safe_user_id = stoi(user_id); } catch (...) { continue; }
-        
+
+            int post_id_int = -1;
+            try { post_id_int = stoi(post_id); } catch (...) { continue; }
+
             crow::mustache::context post_ctx;
+            post_ctx["id"] = post_id_int;
             post_ctx["body"] = content; post_ctx["likes"] = likes_count; post_ctx["reposts"] = retweets_count;
-            post_ctx["replies"] = 0; 
+            post_ctx["replies"] = 0;
             if (created_at.size() >= 10)
                 post_ctx["time_ago"] = created_at.substr(0, 10);
             else
                 post_ctx["time_ago"] = created_at;
-            
+
             user post_author(safe_user_id);
             if(post_author.isFound()) {
                 post_ctx["author_name"] = post_author.fullname();
                 post_ctx["author_handle"] = post_author.handle();
                 post_ctx["author_role"] = role;
                 post_ctx["is_verified"] = post_author.is_verified();
-                
+
                 string author_initials = "";
                 if (!post_author.fullname().empty()) {
                     author_initials += post_author.fullname()[0];
@@ -1376,6 +1403,11 @@ int main()
                 post_ctx["is_prof"] = (role == "teacher" || role == "Teacher");
                 post_ctx["is_staff"] = (role == "staff" || role == "Staff");
             }
+
+            // Add delete button flag if current user is post owner
+            if (userID > 0 && safe_user_id == userID)
+                post_ctx["can_delete"] = true;
+
             posts_vector.push_back(post_ctx); 
         }
         ctx["posts"] = std::move(posts_vector);
@@ -1540,7 +1572,82 @@ int main()
         if (profileUser.id() == currentUser.id())
             ctx["is_own_profile"] = true;
 
-        ctx["has_posts"] = true;
+        // Load posts for this user
+        std::vector<crow::mustache::context> posts_vector;
+        std::ifstream posts_file("database/posts.csv");
+        std::string line;
+
+        if (posts_file.good())
+            std::getline(posts_file, line); // skip header
+
+        while (std::getline(posts_file, line))
+        {
+            if (line.empty()) continue;
+
+            std::stringstream ss(line);
+            std::string post_id_str, user_id_str, content, parent_id_str, likes_str, reposts_str, created_at, role;
+
+            std::getline(ss, post_id_str, ',');
+            std::getline(ss, user_id_str, ',');
+            std::getline(ss, content, ',');
+            std::getline(ss, parent_id_str, ',');
+            std::getline(ss, likes_str, ',');
+            std::getline(ss, reposts_str, ',');
+            std::getline(ss, created_at, ',');
+            std::getline(ss, role);
+
+            if (role.empty() || role.back() == '\r') continue;
+            if (user_id_str.empty()) continue;
+
+            int safe_user_id = -1;
+            try { safe_user_id = stoi(user_id_str); } catch (...) { continue; }
+
+            // Only load posts from the profile user
+            if (safe_user_id != profileUser.id()) continue;
+
+            int post_id = -1;
+            try { post_id = stoi(post_id_str); } catch (...) { continue; }
+
+            crow::mustache::context post_ctx;
+            post_ctx["id"] = post_id;
+            post_ctx["body"] = content;
+            post_ctx["likes"] = likes_str;
+            post_ctx["reposts"] = reposts_str;
+            post_ctx["replies"] = 0;
+            post_ctx["author_name"] = profileUser.fullname();
+            post_ctx["author_handle"] = profileUser.handle();
+            post_ctx["author_role"] = role;
+            post_ctx["is_verified"] = profileUser.is_verified();
+            post_ctx["author_initials"] = ctx["profile_initials"];
+
+            post_ctx["is_user"] = (role == "student" || role == "Student");
+            post_ctx["is_prof"] = (role == "teacher" || role == "Teacher");
+            post_ctx["is_staff"] = (role == "staff" || role == "Staff");
+
+            if (created_at.size() >= 10)
+                post_ctx["time_ago"] = created_at.substr(0, 10);
+            else
+                post_ctx["time_ago"] = created_at;
+
+            // Add flag for delete button (only show if current user owns post)
+            if (profileUser.id() == currentUser.id())
+                post_ctx["can_delete"] = true;
+
+            posts_vector.push_back(post_ctx);
+        }
+
+        posts_file.close();
+
+        if (!posts_vector.empty())
+        {
+            ctx["has_posts"] = true;
+            ctx["posts"] = std::move(posts_vector);
+        }
+        else
+        {
+            ctx["has_posts"] = false;
+        }
+
         ctx["news"] = loadNews();
 
         auto profile_page = crow::mustache::load("profile.html");

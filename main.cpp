@@ -1577,6 +1577,17 @@ int main()
         std::ifstream posts_file("database/posts.csv");
         std::string line;
 
+        // Pre-compute profile initials
+        std::string profile_initials_str = "";
+        if (!profileUser.fullname().empty()) {
+            profile_initials_str += profileUser.fullname()[0];
+            size_t space_pos = profileUser.fullname().find(' ');
+            if (space_pos != std::string::npos && space_pos + 1 < profileUser.fullname().length()) {
+                profile_initials_str += profileUser.fullname()[space_pos + 1];
+            }
+        }
+        if (profile_initials_str.empty()) profile_initials_str = "U";
+
         if (posts_file.good())
             std::getline(posts_file, line); // skip header
 
@@ -1596,7 +1607,10 @@ int main()
             std::getline(ss, created_at, ',');
             std::getline(ss, role);
 
-            if (role.empty() || role.back() == '\r') continue;
+            // Remove carriage return if present
+            if (!role.empty() && role.back() == '\r')
+                role.pop_back();
+
             if (user_id_str.empty()) continue;
 
             int safe_user_id = -1;
@@ -1618,7 +1632,7 @@ int main()
             post_ctx["author_handle"] = profileUser.handle();
             post_ctx["author_role"] = role;
             post_ctx["is_verified"] = profileUser.is_verified();
-            post_ctx["author_initials"] = ctx["profile_initials"];
+            post_ctx["author_initials"] = profile_initials_str;
 
             post_ctx["is_user"] = (role == "student" || role == "Student");
             post_ctx["is_prof"] = (role == "teacher" || role == "Teacher");

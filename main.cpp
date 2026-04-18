@@ -489,6 +489,7 @@ public:
     ~post();
     static post getpost(int id);
     static void savepost(const post &p);
+    static bool deletepost(int post_id);
 };
 
 post::post()
@@ -764,6 +765,77 @@ void post::savepost(const post &p)
     }
 
     outFile.close();
+}
+
+bool post::deletepost(int post_id)
+{
+    string filePath = "database/posts.csv";
+
+    ifstream inFile(filePath);
+    if (!inFile.is_open())
+    {
+        cerr << "Error: Could not open posts.csv\n";
+        return false;
+    }
+
+    vector<string> lines;
+    string line;
+    bool found = false;
+
+    // Save header
+    getline(inFile, line);
+    lines.push_back(line);
+
+    while (getline(inFile, line))
+    {
+        if (line.empty())
+        {
+            continue;
+        }
+
+        stringstream ss(line);
+        string idStr;
+
+        getline(ss, idStr, ',');
+
+        try
+        {
+            int currentId = stoi(idStr);
+
+            if (currentId == post_id)
+            {
+                // Skip this post (delete it)
+                found = true;
+            }
+            else
+            {
+                lines.push_back(line);
+            }
+        }
+        catch (...)
+        {
+            lines.push_back(line);
+        }
+    }
+
+    inFile.close();
+
+    if (!found)
+    {
+        cerr << "Post ID not found\n";
+        return false;
+    }
+
+    // Rewrite the entire file without the deleted post
+    ofstream outFile(filePath);
+
+    for (const auto &l : lines)
+    {
+        outFile << l << "\n";
+    }
+
+    outFile.close();
+    return true;
 }
 
 //=================================
@@ -1617,6 +1689,84 @@ int main()
             res.set_header("Location", "/");
             return res; });
 
+    // ==========================================
+    // DELETE POST ROUTE
+    // ==========================================
+    CROW_ROUTE(app, "/deletepost").methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
+                                                                                           {
+        if (verify_token(req)<= 0)
+        {
+            crow::response res;
+            res.code = 303;
+            res.set_header("Location", "/login");
+            return res;
+        }
+
+        std::string post_id_str = "";
+
+        if (req.method == crow::HTTPMethod::GET)
+        {
+            post_id_str = req.url_params.get("id") ? req.url_params.get("id") : "";
+        }
+        else if (req.method == crow::HTTPMethod::POST)
+        {
+            crow::query_string params("?" + req.body);
+            post_id_str = params.get("id") ? params.get("id") : "";
+        }
+
+        if (post_id_str.empty())
+        {
+            auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "400"}, {"error_message", "Post ID is required"}});
+            return crow::response(400, message_page.render(ctx));
+        }
+
+        int post_id = -1;
+        try
+        {
+            post_id = stoi(post_id_str);
+        }
+        catch (...)
+        {
+            auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "400"}, {"error_message", "Invalid post ID"}});
+            return crow::response(400, message_page.render(ctx));
+        }
+
+        post p = post::getpost(post_id);
+
+        if (!p.isFound())
+        {
+            auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "404"}, {"error_message", "Post not found"}});
+            return crow::response(404, message_page.render(ctx));
+        }
+
+        int logged_in_user = verify_token(req);
+
+        // Check if the logged-in user is the owner of the post
+        if (p.user_id() != logged_in_user)
+        {
+            auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "403"}, {"error_message", "You can only delete your own posts"}});
+            return crow::response(403, message_page.render(ctx));
+        }
+
+        // Delete the post
+        if (post::deletepost(post_id))
+        {
+            crow::response res;
+            res.code = 303;
+            res.set_header("Location", "/");
+            return res;
+        }
+        else
+        {
+            auto message_page = crow::mustache::load("message.html");
+            crow::mustache::context ctx({{"error_code", "500"}, {"error_message", "Failed to delete post"}});
+            return crow::response(500, message_page.render(ctx));
+        } });
+
     CROW_ROUTE(app, "/editprofile").methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
                                                                                            {
         if (verify_token(req)<= 0)
@@ -1642,14 +1792,18 @@ int main()
 
             ctx["profile_name"] = currentUser.fullname();
             ctx["profile_handle"] = currentUser.handle();
+            ctx["profile_bio"] = currentUser.bio();
+            ctx["profile_location"] = currentUser.location();
+            ctx["profile_link"] = currentUser.link();
+            ctx["profile_initials"] = initials;
             string name = currentUser.fullname();
             auto profile_page = crow::mustache::load("edit_profile.html");
             return crow::response(profile_page.render(ctx));
 
-           
+
         } return crow::response(200, "Profile updated successfully"); });
 
-    CROW_ROUTE(app, "/updateprofile").methods(crow::HTTPMethod::POST, crow::HTTPMethod::GET)([](const crow::request &req)
+    CROW_ROUTE(app, "/updateprofile").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                                                              {
         if (verify_token(req)<= 0)
         {

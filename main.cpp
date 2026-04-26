@@ -1,3 +1,10 @@
+/*
+ * OVERVIEW:
+ * This is the main server file for the X-NCU application.
+ * It handles all the website links (like home, profile, login).
+ * It reads and writes data to simple CSV files instead of a big database.
+ * It also uses tokens to keep users logged in safely.
+ */
 #include "crow.h"
 #include <iostream>
 #include <fstream>
@@ -14,6 +21,12 @@
 
 using namespace std;
 
+/*
+ * USER CLASS:
+ * This part defines what a "user" is in our system.
+ * It holds details like their name, email, password, and followers.
+ * It also has tools to save these details back into the users.csv file.
+ */
 class user
 {
 private:
@@ -102,6 +115,12 @@ user::user(int targetUserNo) // constructor -- read data from user.csv ya fir us
         if (line.empty())
             continue; // Skip blank lines
 
+        /*
+         * BREAKING DOWN THE LINE:
+         * We use a 'stringstream' to treat the text line like a mini-file.
+         * Then, we use 'getline' to read word by word, stopping at every comma.
+         * This is how we split the CSV row into separate pieces of data.
+         */
         stringstream ss(line);
         string idStr;
 
@@ -110,6 +129,12 @@ user::user(int targetUserNo) // constructor -- read data from user.csv ya fir us
         if (idStr.empty())
             continue; // Skip if no ID is found
 
+        /*
+         * SAFE CONVERSION:
+         * Since the ID from the file is text, we must convert it to a number using 'stoi'.
+         * We use 'try-catch' because if the text is corrupted and isn't a number, 
+         * the program will crash. The 'catch' block stops the crash and just skips the bad user.
+         */
         int current_id = -1;
         try
         {
@@ -166,6 +191,13 @@ void user::updateUserInCSV()
     if (!file.is_open())
         return;
 
+    /*
+     * UPDATING A CSV FILE:
+     * You cannot easily change a single line in the middle of a text file.
+     * So, we read every single line into a list (vector) in memory.
+     * When we find the user we want to update, we replace their old line with the new data.
+     * Finally, we erase the old file and write the entire list back to it.
+     */
     vector<string> lines;
     string line;
     getline(file, line);
@@ -216,6 +248,11 @@ void user::updateUserInCSV()
     }
 }
 
+/*
+ * GET USER PROFILE:
+ * This tool searches the users.csv file to find someone by their username.
+ * If it finds them, it gives back their secret ID number.
+ */
 int getuserprofile(const string &username)
 {
     ifstream file("database/users.csv");
@@ -267,6 +304,12 @@ int getuserprofile(const string &username)
     return -1;
 }
 
+/*
+ * AUTHENTICATE USER:
+ * This checks if the email and password entered match our records.
+ * It reads the users.csv file and compares passwords safely.
+ * If correct, it lets the user log in.
+ */
 int authenticateUser(const string &inputEmail, const string &inputPassword)
 {
     // 1. Open the CSV file
@@ -328,6 +371,12 @@ int authenticateUser(const string &inputEmail, const string &inputPassword)
     return 0; // Return 0 here to trigger your "User Not Found" response
 }
 
+/*
+ * REGISTER USER:
+ * This adds a brand new user to our system.
+ * It creates a new row in the users.csv file with all their details.
+ * It also makes sure their email is not already taken.
+ */
 int registerUser(const string &email, const string &fullName, const string &role, const string &password)
 {
     string filePath = "database/users.csv";
@@ -447,6 +496,12 @@ int registerUser(const string &email, const string &fullName, const string &role
     return newId;
 }
 
+/*
+ * POST CLASS:
+ * This part manages all the posts (like tweets) made by users.
+ * It keeps track of who posted it, what it says, and how many likes it has.
+ * It also saves new posts into the posts.csv file.
+ */
 class post
 {
 private:
@@ -511,6 +566,12 @@ post::post(const string &content_input, int user_id, int parent_id)
     role_private = "";
     isFound_private = false;
 
+    /*
+     * FIXING BAD INPUT (SANITIZATION):
+     * A CSV file uses newlines for new rows and commas for new columns.
+     * If a user types a comma or presses enter in their post, it will completely break our database!
+     * To fix this, we replace all enter keys with a space, and all commas with a semicolon.
+     */
     // 1. SANITIZE THE INPUT (Crucial for CSV stability)
     content_private = content_input;
     for (char &c : content_private)
@@ -528,6 +589,11 @@ post::post(const string &content_input, int user_id, int parent_id)
     string filePath = "database/posts.csv";
     ifstream inFile(filePath);
 
+    /*
+     * FINDING THE NEXT ID:
+     * To give this new post a unique ID, we read the entire file to find the biggest ID currently used.
+     * Then, we just add 1 to it. This ensures no two posts have the same number.
+     */
     int maxId = 0;
 
     if (inFile.is_open())
@@ -939,6 +1005,11 @@ vector<crow::mustache::context> loadNews()
 
 // verify function
 
+/*
+ * VERIFY TOKEN:
+ * This checks the secret digital badge (token) of the user.
+ * It makes sure the user is actually logged in before letting them see private pages.
+ */
 int verify_token(const crow::request &req)
 {
     std::string token;
@@ -967,6 +1038,13 @@ int verify_token(const crow::request &req)
 
     try
     {
+        /*
+         * CHECKING THE TOKEN'S MATH:
+         * This uses a complex math formula (algorithm) and a secret password 
+         * to check if the token is real or fake.
+         * If someone tried to make their own fake token, the math will fail and we reject them.
+         * If the math is correct, we read the user's ID hidden inside the token and return it.
+         */
         auto decoded = jwt::decode(token);
 
         jwt::verify()
@@ -986,6 +1064,11 @@ int verify_token(const crow::request &req)
     }
 }
 
+/*
+ * MAIN FUNCTION:
+ * This is the starting point of the whole website.
+ * It turns on the server and lists all the web pages users can visit.
+ */
 int main()
 {
     crow::SimpleApp app;
@@ -994,6 +1077,11 @@ int main()
     // ==========================================
     // 1. HOME ROUTE
     // ==========================================
+    /*
+     * HOME PAGE ROUTE (/):
+     * This prepares the main feed where you see all posts.
+     * It checks if you are logged in, loads posts from the database, and sends them to the webpage.
+     */
     CROW_ROUTE(app, "/")([](const crow::request &req)
                          {
     if (verify_token(req)<= 0) return requireLogin(req);
@@ -1083,6 +1171,11 @@ int main()
             reply_count[p.parent_id]++;
     }
 
+    /*
+     * SORTING POSTS:
+     * This takes all the posts we loaded into memory and sorts them.
+     * It compares the IDs (which go up automatically) to put the highest ID (newest post) at the top of the list.
+     */
     // Sort newest first
     std::sort(posts.begin(),posts.end(),
         [](const PostData &a,const PostData &b)
@@ -1150,6 +1243,10 @@ int main()
     // ==========================================
     // 2. STUDENTS FEED ROUTE
     // ==========================================
+    /*
+     * STUDENTS FEED ROUTE (/students):
+     * This is a special feed that only shows posts made by students.
+     */
     CROW_ROUTE(app, "/students")([](const crow::request &req)
                                  {
                                     int userID = verify_token(req);
@@ -1510,6 +1607,11 @@ int main()
         } });
 
     // GET PROFILE PAGE
+    /*
+     * PROFILE PAGE ROUTE (/profile/<username>):
+     * This loads a specific user's personal page.
+     * It shows their details and only the posts they have made.
+     */
     CROW_ROUTE(app, "/profile/<string>")([](const crow::request &req, string username)
                                          {
 

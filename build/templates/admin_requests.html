@@ -1,0 +1,86 @@
+{{>head.html}}
+
+<body class="bg-xblack text-xtext font-sans antialiased flex h-screen overflow-hidden">
+
+    {{>leftsidebar.html}}
+
+    <main class="flex-1 border-r border-xborder h-full overflow-y-auto no-scrollbar relative">
+
+        <div class="sticky top-0 z-30 bg-xblack/90 backdrop-blur-md border-b border-xborder">
+            <header class="flex items-center px-4 py-3 space-x-4">
+                <a href="/" class="p-2 hover:bg-xborder/50 rounded-full transition-colors cursor-pointer">
+                    <i class="ph ph-arrow-left text-xl"></i>
+                </a>
+                <div>
+                    <h2 class="text-xl font-bold">Access Requests</h2>
+                    <p class="text-xs text-xmuted">Pending approvals</p>
+                </div>
+            </header>
+        </div>
+
+        {{^requests}}
+        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <h2 class="text-3xl font-extrabold mb-2">No pending requests</h2>
+            <p class="text-xmuted text-[15px]">All cross-programme access requests have been processed.</p>
+        </div>
+        {{/requests}}
+
+        {{#requests}}
+        <div id="requests-container">
+            {{#requests}}
+            <article class="p-4 border-b border-xborder hover:bg-xborder/10 transition-colors flex justify-between items-center">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold">{{user_name}}</span>
+                        <span class="text-xmuted text-sm">(User #{{user_id}})</span>
+                    </div>
+                    <p class="text-[15px] mt-1 text-xtext">Requesting access to: <span class="font-bold">{{target_programme}}</span></p>
+                </div>
+                <div class="flex space-x-2 ml-4">
+                    <button data-request-id="{{request_id}}" onclick="approveRequest(this)" class="bg-xgreen hover:bg-xgreen/80 text-xblack font-bold px-4 py-2 rounded-full transition-colors">
+                        Approve
+                    </button>
+                    <button data-request-id="{{request_id}}" onclick="rejectRequest(this)" class="border border-red-500 hover:bg-red-500/10 text-red-500 font-bold px-4 py-2 rounded-full transition-colors">
+                        Reject
+                    </button>
+                </div>
+            </article>
+            {{/requests}}
+        </div>
+        {{/requests}}
+
+    </main>
+
+    {{>rightsidebar.html}}
+
+    <script>
+        async function approveRequest(btn) {
+            const requestId = btn.getAttribute('data-request-id');
+            const response = await fetch('/approve-request?request_id=' + requestId, {
+                method: 'POST'
+            });
+            if (response.ok) {
+                btn.closest('article').remove();
+                alert('Request approved');
+            } else {
+                alert('Failed to approve request');
+            }
+        }
+
+        async function rejectRequest(btn) {
+            const requestId = btn.getAttribute('data-request-id');
+            const response = await fetch('/reject-request?request_id=' + requestId, {
+                method: 'POST'
+            });
+            if (response.ok) {
+                btn.closest('article').remove();
+                alert('Request rejected');
+            } else {
+                alert('Failed to reject request');
+            }
+        }
+    </script>
+
+</body>
+
+</html>

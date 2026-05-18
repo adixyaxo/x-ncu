@@ -1,0 +1,60 @@
+{{>head.html}}
+
+<body class="bg-xblack text-xtext font-sans antialiased flex h-screen overflow-hidden">
+
+    {{>leftsidebar.html}}
+
+    <main class="flex-1 border-r border-xborder h-full overflow-y-auto no-scrollbar relative">
+
+        <div class="sticky top-0 z-30 bg-xblack/90 backdrop-blur-md border-b border-xborder">
+            <header class="flex items-center px-4 py-3 space-x-4">
+                <a href="/profile/{{target_handle}}" class="p-2 hover:bg-xborder/50 rounded-full transition-colors cursor-pointer">
+                    <i class="ph ph-arrow-left text-xl"></i>
+                </a>
+                <div>
+                    <h2 class="text-xl font-bold">{{target_user}}</h2>
+                    <p class="text-xs text-xmuted">Following</p>
+                </div>
+            </header>
+        </div>
+
+        {{^following}}
+        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <h2 class="text-3xl font-extrabold mb-2">Not following anyone</h2>
+            <p class="text-xmuted text-[15px]">When they follow people, they'll show up here.</p>
+        </div>
+        {{/following}}
+
+        {{#following}}
+        <div id="following-container">
+            {{#following}}
+            <article class="p-4 border-b border-xborder hover:bg-xborder/10 transition-colors cursor-pointer flex justify-between items-center">
+                <a href="/profile/{{handle}}" class="flex-1 flex space-x-3">
+                    <div class="w-12 h-12 rounded-full bg-xborder flex-shrink-0 flex items-center justify-center text-sm font-bold">
+                        {{fullname}}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center space-x-1">
+                            <span class="font-bold hover:underline">{{fullname}}</span>
+                        </div>
+                        <p class="text-xmuted text-sm">{{handle}}</p>
+                        <p class="text-[15px] mt-1 text-xtext leading-snug">{{bio}}</p>
+                    </div>
+                </a>
+                <button data-user-id="{{id}}" onclick="toggleFollow(this)" class="ml-4 follow-btn border border-xborder hover:bg-xborder/30 font-bold px-4 py-1.5 rounded-full transition-colors">
+                    Following
+                </button>
+            </article>
+            {{/following}}
+        </div>
+        {{/following}}
+
+    </main>
+
+    {{>rightsidebar.html}}
+
+    <script src="/static/script.js"></script>
+
+</body>
+
+</html>

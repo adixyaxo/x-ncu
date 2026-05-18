@@ -1,0 +1,95 @@
+{{>head.html}}
+
+<body class="bg-xblack text-xtext font-sans antialiased flex h-screen overflow-hidden">
+
+    {{>leftsidebar.html}}
+
+    <main class="flex-1 border-r border-xborder h-full overflow-y-auto no-scrollbar relative">
+
+        <div class="sticky top-0 z-30 bg-xblack/90 backdrop-blur-md border-b border-xborder">
+            <header class="flex items-center px-4 py-3 space-x-4">
+                <a href="/" class="p-2 hover:bg-xborder/50 rounded-full transition-colors cursor-pointer">
+                    <i class="ph ph-arrow-left text-xl"></i>
+                </a>
+                <div>
+                    <h2 class="text-xl font-bold">{{programme}}</h2>
+                    <p class="text-xs text-xmuted">Academic Hub</p>
+                </div>
+            </header>
+        </div>
+
+        {{#needs_access}}
+        <div class="p-6 border-b border-xborder">
+            <div class="border border-xborder bg-xdark/60 rounded-lg p-5">
+                <h2 class="text-2xl font-extrabold mb-2">Request access to {{programme}}</h2>
+                <p class="text-xmuted text-[15px] leading-relaxed mb-4">
+                    This hub is visible in navigation, but posts are private to members of the programme and approved cross-programme visitors.
+                </p>
+                <button data-programme="{{hub_slug}}" onclick="requestHubAccess(this)"
+                    class="bg-xgreen text-xblack font-bold px-5 py-2 rounded-full hover:bg-opacity-90 transition-colors">
+                    Request access
+                </button>
+            </div>
+        </div>
+        {{/needs_access}}
+
+        {{#has_access}}
+        {{^posts}}
+        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <h2 class="text-3xl font-extrabold mb-2">No posts yet</h2>
+            <p class="text-xmuted text-[15px]">Be the first to post in this hub.</p>
+        </div>
+        {{/posts}}
+
+        {{#posts}}
+        <div id="hub-feed-container">
+            {{#posts}}
+            <article
+                class="p-4 border-b border-xborder hover:bg-xborder/10 transition-colors cursor-pointer flex space-x-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-xborder flex-shrink-0 flex items-center justify-center text-sm font-bold mt-1">
+                    {{author_initials}}
+                </div>
+
+                <div class="flex-1">
+                    <div class="flex items-center space-x-1 text-sm">
+                        <a href="/profile/{{author_handle}}" class="font-bold hover:underline">{{author}}</a>
+                        {{#is_admin}}
+                        <i class="ph-fill ph-seal-check text-black bg-white rounded-full text-[16px] ml-0.5"
+                            title="Admin"></i>
+                        {{/is_admin}}
+                        {{^is_admin}}
+                        {{#is_verified}}
+                        <i class="ph-fill ph-seal-check text-[#1DA1F2] text-[16px] ml-0.5" title="Verified"></i>
+                        {{/is_verified}}
+                        {{/is_admin}}
+                        <span class="text-xmuted">{{author_handle}} · {{time_ago}}</span>
+                    </div>
+
+                    <div class="mt-1 text-[15px] leading-snug whitespace-pre-wrap">{{content}}</div>
+
+                    <div class="flex justify-between items-center mt-3 text-xmuted w-full max-w-md">
+                        <button data-post-id="{{post_id}}" onclick="likePost(this)"
+                            class="flex items-center space-x-2 hover:text-pink-500 transition-colors group like-btn">
+                            <div class="p-1.5 group-hover:bg-pink-500/10 rounded-full">
+                                <i class="ph {{#liked}}ph-fill{{/liked}} ph-heart text-lg"></i>
+                            </div>
+                            <span class="text-xs">{{likes}}</span>
+                        </button>
+                    </div>
+                </div>
+            </article>
+            {{/posts}}
+        </div>
+        {{/posts}}
+        {{/has_access}}
+
+    </main>
+
+    {{>rightsidebar.html}}
+
+    <script src="/static/script.js"></script>
+
+</body>
+
+</html>

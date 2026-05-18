@@ -86,13 +86,20 @@
                 <div class="flex-1">
                     <div class="flex items-center space-x-1 text-sm">
                         <a href="/profile/{{author_handle}}" class="font-bold hover:underline">{{author_name}}</a>
+                        {{#is_admin}}
+                        <i class="ph-fill ph-seal-check text-black bg-white rounded-full text-[16px] ml-0.5"
+                            title="Admin"></i>
+                        {{/is_admin}}
+                        {{^is_admin}}
                         {{#is_verified}}
                         <i class="ph-fill ph-seal-check text-[#1DA1F2] text-[16px] ml-0.5" title="Verified"></i>
                         {{/is_verified}}
+                        {{/is_admin}}
 
                         <span class="text-[10px] font-bold px-1.5 py-0.5 rounded border ml-1
                             {{#is_user}}text-xgreen border-xgreen/30 bg-xgreen/10{{/is_user}}
                             {{#is_prof}}text-blue-400 border-blue-400/30 bg-blue-400/10{{/is_prof}}
+                            {{#is_admin}}text-white border-white/30 bg-white/10{{/is_admin}}
                             {{#is_staff}}text-orange-400 border-orange-400/30 bg-orange-400/10{{/is_staff}}">
                             {{author_role}}
                         </span>

@@ -12,7 +12,7 @@
             </a>
             <div>
                 <h2 class="text-xl font-bold leading-tight">{{profile_name}}</h2>
-                <p class="text-xs text-xmuted">{{profile_post_count}} posts</p>
+                <p class="text-xs text-xmuted">{{profile_posts}} posts</p>
             </div>
         </header>
 
@@ -43,17 +43,37 @@
                     </a>
                     {{/is_own_profile}}
                     {{^is_own_profile}}
-                    <button
+                    {{#is_following}}
+                    <button data-user-id="{{profile_user_id}}" onclick="toggleFollow(this)"
+                        class="follow-btn border border-xborder hover:bg-xborder/30 font-bold px-5 py-1.5 rounded-full transition-colors ml-2">
+                        Following
+                    </button>
+                    {{/is_following}}
+                    {{^is_following}}
+                    <button data-user-id="{{profile_user_id}}" onclick="toggleFollow(this)"
                         class="bg-xtext text-xblack hover:bg-opacity-90 font-bold px-5 py-1.5 rounded-full transition-colors ml-2">
                         Follow
                     </button>
+                    {{/is_following}}
                     {{/is_own_profile}}
                 </div>
             </div>
 
             <div class="px-4 pt-3 pb-4 border-b border-xborder">
-                <h1 class="text-xl font-extrabold">{{profile_name}}</h1>
-                <p class="text-xmuted text-[15px] leading-tight">{{profile_handle}}</p>
+                <h1 class="text-xl font-extrabold flex items-center gap-1">
+                    <span>{{profile_name}}</span>
+                    {{#is_admin}}
+                    <i class="ph-fill ph-seal-check text-black bg-white rounded-full text-[16px]" title="Admin"></i>
+                    {{/is_admin}}
+                </h1>
+                <p class="text-xmuted text-[15px] leading-tight flex items-center gap-1">
+                    <span>{{profile_handle}}</span>
+                    {{^is_admin}}
+                    {{#is_verified}}
+                    <i class="ph-fill ph-seal-check text-[#1DA1F2] text-[16px]" title="Verified"></i>
+                    {{/is_verified}}
+                    {{/is_admin}}
+                </p>
 
                 <div class="mt-3 text-[15px]">
                     {{profile_bio}}
@@ -76,12 +96,12 @@
                 </div>
 
                 <div class="flex space-x-5 mt-3 text-[14px]">
-                    <a href="#" class="hover:underline">
-                        <span class="font-bold text-xtext">{{following_count}}</span> <span
+                    <a href="/following/{{profile_handle}}" class="hover:underline">
+                        <span class="font-bold text-xtext">{{profile_following}}</span> <span
                             class="text-xmuted">Following</span>
                     </a>
-                    <a href="#" class="hover:underline">
-                        <span class="font-bold text-xtext">{{followers_count}}</span> <span
+                    <a href="/followers/{{profile_handle}}" class="hover:underline">
+                        <span class="font-bold text-xtext">{{profile_followers}}</span> <span
                             class="text-xmuted">Followers</span>
                     </a>
                 </div>
@@ -108,6 +128,18 @@
                     class="tab-underline absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-xgreen rounded-full hidden">
                 </div>
             </button>
+            <button class="feed-tab flex-1 py-4 text-center text-xmuted hover:bg-xborder/30 transition-colors relative">
+                Following
+                <div
+                    class="tab-underline absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-xgreen rounded-full hidden">
+                </div>
+            </button>
+            <button class="feed-tab flex-1 py-4 text-center text-xmuted hover:bg-xborder/30 transition-colors relative">
+                Followers
+                <div
+                    class="tab-underline absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-xgreen rounded-full hidden">
+                </div>
+            </button>
         </div>
 
         {{^has_posts}}
@@ -130,13 +162,20 @@
                 <div class="flex-1">
                     <div class="flex items-center space-x-1 text-sm">
                         <a href="/profile/{{author_handle}}" class="font-bold hover:underline">{{author_name}}</a>
+                        {{#is_admin}}
+                        <i class="ph-fill ph-seal-check text-black bg-white rounded-full text-[16px] ml-0.5"
+                            title="Admin"></i>
+                        {{/is_admin}}
+                        {{^is_admin}}
                         {{#is_verified}}
                         <i class="ph-fill ph-seal-check text-[#1DA1F2] text-[16px] ml-0.5" title="Verified"></i>
                         {{/is_verified}}
+                        {{/is_admin}}
 
                         <span class="text-[10px] font-bold px-1.5 py-0.5 rounded border ml-1
                             {{#is_user}}text-xgreen border-xgreen/30 bg-xgreen/10{{/is_user}}
                             {{#is_prof}}text-blue-400 border-blue-400/30 bg-blue-400/10{{/is_prof}}
+                            {{#is_admin}}text-white border-white/30 bg-white/10{{/is_admin}}
                             {{#is_staff}}text-orange-400 border-orange-400/30 bg-orange-400/10{{/is_staff}}">
                             {{author_role}}
                         </span>
@@ -191,6 +230,8 @@
     </main>
 
     {{>rightsidebar.html}}
+
+    <script src="/static/script.js"></script>
 
 </body>
 

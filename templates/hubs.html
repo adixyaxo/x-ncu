@@ -1,0 +1,49 @@
+{{>head.html}}
+
+<body class="bg-xblack text-xtext font-sans antialiased flex h-screen overflow-hidden">
+
+    {{>leftsidebar.html}}
+
+    <main class="flex-1 border-r border-xborder h-full overflow-y-auto no-scrollbar relative">
+
+        <div class="sticky top-0 z-30 bg-xblack/90 backdrop-blur-md border-b border-xborder">
+            <header class="flex items-center px-4 py-3 space-x-4">
+                <a href="/" class="p-2 hover:bg-xborder/50 rounded-full transition-colors cursor-pointer">
+                    <i class="ph ph-arrow-left text-xl"></i>
+                </a>
+                <div>
+                    <h2 class="text-xl font-bold">Academic Hubs</h2>
+                    <p class="text-xs text-xmuted">Your programme: {{current_programme}}</p>
+                </div>
+            </header>
+        </div>
+
+        <section class="p-4 border-b border-xborder">
+            <div class="grid gap-3 sm:grid-cols-2">
+                {{#hubs}}
+                <a href="/hub/{{slug}}"
+                    class="block border border-xborder hover:border-xgreen/50 bg-xdark/50 hover:bg-xborder/20 rounded-lg p-4 transition-colors">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="w-11 h-11 rounded-full bg-xborder flex items-center justify-center text-sm font-bold text-xgreen">
+                            {{short_name}}
+                        </div>
+                        {{#is_current}}
+                        <span class="text-xs font-bold text-xgreen border border-xgreen/30 rounded-full px-2 py-0.5">My hub</span>
+                        {{/is_current}}
+                    </div>
+                    <h3 class="font-bold text-lg mt-3">{{name}}</h3>
+                    <p class="text-xmuted text-sm leading-relaxed mt-1">{{description}}</p>
+                </a>
+                {{/hubs}}
+            </div>
+        </section>
+
+    </main>
+
+    {{>rightsidebar.html}}
+
+    <script src="/static/script.js"></script>
+
+</body>
+
+</html>

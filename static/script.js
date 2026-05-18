@@ -65,3 +65,81 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function postForm(url, params) {
+    return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(params).toString()
+    });
+}
+
+function toggleFollow(button) {
+    const userId = button.dataset.userId;
+    const isFollowing = button.textContent.trim().toLowerCase() === 'following';
+    const endpoint = isFollowing ? '/unfollow' : '/follow';
+
+    button.disabled = true;
+
+    postForm(endpoint, { user_id: userId })
+        .then(response => {
+            if (!response.ok) throw new Error('Follow request failed');
+            button.textContent = isFollowing ? 'Follow' : 'Following';
+            button.classList.toggle('bg-xtext', isFollowing);
+            button.classList.toggle('text-xblack', isFollowing);
+            button.classList.toggle('border', !isFollowing);
+            button.classList.toggle('border-xborder', !isFollowing);
+        })
+        .catch(() => {
+            alert('Could not update follow status. Please try again.');
+        })
+        .finally(() => {
+            button.disabled = false;
+        });
+}
+
+function likePost(button) {
+    const postId = button.dataset.postId;
+    const icon = button.querySelector('i');
+    const count = button.querySelector('span');
+    const isLiked = icon && icon.classList.contains('ph-fill');
+    const endpoint = isLiked ? '/unlike' : '/like';
+
+    button.disabled = true;
+
+    postForm(endpoint, { post_id: postId })
+        .then(response => {
+            if (!response.ok) throw new Error('Like request failed');
+            if (icon) icon.classList.toggle('ph-fill', !isLiked);
+            if (count) {
+                const current = parseInt(count.textContent || '0', 10);
+                count.textContent = String(Math.max(0, current + (isLiked ? -1 : 1)));
+            }
+        })
+        .catch(() => {
+            alert('Could not update like status. Please try again.');
+        })
+        .finally(() => {
+            button.disabled = false;
+        });
+}
+
+function requestHubAccess(button) {
+    const programme = button.dataset.programme;
+    button.disabled = true;
+    const originalText = button.textContent;
+    button.textContent = 'Requesting...';
+
+    postForm('/request-access', { programme })
+        .then(response => {
+            if (!response.ok) throw new Error('Access request failed');
+            button.textContent = 'Request sent';
+        })
+        .catch(() => {
+            button.textContent = originalText;
+            alert('Could not send access request. Please try again.');
+        })
+        .finally(() => {
+            button.disabled = false;
+        });
+}

@@ -77,6 +77,11 @@
                         <i class="ph ph-house text-xl"></i>
                         <span>General Feed</span>
                     </a>
+                    <a href="/hubs" data-route="hubs"
+                        class="nav-link flex items-center space-x-3 px-3 py-2 rounded-md transition-colors text-gray-300 hover:bg-xborder/50 mt-1">
+                        <i class="ph ph-squares-four text-xl"></i>
+                        <span>All Hubs</span>
+                    </a>
                 </div>
             </div>
 
@@ -113,24 +118,38 @@
                     <i class="ph ph-caret-down mr-1 transition-transform duration-200"></i> ACADEMIC HUB
                 </h2>
                 <ul class="dropdown-content space-y-1 text-sm text-gray-300">
+                    {{#user_hub_slug}}
                     <li>
-                        <a href="/cse" data-route="cse"
+                        <a href="/hub/{{user_hub_slug}}" data-route="my-hub"
                             class="nav-link bg-grain flex items-center space-x-2 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 hover:text-white">
-                            <span class="text-xmuted">&gt;_</span><span>CSE</span>
+                            <i class="ph ph-book-open text-lg text-xgreen"></i><span>My Hub</span>
                         </a>
                     </li>
+                    {{/user_hub_slug}}
+                    {{#is_admin}}
                     <li>
-                        <a href="/ece" data-route="ece"
+                        <a href="/hubs" data-route="hubs-admin"
                             class="nav-link bg-grain flex items-center space-x-2 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 hover:text-white">
-                            <span class="text-xmuted">&gt;_</span><span>ECE</span>
+                            <i class="ph ph-squares-four text-lg text-xgreen"></i><span>All Hubs</span>
                         </a>
                     </li>
+                    {{/is_admin}}
+                    {{#academic_hubs}}
                     <li>
-                        <a href="/me" data-route="me"
+                        <a href="/hub/{{slug}}" data-route="{{slug}}"
                             class="nav-link bg-grain flex items-center space-x-2 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 hover:text-white">
-                            <span class="text-xmuted">&gt;_</span><span>ME</span>
+                            <span class="text-xmuted">&gt;_</span><span>{{name}}</span>
                         </a>
                     </li>
+                    {{/academic_hubs}}
+                    {{#is_staff}}
+                    <li>
+                        <a href="/pending-requests" data-route="pending-requests"
+                            class="nav-link flex items-center space-x-2 hover:bg-white/5 px-3 py-2 rounded-md transition-all duration-200 hover:text-white">
+                            <i class="ph ph-check-square-offset text-lg text-xgreen"></i><span>Access Requests</span>
+                        </a>
+                    </li>
+                    {{/is_staff}}
                 </ul>
             </div>
         </nav>
@@ -145,7 +164,13 @@
                 {{user_initials}}
             </div>
             <div class="flex-1 overflow-hidden">
-                <p class="font-semibold text-sm text-gray-200 tracking-wide truncate">{{user_name}}</p>
+                <p class="font-semibold text-sm text-gray-200 tracking-wide truncate flex items-center gap-1">
+                    <span class="truncate">{{user_name}}</span>
+                    {{#is_admin}}
+                    <i class="ph-fill ph-seal-check text-black bg-white rounded-full text-[14px] flex-shrink-0"
+                        title="Admin"></i>
+                    {{/is_admin}}
+                </p>
                 <p class="text-xmuted text-[13px] mt-0.5 truncate">{{user_handle}}</p>
             </div>
         </div>

@@ -13,6 +13,7 @@
 #include <vector>
 #include <iomanip>
 #include <ctime>
+#include <chrono>
 #include <unordered_map>
 #include <algorithm>
 #include <jwt-cpp/jwt.h>
@@ -20,6 +21,10 @@
 #include "otp_service.h"
 
 using namespace std;
+
+string normalizeRole(const string &role);
+bool isStaffRole(const string &role);
+bool isAdminRole(const string &role);
 
 /*
  * USER CLASS:
@@ -48,6 +53,11 @@ private:
     int followers_count_private = 0;
     int posts_private = 0;
 
+    // PROGRAMME & SOCIAL FEATURES
+    string programme_private = "";
+    string liked_post_ids_private = "";
+    string followed_user_ids_private = "";
+
 public:
     user();
     user(int targetUserNo);
@@ -73,6 +83,9 @@ public:
     int following_count() const { return following_count_private; }
     int followers_count() const { return followers_count_private; }
     string created_at() const { return created_at_private; }
+    string programme() const { return programme_private; }
+    string liked_post_ids() const { return liked_post_ids_private; }
+    string followed_user_ids() const { return followed_user_ids_private; }
     // ==========================================
     // SETTERS
     // ==========================================
@@ -93,6 +106,9 @@ public:
     void following_count(int val) { following_count_private = val; }
     void followers_count(int val) { followers_count_private = val; }
     void created_at(const string &val) { created_at_private = val; }
+    void programme(const string &val) { programme_private = val; }
+    void liked_post_ids(const string &val) { liked_post_ids_private = val; }
+    void followed_user_ids(const string &val) { followed_user_ids_private = val; }
 
     void updateUserInCSV();
 };
@@ -132,7 +148,7 @@ user::user(int targetUserNo) // constructor -- read data from user.csv ya fir us
         /*
          * SAFE CONVERSION:
          * Since the ID from the file is text, we must convert it to a number using 'stoi'.
-         * We use 'try-catch' because if the text is corrupted and isn't a number, 
+         * We use 'try-catch' because if the text is corrupted and isn't a number,
          * the program will crash. The 'catch' block stops the crash and just skips the bad user.
          */
         int current_id = -1;
@@ -154,6 +170,7 @@ user::user(int targetUserNo) // constructor -- read data from user.csv ya fir us
             getline(ss, email_private, ',');
             getline(ss, fullname_private, ',');
             getline(ss, role_private, ',');
+            getline(ss, programme_private, ',');
             getline(ss, password_private, ',');
             getline(ss, bio_private, ',');
 
@@ -174,8 +191,11 @@ user::user(int targetUserNo) // constructor -- read data from user.csv ya fir us
             followers_count_private = followers_str.empty() ? 0 : stoi(followers_str);
 
             string posts_str;
-            getline(ss, posts_str);
+            getline(ss, posts_str, ',');
             posts_private = posts_str.empty() ? 0 : stoi(posts_str);
+
+            getline(ss, liked_post_ids_private, ',');
+            getline(ss, followed_user_ids_private);
 
             isFound_private = true;
             break;
@@ -220,6 +240,7 @@ void user::updateUserInCSV()
                     << email_private << ","
                     << fullname_private << ","
                     << role_private << ","
+                    << programme_private << ","
                     << password_private << ","
                     << bio_private << ","
                     << (is_verified_private ? "TRUE" : "FALSE") << ","
@@ -228,7 +249,9 @@ void user::updateUserInCSV()
                     << link_private << ","
                     << following_count_private << ","
                     << followers_count_private << ","
-                    << posts_private;
+                    << posts_private << ","
+                    << liked_post_ids_private << ","
+                    << followed_user_ids_private;
             lines.push_back(updated.str());
             found = true;
         }
@@ -245,6 +268,164 @@ void user::updateUserInCSV()
         for (const auto &l : lines)
             outFile << l << "\n";
         outFile.close();
+    }
+}
+
+// LIKE HELPER FUNCTIONS
+bool hasUserLikedPost(int userId, int postId)
+{
+    user u(userId);
+    if (!u.isFound()) return false;
+
+    string likedIds = u.liked_post_ids();
+    if (likedIds.empty()) return false;
+
+    stringstream ss(likedIds);
+    string id;
+    while (getline(ss, id, ';'))
+    {
+        if (id == to_string(postId)) return true;
+    }
+    return false;
+}
+
+void addLikeToUser(int userId, int postId)
+{
+    user u(userId);
+    if (!u.isFound()) return;
+
+    if (hasUserLikedPost(userId, postId)) return;
+
+    string likedIds = u.liked_post_ids();
+    if (!likedIds.empty()) likedIds += ";";
+    likedIds += to_string(postId);
+    u.liked_post_ids(likedIds);
+    u.updateUserInCSV();
+}
+
+void removeLikeFromUser(int userId, int postId)
+{
+    user u(userId);
+    if (!u.isFound()) return;
+
+    string likedIds = u.liked_post_ids();
+    if (likedIds.empty()) return;
+
+    stringstream ss(likedIds);
+    string id;
+    vector<string> remaining;
+    string postIdStr = to_string(postId);
+
+    while (getline(ss, id, ';'))
+    {
+        if (id != postIdStr) remaining.push_back(id);
+    }
+
+    string newLikedIds;
+    for (size_t i = 0; i < remaining.size(); ++i)
+    {
+        if (i > 0) newLikedIds += ";";
+        newLikedIds += remaining[i];
+    }
+
+    u.liked_post_ids(newLikedIds);
+    u.updateUserInCSV();
+}
+
+// FOLLOW HELPER FUNCTIONS
+vector<int> getFollowedUsers(int userId)
+{
+    vector<int> followed;
+    user u(userId);
+    if (!u.isFound()) return followed;
+
+    string followedIds = u.followed_user_ids();
+    if (followedIds.empty()) return followed;
+
+    stringstream ss(followedIds);
+    string id;
+    while (getline(ss, id, ';'))
+    {
+        try { followed.push_back(stoi(id)); }
+        catch (...) {}
+    }
+    return followed;
+}
+
+bool doesUserFollow(int userA, int userB)
+{
+    user u(userA);
+    if (!u.isFound()) return false;
+
+    string followedIds = u.followed_user_ids();
+    if (followedIds.empty()) return false;
+
+    stringstream ss(followedIds);
+    string id;
+    while (getline(ss, id, ';'))
+    {
+        if (id == to_string(userB)) return true;
+    }
+    return false;
+}
+
+void addFollow(int userA, int userB)
+{
+    if (userA == userB) return;
+    if (doesUserFollow(userA, userB)) return;
+
+    user u(userA);
+    if (!u.isFound()) return;
+
+    string followedIds = u.followed_user_ids();
+    if (!followedIds.empty()) followedIds += ";";
+    followedIds += to_string(userB);
+    u.followed_user_ids(followedIds);
+    u.following_count(u.following_count() + 1);
+    u.updateUserInCSV();
+
+    user targetUser(userB);
+    if (targetUser.isFound())
+    {
+        targetUser.followers_count(targetUser.followers_count() + 1);
+        targetUser.updateUserInCSV();
+    }
+}
+
+void removeFollow(int userA, int userB)
+{
+    user u(userA);
+    if (!u.isFound()) return;
+
+    string followedIds = u.followed_user_ids();
+    if (followedIds.empty()) return;
+
+    stringstream ss(followedIds);
+    string id;
+    vector<string> remaining;
+    string userBStr = to_string(userB);
+
+    while (getline(ss, id, ';'))
+    {
+        if (id != userBStr) remaining.push_back(id);
+    }
+
+    string newFollowedIds;
+    for (size_t i = 0; i < remaining.size(); ++i)
+    {
+        if (i > 0) newFollowedIds += ";";
+        newFollowedIds += remaining[i];
+    }
+
+    u.followed_user_ids(newFollowedIds);
+    u.following_count(u.following_count() - 1);
+    u.updateUserInCSV();
+
+    user targetUser(userB);
+    if (targetUser.isFound())
+    {
+        targetUser.followers_count(targetUser.followers_count() - 1);
+        targetUser.updateUserInCSV();
     }
 }
 
@@ -330,7 +511,7 @@ int authenticateUser(const string &inputEmail, const string &inputPassword)
     while (getline(file, line))
     {
         stringstream ss(line);
-        string idStr, email, fullName, handle, role, storedPassword, is_verified, bio, created_at;
+        string idStr, email, fullName, handle, role, programme, storedPassword, is_verified, bio, created_at;
         string location, link, following, followers, posts;
 
         // 4. Extract each column up to the comma
@@ -339,6 +520,7 @@ int authenticateUser(const string &inputEmail, const string &inputPassword)
         getline(ss, email, ',');
         getline(ss, fullName, ',');
         getline(ss, role, ',');
+        getline(ss, programme, ',');
         getline(ss, storedPassword, ',');
         getline(ss, bio, ',');
         getline(ss, is_verified, ',');
@@ -480,7 +662,8 @@ int registerUser(const string &email, const string &fullName, const string &role
             << handle << ","
             << email << ","
             << fullName << ","
-            << role << ","
+            << normalizeRole(role) << ","
+            << "General" << ","
             << sha256(password) << ","
             << "" << ","        // Bio
             << "FALSE" << ","   // IsVerified
@@ -489,7 +672,9 @@ int registerUser(const string &email, const string &fullName, const string &role
             << "" << ","        // Link
             << "0" << ","       // FollowingCount
             << "0" << ","       // FollowersCount
-            << "" << "\n";      // Posts
+            << "0" << ","       // Posts
+            << "" << ","        // LikedPostIDs
+            << "" << "\n";      // FollowedUserIDs
 
     outFile.close();
 
@@ -944,6 +1129,79 @@ string getInitials(const string &name)
     return initials;
 }
 
+struct HubInfo
+{
+    string slug;
+    string name;
+    string short_name;
+    string description;
+};
+
+vector<HubInfo> getAcademicHubs()
+{
+    return {
+        {"engineering-technology", "Engineering & Technology", "ET", "Engineering projects, labs, hardware, and technical collaboration."},
+        {"computer-applications", "Computer Applications", "CA", "Software, systems, data, and applied computing discussions."},
+        {"management-business-administration", "Management & Business Administration", "MBA", "Business, management, events, and campus leadership."},
+        {"commerce", "Commerce", "COM", "Accounting, finance, markets, and commerce conversations."},
+        {"economics", "Economics", "ECO", "Policy, markets, development, and economic research discussions."},
+        {"law", "Law", "LAW", "Moot courts, case analysis, legal research, and policy debate."},
+        {"humanities-liberal-arts", "Humanities & Liberal Arts", "HLA", "Culture, writing, history, society, and interdisciplinary thinking."},
+        {"psychology", "Psychology", "PSY", "Behavior, cognition, counseling, and mental health discussions."},
+        {"sciences", "Sciences", "SCI", "Physics, chemistry, biology, mathematics, and research collaboration."},
+        {"design-media", "Design & Media", "DM", "Visual design, communication, content, and creative production."},
+        {"allied-health-sciences", "Allied Health Sciences", "AHS", "Health sciences, clinical practice, wellness, and public health."},
+        {"doctoral-phd-programs", "Doctoral (Ph.D.) Programs", "PHD", "Research methods, publications, thesis work, and doctoral life."}
+    };
+}
+
+string hubProgrammeFromSlug(const string &slug)
+{
+    if (slug == "cse" || slug == "ca" || slug == "computer-apps") return "Computer Applications";
+    if (slug == "ece" || slug == "me" || slug == "et" || slug == "engineering") return "Engineering & Technology";
+    if (slug == "mba" || slug == "management") return "Management & Business Administration";
+    if (slug == "humanities" || slug == "liberal-arts") return "Humanities & Liberal Arts";
+    if (slug == "design") return "Design & Media";
+    if (slug == "health" || slug == "allied-health") return "Allied Health Sciences";
+    if (slug == "phd" || slug == "doctoral") return "Doctoral (Ph.D.) Programs";
+
+    for (const auto &hub : getAcademicHubs())
+    {
+        if (hub.slug == slug || hub.name == slug)
+            return hub.name;
+    }
+
+    return "";
+}
+
+string hubSlugFromProgramme(const string &programme)
+{
+    for (const auto &hub : getAcademicHubs())
+    {
+        if (hub.name == programme)
+            return hub.slug;
+    }
+
+    return "";
+}
+
+vector<crow::mustache::context> buildHubContexts(const string &currentProgramme = "")
+{
+    vector<crow::mustache::context> hubs;
+    for (const auto &hub : getAcademicHubs())
+    {
+        crow::mustache::context hub_ctx;
+        hub_ctx["slug"] = hub.slug;
+        hub_ctx["name"] = hub.name;
+        hub_ctx["short_name"] = hub.short_name;
+        hub_ctx["description"] = hub.description;
+        if (hub.name == currentProgramme)
+            hub_ctx["is_current"] = true;
+        hubs.push_back(hub_ctx);
+    }
+    return hubs;
+}
+
 void addCurrentUserContext(crow::mustache::context &ctx, int user_id)
 {
     user currentUser(user_id);
@@ -966,6 +1224,41 @@ void addCurrentUserContext(crow::mustache::context &ctx, int user_id)
     ctx["user_initials"] = initials;
     ctx["user_name"] = currentUser.fullname();
     ctx["user_handle"] = currentUser.handle();
+    ctx["user_programme"] = currentUser.programme();
+    ctx["user_hub_slug"] = hubSlugFromProgramme(currentUser.programme());
+    ctx["is_staff"] = isStaffRole(currentUser.role());
+    ctx["is_admin"] = isAdminRole(currentUser.role());
+    ctx["academic_hubs"] = buildHubContexts(currentUser.programme());
+}
+
+string getRequestParam(const crow::request &req, const string &name)
+{
+    const char *urlValue = req.url_params.get(name);
+    if (urlValue)
+        return urlValue;
+
+    crow::query_string params("?" + req.body);
+    const char *value = params.get(name);
+    return value ? value : "";
+}
+
+string normalizeRole(const string &role)
+{
+    if (role == "student" || role == "Student") return "Student";
+    if (role == "teacher" || role == "Teacher") return "Teacher";
+    if (role == "staff" || role == "Staff") return "Staff";
+    if (role == "admin" || role == "Admin") return "Admin";
+    return role;
+}
+
+bool isStaffRole(const string &role)
+{
+    return role == "staff" || role == "Staff" || isAdminRole(role);
+}
+
+bool isAdminRole(const string &role)
+{
+    return role == "admin" || role == "Admin";
 }
 
 vector<crow::mustache::context> loadNews()
@@ -1040,7 +1333,7 @@ int verify_token(const crow::request &req)
     {
         /*
          * CHECKING THE TOKEN'S MATH:
-         * This uses a complex math formula (algorithm) and a secret password 
+         * This uses a complex math formula (algorithm) and a secret password
          * to check if the token is real or fake.
          * If someone tried to make their own fake token, the math will fail and we reject them.
          * If the math is correct, we read the user's ID hidden inside the token and return it.
@@ -1195,6 +1488,7 @@ int main()
             post_ctx["author_handle"] = post_author.handle();
             post_ctx["author_role"] = p.role;
             post_ctx["is_verified"] = post_author.is_verified();
+            post_ctx["is_admin"] = isAdminRole(post_author.role());
 
             post_ctx["author_initials"] = getInitials(post_author.fullname());
 
@@ -1254,18 +1548,18 @@ int main()
 
         crow::mustache::context ctx; ctx["title"] = "Students | X-NCU";
         user currentUser(userID);
-        
+
         if (currentUser.isFound()) {
             string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
             ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname(); ctx["user_handle"] = currentUser.handle();
-        } 
+        }
 
         std::vector<crow::mustache::context> posts_vector;
         std::vector<crow::mustache::context> news_vector;
-        
+
         std::ifstream posts_file("database/students.csv"); std::string line;
-        if (posts_file.good()) std::getline(posts_file, line); 
-        
+        if (posts_file.good()) std::getline(posts_file, line);
+
         while (std::getline(posts_file, line)) {
             if (line.empty()) continue;
 
@@ -1300,6 +1594,7 @@ int main()
                 post_ctx["author_handle"] = post_author.handle();
                 post_ctx["author_role"] = role;
                 post_ctx["is_verified"] = post_author.is_verified();
+                post_ctx["is_admin"] = isAdminRole(post_author.role());
 
                 string author_initials = "";
                 if (!post_author.fullname().empty()) {
@@ -1321,11 +1616,11 @@ int main()
             if (userID > 0 && safe_user_id == userID)
                 post_ctx["can_delete"] = true;
 
-            posts_vector.push_back(post_ctx); 
+            posts_vector.push_back(post_ctx);
         }
         ctx["posts"] = std::move(posts_vector);
-        
-        std::ifstream news_file("database/news.csv"); if (news_file.good()) std::getline(news_file, line); 
+
+        std::ifstream news_file("database/news.csv"); if (news_file.good()) std::getline(news_file, line);
         while (std::getline(news_file, line)) {
             std::stringstream ss(line); std::string id, headline, category, time_ago, post_count;
             std::getline(ss, id, ','); std::getline(ss, headline, ','); std::getline(ss, category, ','); std::getline(ss, time_ago, ','); std::getline(ss, post_count, ',');
@@ -1333,7 +1628,7 @@ int main()
             news_vector.push_back(news_ctx);
         }
         ctx["news"] = std::move(news_vector);
-        
+
         auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
     // ==========================================
@@ -1346,18 +1641,18 @@ int main()
 
         crow::mustache::context ctx; ctx["title"] = "Teachers | X-NCU";
         user currentUser(userID);
-        
+
         if (currentUser.isFound()) {
             string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
             ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname(); ctx["user_handle"] = currentUser.handle();
-        } 
+        }
 
         std::vector<crow::mustache::context> posts_vector;
         std::vector<crow::mustache::context> news_vector;
-        
+
         std::ifstream posts_file("database/teachers.csv"); std::string line;
-        if (posts_file.good()) std::getline(posts_file, line); 
-        
+        if (posts_file.good()) std::getline(posts_file, line);
+
         while (std::getline(posts_file, line)) {
             if (line.empty()) continue;
 
@@ -1392,6 +1687,7 @@ int main()
                 post_ctx["author_handle"] = post_author.handle();
                 post_ctx["author_role"] = role;
                 post_ctx["is_verified"] = post_author.is_verified();
+                post_ctx["is_admin"] = isAdminRole(post_author.role());
 
                 string author_initials = "";
                 if (!post_author.fullname().empty()) {
@@ -1413,11 +1709,11 @@ int main()
             if (userID > 0 && safe_user_id == userID)
                 post_ctx["can_delete"] = true;
 
-            posts_vector.push_back(post_ctx); 
+            posts_vector.push_back(post_ctx);
         }
         ctx["posts"] = std::move(posts_vector);
-        
-        std::ifstream news_file("database/news.csv"); if (news_file.good()) std::getline(news_file, line); 
+
+        std::ifstream news_file("database/news.csv"); if (news_file.good()) std::getline(news_file, line);
         while (std::getline(news_file, line)) {
             std::stringstream ss(line); std::string id, headline, category, time_ago, post_count;
             std::getline(ss, id, ','); std::getline(ss, headline, ','); std::getline(ss, category, ','); std::getline(ss, time_ago, ','); std::getline(ss, post_count, ',');
@@ -1425,7 +1721,7 @@ int main()
             news_vector.push_back(news_ctx);
         }
         ctx["news"] = std::move(news_vector);
-        
+
         auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
     // ==========================================
@@ -1438,18 +1734,18 @@ int main()
 
         crow::mustache::context ctx; ctx["title"] = "Staff | X-NCU";
         user currentUser(userID);
-        
+
         if (currentUser.isFound()) {
             string initials = "U"; if (currentUser.fullname().length() >= 2) initials = currentUser.fullname().substr(0, 2);
             ctx["user_initials"] = initials; ctx["user_name"] = currentUser.fullname(); ctx["user_handle"] = currentUser.handle();
-        } 
+        }
 
         std::vector<crow::mustache::context> posts_vector;
         std::vector<crow::mustache::context> news_vector;
-        
+
         std::ifstream posts_file("database/staff.csv"); std::string line;
-        if (posts_file.good()) std::getline(posts_file, line); 
-        
+        if (posts_file.good()) std::getline(posts_file, line);
+
         while (std::getline(posts_file, line)) {
             if (line.empty()) continue;
 
@@ -1484,6 +1780,7 @@ int main()
                 post_ctx["author_handle"] = post_author.handle();
                 post_ctx["author_role"] = role;
                 post_ctx["is_verified"] = post_author.is_verified();
+                post_ctx["is_admin"] = isAdminRole(post_author.role());
 
                 string author_initials = "";
                 if (!post_author.fullname().empty()) {
@@ -1505,11 +1802,11 @@ int main()
             if (userID > 0 && safe_user_id == userID)
                 post_ctx["can_delete"] = true;
 
-            posts_vector.push_back(post_ctx); 
+            posts_vector.push_back(post_ctx);
         }
         ctx["posts"] = std::move(posts_vector);
-        
-        std::ifstream news_file("database/news.csv"); if (news_file.good()) std::getline(news_file, line); 
+
+        std::ifstream news_file("database/news.csv"); if (news_file.good()) std::getline(news_file, line);
         while (std::getline(news_file, line)) {
             std::stringstream ss(line); std::string id, headline, category, time_ago, post_count;
             std::getline(ss, id, ','); std::getline(ss, headline, ','); std::getline(ss, category, ','); std::getline(ss, time_ago, ','); std::getline(ss, post_count, ',');
@@ -1517,7 +1814,7 @@ int main()
             news_vector.push_back(news_ctx);
         }
         ctx["news"] = std::move(news_vector);
-        
+
         auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
     // GET ABOUT PAGE
@@ -1583,7 +1880,7 @@ int main()
 
         int signup_status = registerUser(email, name, role, password);
         int userId = signup_status;
-        
+
 
         if (userId == -1)
         {
@@ -1598,7 +1895,7 @@ int main()
     .set_payload_claim("user_id", jwt::claim(std::to_string(userId)))
     .set_expires_at(std::chrono::system_clock::now() + std::chrono::hours(24))
     .sign(jwt::algorithm::hs256{"meetthemakeraditya"});
-            
+
             crow::response res;
             res.code = 303;
             res.set_header("Set-Cookie", "token=" + token + "; HttpOnly; Path=/");
@@ -1623,7 +1920,7 @@ int main()
 
     int search_userID = getuserprofile(username);
 
-    if (!search_userID)
+    if (search_userID <= 0)
     {
         auto message_page = crow::mustache::load("message.html");
         crow::mustache::context ctx({{"error_code", "404"}, {"error_message", "User Not Found"}});
@@ -1655,10 +1952,12 @@ int main()
 
         ctx["profile_name"] = profileUser.fullname();
         ctx["profile_handle"] = profileUser.handle();
+        ctx["profile_user_id"] = profileUser.id();
         string name = profileUser.fullname();
         ctx["profile_initials"] = name.size() >= 2 ? name.substr(0,2) : name;
         ctx["profile_bio"] = profileUser.bio();
         ctx["is_verified"] = profileUser.is_verified();
+        ctx["is_admin"] = isAdminRole(profileUser.role());
 
         ctx["profile_location"] = profileUser.location();
         ctx["profile_link"] = profileUser.link();
@@ -1673,6 +1972,8 @@ int main()
 
         if (profileUser.id() == currentUser.id())
             ctx["is_own_profile"] = true;
+        else if (doesUserFollow(currentUser.id(), profileUser.id()))
+            ctx["is_following"] = true;
 
         // Load posts for this user
         std::vector<crow::mustache::context> posts_vector;
@@ -1734,6 +2035,7 @@ int main()
             post_ctx["author_handle"] = profileUser.handle();
             post_ctx["author_role"] = role;
             post_ctx["is_verified"] = profileUser.is_verified();
+            post_ctx["is_admin"] = isAdminRole(profileUser.role());
             post_ctx["author_initials"] = profile_initials_str;
 
             post_ctx["is_user"] = (role == "student" || role == "Student");
@@ -1860,10 +2162,10 @@ int main()
                 res.set_header("Location", "/login");
                 return res;
             }
-        
+
             std::string action_str = "";
             std::string id_str = "";
-        
+
             if (req.method == crow::HTTPMethod::GET)
             {
                 action_str = req.url_params.get("action") ? req.url_params.get("action") : "";
@@ -1875,27 +2177,27 @@ int main()
                 action_str = params.get("action") ? params.get("action") : "";
                 id_str = params.get("id") ? params.get("id") : "";
             }
-        
+
             cout << action_str << " " << id_str << endl;
-        
+
             int action = -1;
             int post_id = -1;
-        
+
             try { action = stoi(action_str); } catch (...) {}
             try { post_id = stoi(id_str); } catch (...) {}
-        
+
             if (post_id <= 0 || action < 1 || action > 3)
             {
                 auto message_page = crow::mustache::load("message.html");
                 crow::mustache::context ctx({{"error_code","400"},{"error_message","Invalid post_id or action"}});
                 return crow::response(400, message_page.render(ctx));
             }
-        
+
             post p = post::getpost(post_id);
-        
+
             if (!p.isFound())
                 return crow::response(404, "Post not found");
-        
+
             if (action == 1)
             {
                 p.likes_count(p.likes_count() + 1);
@@ -1906,7 +2208,7 @@ int main()
                 p.retweets_count(p.retweets_count() + 1);
                 p.savepost(p);
             }
-        
+
             crow::response res;
             res.code = 303;
             res.set_header("Location", "/");
@@ -2066,6 +2368,635 @@ int main()
             crow::mustache::context ctx({{"error_code", "500"}, {"error_message", "Failed to update profile"}});
             return crow::response(500, message_page.render(ctx));
         } });
+
+    // LIKE ROUTE
+    CROW_ROUTE(app, "/like").methods(crow::HTTPMethod::POST)([](const crow::request &req)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        auto post_id = getRequestParam(req, "post_id");
+        if (post_id.empty()) return crow::response(400, "Missing post_id");
+
+        try
+        {
+            int postId = stoi(post_id);
+            post p = post::getpost(postId);
+            if (!p.isFound()) return crow::response(404, "Post not found");
+            if (p.user_id() == user_id) return crow::response(400, "Cannot like own post");
+
+            if (hasUserLikedPost(user_id, postId))
+                return crow::response(400, "Already liked");
+
+            addLikeToUser(user_id, postId);
+            p.likes_count(p.likes_count() + 1);
+            post::savepost(p);
+
+            return crow::response(200, "Liked");
+        }
+        catch (...) { return crow::response(400, "Invalid post_id"); }
+    });
+
+    // UNLIKE ROUTE
+    CROW_ROUTE(app, "/unlike").methods(crow::HTTPMethod::POST)([](const crow::request &req)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        auto post_id = getRequestParam(req, "post_id");
+        if (post_id.empty()) return crow::response(400, "Missing post_id");
+
+        try
+        {
+            int postId = stoi(post_id);
+            if (!hasUserLikedPost(user_id, postId))
+                return crow::response(400, "Not liked");
+
+            removeLikeFromUser(user_id, postId);
+            post p = post::getpost(postId);
+            if (p.isFound())
+            {
+                p.likes_count(max(0, p.likes_count() - 1));
+                post::savepost(p);
+            }
+
+            return crow::response(200, "Unliked");
+        }
+        catch (...) { return crow::response(400, "Invalid post_id"); }
+    });
+
+    // FOLLOW ROUTE
+    CROW_ROUTE(app, "/follow").methods(crow::HTTPMethod::POST)([](const crow::request &req)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        auto follow_id = getRequestParam(req, "user_id");
+        if (follow_id.empty()) return crow::response(400, "Missing user_id");
+
+        try
+        {
+            int followId = stoi(follow_id);
+            if (user_id == followId) return crow::response(400, "Cannot follow yourself");
+
+            user targetUser(followId);
+            if (!targetUser.isFound()) return crow::response(404, "User not found");
+
+            if (doesUserFollow(user_id, followId))
+                return crow::response(400, "Already following");
+
+            addFollow(user_id, followId);
+            return crow::response(200, "Followed");
+        }
+        catch (...) { return crow::response(400, "Invalid user_id"); }
+    });
+
+    // UNFOLLOW ROUTE
+    CROW_ROUTE(app, "/unfollow").methods(crow::HTTPMethod::POST)([](const crow::request &req)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        auto unfollow_id = getRequestParam(req, "user_id");
+        if (unfollow_id.empty()) return crow::response(400, "Missing user_id");
+
+        try
+        {
+            int unfollowId = stoi(unfollow_id);
+            if (!doesUserFollow(user_id, unfollowId))
+                return crow::response(400, "Not following");
+
+            removeFollow(user_id, unfollowId);
+            return crow::response(200, "Unfollowed");
+        }
+        catch (...) { return crow::response(400, "Invalid user_id"); }
+    });
+
+    // FOLLOWING LIST ROUTE
+    CROW_ROUTE(app, "/following/<string>")([](const crow::request &req, string username)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        int targetUserId = getuserprofile(username);
+        if (targetUserId <= 0) return crow::response(404, "User not found");
+
+        user targetUser(targetUserId);
+        if (!targetUser.isFound()) return crow::response(404, "User not found");
+
+        vector<int> followed = getFollowedUsers(targetUserId);
+
+        crow::mustache::context ctx;
+        ctx["target_user"] = targetUser.fullname();
+        ctx["target_handle"] = targetUser.handle();
+
+        vector<crow::mustache::context> following_list;
+        for (int followedId : followed)
+        {
+            user u(followedId);
+            if (u.isFound())
+            {
+                crow::mustache::context user_ctx;
+                user_ctx["id"] = u.id();
+                user_ctx["fullname"] = u.fullname();
+                user_ctx["handle"] = u.handle();
+                user_ctx["bio"] = u.bio();
+                following_list.push_back(user_ctx);
+            }
+        }
+        ctx["following"] = std::move(following_list);
+        ctx["news"] = loadNews();
+        addCurrentUserContext(ctx, user_id);
+
+        auto page = crow::mustache::load("following.html");
+        return crow::response(page.render(ctx));
+    });
+
+    // FOLLOWERS LIST ROUTE
+    CROW_ROUTE(app, "/followers/<string>")([](const crow::request &req, string username)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        int targetUserId = getuserprofile(username);
+        if (targetUserId <= 0) return crow::response(404, "User not found");
+
+        user targetUser(targetUserId);
+        if (!targetUser.isFound()) return crow::response(404, "User not found");
+
+        vector<crow::mustache::context> followers_list;
+        ifstream file("database/users.csv");
+        if (file.is_open())
+        {
+            string line;
+            getline(file, line);
+            while (getline(file, line))
+            {
+                if (line.empty()) continue;
+                stringstream ss(line);
+                string idStr;
+                getline(ss, idStr, ',');
+                try
+                {
+                    int checkId = stoi(idStr);
+                    if (doesUserFollow(checkId, targetUserId))
+                    {
+                        user follower(checkId);
+                        if (follower.isFound())
+                        {
+                            crow::mustache::context user_ctx;
+                            user_ctx["id"] = follower.id();
+                            user_ctx["fullname"] = follower.fullname();
+                            user_ctx["handle"] = follower.handle();
+                            user_ctx["bio"] = follower.bio();
+                            followers_list.push_back(user_ctx);
+                        }
+                    }
+                }
+                catch (...) {}
+            }
+            file.close();
+        }
+
+        crow::mustache::context ctx;
+        ctx["target_user"] = targetUser.fullname();
+        ctx["target_handle"] = targetUser.handle();
+        ctx["followers"] = std::move(followers_list);
+        ctx["news"] = loadNews();
+        addCurrentUserContext(ctx, user_id);
+
+        auto page = crow::mustache::load("followers.html");
+        return crow::response(page.render(ctx));
+    });
+
+    // ACADEMIC HUBS INDEX
+    CROW_ROUTE(app, "/hubs")([](const crow::request &req)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return requireLogin(req);
+
+        user currentUser(user_id);
+        if (!currentUser.isFound()) return crow::response(404, "User not found");
+
+        crow::mustache::context ctx;
+        ctx["title"] = "Academic Hubs | X-NCU";
+        ctx["current_programme"] = currentUser.programme();
+        ctx["hubs"] = buildHubContexts(currentUser.programme());
+        ctx["news"] = loadNews();
+        addCurrentUserContext(ctx, user_id);
+
+        auto page = crow::mustache::load("hubs.html");
+        return crow::response(page.render(ctx));
+    });
+
+    CROW_ROUTE(app, "/cse")([](const crow::request &req)
+    {
+        if (verify_token(req) <= 0) return requireLogin(req);
+        crow::response res;
+        res.code = 303;
+        res.set_header("Location", "/hub/computer-applications");
+        return res;
+    });
+
+    CROW_ROUTE(app, "/ece")([](const crow::request &req)
+    {
+        if (verify_token(req) <= 0) return requireLogin(req);
+        crow::response res;
+        res.code = 303;
+        res.set_header("Location", "/hub/engineering-technology");
+        return res;
+    });
+
+    CROW_ROUTE(app, "/me")([](const crow::request &req)
+    {
+        if (verify_token(req) <= 0) return requireLogin(req);
+        crow::response res;
+        res.code = 303;
+        res.set_header("Location", "/hub/engineering-technology");
+        return res;
+    });
+
+    // ACADEMIC HUB ROUTE
+    CROW_ROUTE(app, "/hub/<string>")([](const crow::request &req, string hubSlug)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return requireLogin(req);
+
+        user currentUser(user_id);
+        if (!currentUser.isFound()) return crow::response(404, "User not found");
+
+        string programme = hubProgrammeFromSlug(hubSlug);
+        if (programme.empty()) return crow::response(404, "Hub not found");
+
+        bool hasAccess = isAdminRole(currentUser.role()) || currentUser.programme() == programme;
+
+        ifstream approvedFile("database/approved_access.csv");
+        if (approvedFile.is_open())
+        {
+            string line;
+            getline(approvedFile, line);
+            while (getline(approvedFile, line))
+            {
+                if (line.empty()) continue;
+                stringstream ss(line);
+                string userIdStr;
+                getline(ss, userIdStr, ',');
+                try
+                {
+                    if (stoi(userIdStr) == user_id)
+                    {
+                        string allowedProgrammes;
+                        getline(ss, allowedProgrammes, ',');
+                        if (allowedProgrammes.find(programme) != string::npos)
+                            hasAccess = true;
+                        break;
+                    }
+                }
+                catch (...) {}
+            }
+            approvedFile.close();
+        }
+
+        vector<crow::mustache::context> posts_list;
+        if (hasAccess)
+        {
+            ifstream postsFile("database/posts.csv");
+            if (postsFile.is_open())
+            {
+                string line;
+                getline(postsFile, line);
+                while (getline(postsFile, line))
+                {
+                    if (line.empty()) continue;
+                    stringstream ss(line);
+                    string postIdStr, userIdStr, content, parentId, likes, reposts, createdAt, role;
+                    getline(ss, postIdStr, ',');
+                    getline(ss, userIdStr, ',');
+                    getline(ss, content, ',');
+                    getline(ss, parentId, ',');
+                    getline(ss, likes, ',');
+                    getline(ss, reposts, ',');
+                    getline(ss, createdAt, ',');
+                    getline(ss, role);
+
+                    try
+                    {
+                        int authorId = stoi(userIdStr);
+                        user author(authorId);
+                        if (author.isFound() && author.programme() == programme)
+                        {
+                            crow::mustache::context post_ctx;
+                            post_ctx["post_id"] = postIdStr;
+                            post_ctx["author"] = author.fullname();
+                            post_ctx["content"] = content;
+                            post_ctx["author_handle"] = author.handle();
+                            post_ctx["author_initials"] = getInitials(author.fullname());
+                            post_ctx["is_admin"] = isAdminRole(author.role());
+                            post_ctx["is_verified"] = author.is_verified();
+                            post_ctx["likes"] = likes;
+                            post_ctx["time_ago"] = createdAt.size() >= 10 ? createdAt.substr(0, 10) : createdAt;
+                            post_ctx["liked"] = hasUserLikedPost(user_id, stoi(postIdStr));
+                            posts_list.push_back(post_ctx);
+                        }
+                    }
+                    catch (...) {}
+                }
+                postsFile.close();
+            }
+        }
+
+        crow::mustache::context ctx;
+        ctx["programme"] = programme;
+        ctx["hub_slug"] = hubSlugFromProgramme(programme);
+        ctx["has_access"] = hasAccess;
+        if (!hasAccess)
+            ctx["needs_access"] = true;
+        ctx["posts"] = std::move(posts_list);
+        ctx["news"] = loadNews();
+        addCurrentUserContext(ctx, user_id);
+
+        auto page = crow::mustache::load("hub.html");
+        return crow::response(page.render(ctx));
+    });
+
+    // REQUEST ACCESS ROUTE
+    CROW_ROUTE(app, "/request-access").methods(crow::HTTPMethod::POST)([](const crow::request &req)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        auto target_programme = getRequestParam(req, "programme");
+        if (target_programme.empty()) return crow::response(400, "Missing programme");
+        string mappedProgramme = hubProgrammeFromSlug(target_programme);
+        if (!mappedProgramme.empty())
+            target_programme = mappedProgramme;
+
+        auto now = chrono::system_clock::now();
+        auto time_t = chrono::system_clock::to_time_t(now);
+        stringstream ss;
+        ss << put_time(gmtime(&time_t), "%Y-%m-%dT%H:%M:%SZ");
+
+        ifstream file("database/access_requests.csv");
+        int maxId = 0;
+        if (file.is_open())
+        {
+            string line;
+            getline(file, line);
+            while (getline(file, line))
+            {
+                if (line.empty()) continue;
+                stringstream lss(line);
+                string idStr;
+                getline(lss, idStr, ',');
+                try { maxId = max(maxId, stoi(idStr)); }
+                catch (...) {}
+            }
+            file.close();
+        }
+
+        int newId = maxId + 1;
+        ofstream outFile("database/access_requests.csv", ios::app);
+        outFile << newId << "," << user_id << "," << target_programme << ",PENDING," << ss.str() << ",,\n";
+        outFile.close();
+
+        return crow::response(200, "Request submitted");
+    });
+
+    // PENDING REQUESTS ROUTE (Admin Only)
+    CROW_ROUTE(app, "/pending-requests")([](const crow::request &req)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        user currentUser(user_id);
+        if (!currentUser.isFound() || !isStaffRole(currentUser.role()))
+            return crow::response(403, "Admin only");
+
+        vector<crow::mustache::context> requests_list;
+        ifstream file("database/access_requests.csv");
+        if (file.is_open())
+        {
+            string line;
+            getline(file, line);
+            while (getline(file, line))
+            {
+                if (line.empty()) continue;
+                stringstream ss(line);
+                string requestId, userId, targetProg, status;
+                getline(ss, requestId, ',');
+                getline(ss, userId, ',');
+                getline(ss, targetProg, ',');
+                getline(ss, status, ',');
+
+                if (status == "PENDING")
+                {
+                    user requester(stoi(userId));
+                    crow::mustache::context req_ctx;
+                    req_ctx["request_id"] = requestId;
+                    req_ctx["user_id"] = userId;
+                    req_ctx["user_name"] = requester.isFound() ? requester.fullname() : "Unknown";
+                    req_ctx["target_programme"] = targetProg;
+                    requests_list.push_back(req_ctx);
+                }
+            }
+            file.close();
+        }
+
+        crow::mustache::context ctx;
+        ctx["requests"] = std::move(requests_list);
+        ctx["news"] = loadNews();
+        addCurrentUserContext(ctx, user_id);
+
+        auto page = crow::mustache::load("admin_requests.html");
+        return crow::response(page.render(ctx));
+    });
+
+    // APPROVE REQUEST ROUTE (Admin Only)
+    CROW_ROUTE(app, "/approve-request").methods(crow::HTTPMethod::POST)([](const crow::request &req)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        user currentUser(user_id);
+        if (!currentUser.isFound() || !isStaffRole(currentUser.role()))
+            return crow::response(403, "Admin only");
+
+        auto request_id = getRequestParam(req, "request_id");
+        if (request_id.empty()) return crow::response(400, "Missing request_id");
+
+        vector<string> lines;
+        string targetUserId, targetProgramme;
+        ifstream inFile("database/access_requests.csv");
+        if (inFile.is_open())
+        {
+            string line;
+            getline(inFile, line);
+            lines.push_back(line);
+
+            auto now = chrono::system_clock::now();
+            auto time_t = chrono::system_clock::to_time_t(now);
+            stringstream ss;
+            ss << put_time(gmtime(&time_t), "%Y-%m-%dT%H:%M:%SZ");
+
+            while (getline(inFile, line))
+            {
+                if (line.empty()) continue;
+                stringstream lss(line);
+                string reqId;
+                getline(lss, reqId, ',');
+
+                if (reqId == request_id)
+                {
+                    string userId, prog, status;
+                    getline(lss, userId, ',');
+                    getline(lss, prog, ',');
+                    getline(lss, status, ',');
+                    targetUserId = userId;
+                    targetProgramme = prog;
+
+                    stringstream updated;
+                    updated << reqId << "," << userId << "," << prog << ",APPROVED," << ss.str() << "," << user_id;
+                    lines.push_back(updated.str());
+                }
+                else
+                {
+                    lines.push_back(line);
+                }
+            }
+            inFile.close();
+        }
+
+        ofstream outFile("database/access_requests.csv");
+        for (const auto &l : lines)
+            outFile << l << "\n";
+        outFile.close();
+
+        if (!targetUserId.empty())
+        {
+            ifstream approvedIn("database/approved_access.csv");
+            vector<string> approvedLines;
+            if (approvedIn.is_open())
+            {
+                string line;
+                getline(approvedIn, line);
+                approvedLines.push_back(line);
+
+                bool found = false;
+                while (getline(approvedIn, line))
+                {
+                    if (line.empty()) continue;
+                    stringstream ss(line);
+                    string uId;
+                    getline(ss, uId, ',');
+
+                    if (uId == targetUserId)
+                    {
+                        string allowedProgs;
+                        getline(ss, allowedProgs, ',');
+                        if (allowedProgs.find(targetProgramme) == string::npos)
+                        {
+                            if (!allowedProgs.empty()) allowedProgs += ";";
+                            allowedProgs += targetProgramme;
+                        }
+
+                        auto now = chrono::system_clock::now();
+                        auto time_t = chrono::system_clock::to_time_t(now);
+                        stringstream tss;
+                        tss << put_time(gmtime(&time_t), "%Y-%m-%dT%H:%M:%SZ");
+
+                        stringstream updated;
+                        updated << uId << "," << allowedProgs << "," << tss.str() << "," << user_id;
+                        approvedLines.push_back(updated.str());
+                        found = true;
+                    }
+                    else
+                    {
+                        approvedLines.push_back(line);
+                    }
+                }
+
+                if (!found)
+                {
+                    auto now = chrono::system_clock::now();
+                    auto time_t = chrono::system_clock::to_time_t(now);
+                    stringstream tss;
+                    tss << put_time(gmtime(&time_t), "%Y-%m-%dT%H:%M:%SZ");
+
+                    stringstream newRecord;
+                    newRecord << targetUserId << "," << targetProgramme << "," << tss.str() << "," << user_id;
+                    approvedLines.push_back(newRecord.str());
+                }
+
+                approvedIn.close();
+            }
+
+            ofstream approvedOut("database/approved_access.csv");
+            for (const auto &l : approvedLines)
+                approvedOut << l << "\n";
+            approvedOut.close();
+        }
+
+        return crow::response(200, "Request approved");
+    });
+
+    // REJECT REQUEST ROUTE (Admin Only)
+    CROW_ROUTE(app, "/reject-request").methods(crow::HTTPMethod::POST)([](const crow::request &req)
+    {
+        int user_id = verify_token(req);
+        if (user_id <= 0) return crow::response(401, "Unauthorized");
+
+        user currentUser(user_id);
+        if (!currentUser.isFound() || !isStaffRole(currentUser.role()))
+            return crow::response(403, "Admin only");
+
+        auto request_id = getRequestParam(req, "request_id");
+        if (request_id.empty()) return crow::response(400, "Missing request_id");
+
+        vector<string> lines;
+        ifstream inFile("database/access_requests.csv");
+        if (inFile.is_open())
+        {
+            string line;
+            getline(inFile, line);
+            lines.push_back(line);
+
+            auto now = chrono::system_clock::now();
+            auto time_t = chrono::system_clock::to_time_t(now);
+            stringstream ss;
+            ss << put_time(gmtime(&time_t), "%Y-%m-%dT%H:%M:%SZ");
+
+            while (getline(inFile, line))
+            {
+                if (line.empty()) continue;
+                stringstream lss(line);
+                string reqId;
+                getline(lss, reqId, ',');
+
+                if (reqId == request_id)
+                {
+                    string userId, prog;
+                    getline(lss, userId, ',');
+                    getline(lss, prog, ',');
+
+                    stringstream updated;
+                    updated << reqId << "," << userId << "," << prog << ",REJECTED," << ss.str() << "," << user_id;
+                    lines.push_back(updated.str());
+                }
+                else
+                {
+                    lines.push_back(line);
+                }
+            }
+            inFile.close();
+        }
+
+        ofstream outFile("database/access_requests.csv");
+        for (const auto &l : lines)
+            outFile << l << "\n";
+        outFile.close();
+
+        return crow::response(200, "Request rejected");
+    });
 
     app.bindaddr("127.0.0.1").port(18080).run();
 }

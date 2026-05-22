@@ -1,1 +1,1 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/X_NCU.dir/link.d CMakeFiles/X_NCU.dir/main.cpp.o -o X_NCU  /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so
+/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/X_NCU.dir/link.d CMakeFiles/X_NCU.dir/main.cpp.o -o X_NCU  /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so

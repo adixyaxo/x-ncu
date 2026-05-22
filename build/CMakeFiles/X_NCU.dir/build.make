@@ -76,15 +76,15 @@ CMakeFiles/X_NCU.dir/main.cpp.o: CMakeFiles/X_NCU.dir/flags.make
 CMakeFiles/X_NCU.dir/main.cpp.o: /home/batman/Desktop/Coding/Projects/x-ncu/main.cpp
 CMakeFiles/X_NCU.dir/main.cpp.o: CMakeFiles/X_NCU.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/X_NCU.dir/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/X_NCU.dir/main.cpp.o -MF CMakeFiles/X_NCU.dir/main.cpp.o.d -o CMakeFiles/X_NCU.dir/main.cpp.o -c /home/batman/Desktop/Coding/Projects/x-ncu/main.cpp
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/X_NCU.dir/main.cpp.o -MF CMakeFiles/X_NCU.dir/main.cpp.o.d -o CMakeFiles/X_NCU.dir/main.cpp.o -c /home/batman/Desktop/Coding/Projects/x-ncu/main.cpp
 
 CMakeFiles/X_NCU.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/X_NCU.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/batman/Desktop/Coding/Projects/x-ncu/main.cpp > CMakeFiles/X_NCU.dir/main.cpp.i
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/batman/Desktop/Coding/Projects/x-ncu/main.cpp > CMakeFiles/X_NCU.dir/main.cpp.i
 
 CMakeFiles/X_NCU.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/X_NCU.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/batman/Desktop/Coding/Projects/x-ncu/main.cpp -o CMakeFiles/X_NCU.dir/main.cpp.s
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/batman/Desktop/Coding/Projects/x-ncu/main.cpp -o CMakeFiles/X_NCU.dir/main.cpp.s
 
 # Object files for target X_NCU
 X_NCU_OBJECTS = \

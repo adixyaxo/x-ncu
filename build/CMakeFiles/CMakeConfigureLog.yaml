@@ -20,9 +20,9 @@ events:
     names:
       - "uname"
     candidate_directories:
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -34,9 +34,9 @@ events:
       - "/usr/local/games/"
       - "/snap/bin/"
     searched_directories:
+      - "/home/batman/.local/bin/uname"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/uname"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/uname"
-      - "/home/batman/.local/bin/uname"
       - "/home/batman/.local/share/omakub/bin/uname"
       - "/usr/local/sbin/uname"
       - "/usr/local/bin/uname"
@@ -44,6 +44,7 @@ events:
     found: "/usr/bin/uname"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -90,9 +91,9 @@ events:
       - "make"
       - "smake"
     candidate_directories:
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -104,9 +105,9 @@ events:
       - "/usr/local/games/"
       - "/snap/bin/"
     searched_directories:
+      - "/home/batman/.local/bin/gmake"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/gmake"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/gmake"
-      - "/home/batman/.local/bin/gmake"
       - "/home/batman/.local/share/omakub/bin/gmake"
       - "/usr/local/sbin/gmake"
       - "/usr/local/bin/gmake"
@@ -114,74 +115,7 @@ events:
     found: "/usr/bin/gmake"
     search_context:
       ENV{PATH}:
-        - "/home/batman/.local/share/mise/installs/python/latest/bin"
-        - "./bin"
         - "/home/batman/.local/bin"
-        - "/home/batman/.local/share/omakub/bin"
-        - "/home/batman/.local/bin"
-        - "./bin"
-        - "/home/batman/.local/bin"
-        - "/home/batman/.local/share/omakub/bin"
-        - "/usr/local/sbin"
-        - "/usr/local/bin"
-        - "/usr/sbin"
-        - "/usr/bin"
-        - "/sbin"
-        - "/bin"
-        - "/usr/games"
-        - "/usr/local/games"
-        - "/snap/bin"
-        - "/snap/bin"
-  -
-    kind: "find-v1"
-    backtrace:
-      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompiler.cmake:73 (find_program)"
-      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCCompiler.cmake:64 (_cmake_find_compiler)"
-      - "CMakeLists.txt:2 (project)"
-    mode: "program"
-    variable: "CMAKE_C_COMPILER"
-    description: "C compiler"
-    settings:
-      SearchFramework: "NEVER"
-      SearchAppBundle: "NEVER"
-      CMAKE_FIND_USE_CMAKE_PATH: true
-      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
-      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
-      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
-      CMAKE_FIND_USE_INSTALL_PREFIX: true
-    names:
-      - "cc"
-      - "gcc"
-      - "cl"
-      - "bcc"
-      - "xlc"
-      - "icx"
-      - "clang"
-    candidate_directories:
-      - "/home/batman/.local/share/mise/installs/python/latest/bin/"
-      - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
-      - "/home/batman/.local/share/omakub/bin/"
-      - "/usr/local/sbin/"
-      - "/usr/local/bin/"
-      - "/usr/sbin/"
-      - "/usr/bin/"
-      - "/sbin/"
-      - "/bin/"
-      - "/usr/games/"
-      - "/usr/local/games/"
-      - "/snap/bin/"
-    searched_directories:
-      - "/home/batman/.local/share/mise/installs/python/latest/bin/cc"
-      - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/cc"
-      - "/home/batman/.local/bin/cc"
-      - "/home/batman/.local/share/omakub/bin/cc"
-      - "/usr/local/sbin/cc"
-      - "/usr/local/bin/cc"
-      - "/usr/sbin/cc"
-    found: "/usr/bin/cc"
-    search_context:
-      ENV{PATH}:
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -227,6 +161,7 @@ events:
     found: "/usr/share/cmake-4.2/Modules/CMakeCCompilerId.c.in"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -254,7 +189,7 @@ events:
       - "CMakeLists.txt:2 (project)"
     message: |
       Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
-      Compiler: /usr/bin/cc 
+      Compiler: /usr/bin/gcc 
       Build flags: 
       Id flags:  
       
@@ -288,9 +223,9 @@ events:
       - "ar"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -303,6 +238,7 @@ events:
     found: "/usr/bin/ar"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -342,9 +278,9 @@ events:
       - "ranlib"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -357,6 +293,7 @@ events:
     found: "/usr/bin/ranlib"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -396,9 +333,9 @@ events:
       - "strip"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -411,6 +348,7 @@ events:
     found: "/usr/bin/strip"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -450,9 +388,9 @@ events:
       - "ld"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -465,6 +403,7 @@ events:
     found: "/usr/bin/ld"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -504,9 +443,9 @@ events:
       - "nm"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -519,6 +458,7 @@ events:
     found: "/usr/bin/nm"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -558,9 +498,9 @@ events:
       - "objdump"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -573,6 +513,7 @@ events:
     found: "/usr/bin/objdump"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -612,9 +553,9 @@ events:
       - "objcopy"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -627,6 +568,7 @@ events:
     found: "/usr/bin/objcopy"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -666,9 +608,9 @@ events:
       - "readelf"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -681,6 +623,7 @@ events:
     found: "/usr/bin/readelf"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -720,9 +663,9 @@ events:
       - "dlltool"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -734,9 +677,9 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/dlltool"
+      - "/home/batman/.local/bin/dlltool"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/dlltool"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/dlltool"
-      - "/home/batman/.local/bin/dlltool"
       - "/home/batman/.local/share/omakub/bin/dlltool"
       - "/usr/local/sbin/dlltool"
       - "/usr/local/bin/dlltool"
@@ -749,6 +692,7 @@ events:
     found: false
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -788,9 +732,9 @@ events:
       - "addr2line"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -803,6 +747,7 @@ events:
     found: "/usr/bin/addr2line"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -842,9 +787,9 @@ events:
       - "tapi"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -856,9 +801,9 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/tapi"
+      - "/home/batman/.local/bin/tapi"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/tapi"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/tapi"
-      - "/home/batman/.local/bin/tapi"
       - "/home/batman/.local/share/omakub/bin/tapi"
       - "/usr/local/sbin/tapi"
       - "/usr/local/bin/tapi"
@@ -871,6 +816,7 @@ events:
     found: false
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -913,9 +859,9 @@ events:
       - "gcc-ar"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -927,9 +873,9 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/gcc-ar-15.2"
+      - "/home/batman/.local/bin/gcc-ar-15.2"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/gcc-ar-15.2"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/gcc-ar-15.2"
-      - "/home/batman/.local/bin/gcc-ar-15.2"
       - "/home/batman/.local/share/omakub/bin/gcc-ar-15.2"
       - "/usr/local/sbin/gcc-ar-15.2"
       - "/usr/local/bin/gcc-ar-15.2"
@@ -942,6 +888,7 @@ events:
     found: "/usr/bin/gcc-ar-15"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -984,9 +931,9 @@ events:
       - "gcc-ranlib"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -998,9 +945,9 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/gcc-ranlib-15.2"
+      - "/home/batman/.local/bin/gcc-ranlib-15.2"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/gcc-ranlib-15.2"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/gcc-ranlib-15.2"
-      - "/home/batman/.local/bin/gcc-ranlib-15.2"
       - "/home/batman/.local/share/omakub/bin/gcc-ranlib-15.2"
       - "/usr/local/sbin/gcc-ranlib-15.2"
       - "/usr/local/bin/gcc-ranlib-15.2"
@@ -1013,57 +960,7 @@ events:
     found: "/usr/bin/gcc-ranlib-15"
     search_context:
       ENV{PATH}:
-        - "/home/batman/.local/share/mise/installs/python/latest/bin"
-        - "./bin"
         - "/home/batman/.local/bin"
-        - "/home/batman/.local/share/omakub/bin"
-        - "/home/batman/.local/bin"
-        - "./bin"
-        - "/home/batman/.local/bin"
-        - "/home/batman/.local/share/omakub/bin"
-        - "/usr/local/sbin"
-        - "/usr/local/bin"
-        - "/usr/sbin"
-        - "/usr/bin"
-        - "/sbin"
-        - "/bin"
-        - "/usr/games"
-        - "/usr/local/games"
-        - "/snap/bin"
-        - "/snap/bin"
-  -
-    kind: "find-v1"
-    backtrace:
-      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCompiler.cmake:54 (find_program)"
-      - "/usr/share/cmake-4.2/Modules/CMakeDetermineCXXCompiler.cmake:69 (_cmake_find_compiler)"
-      - "CMakeLists.txt:2 (project)"
-    mode: "program"
-    variable: "CMAKE_CXX_COMPILER"
-    description: "CXX compiler"
-    settings:
-      SearchFramework: "NEVER"
-      SearchAppBundle: "NEVER"
-      CMAKE_FIND_USE_CMAKE_PATH: true
-      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
-      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
-      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
-      CMAKE_FIND_USE_INSTALL_PREFIX: true
-    names:
-      - "c++"
-      - "CC"
-      - "g++"
-      - "aCC"
-      - "cl"
-      - "bcc"
-      - "xlC"
-      - "icpx"
-      - "icx"
-      - "clang++"
-    candidate_directories:
-      - "/usr/bin/"
-    found: "/usr/bin/c++"
-    search_context:
-      ENV{PATH}:
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -1109,6 +1006,7 @@ events:
     found: "/usr/share/cmake-4.2/Modules/CMakeCXXCompilerId.cpp.in"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -1136,7 +1034,7 @@ events:
       - "CMakeLists.txt:2 (project)"
     message: |
       Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
-      Compiler: /usr/bin/c++ 
+      Compiler: /usr/bin/g++ 
       Build flags: 
       Id flags:  
       
@@ -1173,9 +1071,9 @@ events:
       - "gcc-ar"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -1187,9 +1085,9 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/gcc-ar-15.2"
+      - "/home/batman/.local/bin/gcc-ar-15.2"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/gcc-ar-15.2"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/gcc-ar-15.2"
-      - "/home/batman/.local/bin/gcc-ar-15.2"
       - "/home/batman/.local/share/omakub/bin/gcc-ar-15.2"
       - "/usr/local/sbin/gcc-ar-15.2"
       - "/usr/local/bin/gcc-ar-15.2"
@@ -1202,6 +1100,7 @@ events:
     found: "/usr/bin/gcc-ar-15"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -1244,9 +1143,9 @@ events:
       - "gcc-ranlib"
     candidate_directories:
       - "/usr/bin/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -1258,9 +1157,9 @@ events:
       - "/snap/bin/"
     searched_directories:
       - "/usr/bin/gcc-ranlib-15.2"
+      - "/home/batman/.local/bin/gcc-ranlib-15.2"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/gcc-ranlib-15.2"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/gcc-ranlib-15.2"
-      - "/home/batman/.local/bin/gcc-ranlib-15.2"
       - "/home/batman/.local/share/omakub/bin/gcc-ranlib-15.2"
       - "/usr/local/sbin/gcc-ranlib-15.2"
       - "/usr/local/bin/gcc-ranlib-15.2"
@@ -1273,6 +1172,7 @@ events:
     found: "/usr/bin/gcc-ranlib-15"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -1300,8 +1200,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-gzWzA8"
-      binary: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-gzWzA8"
+      source: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-RahJNI"
+      binary: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-RahJNI"
     cmakeVariables:
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
@@ -1310,15 +1210,15 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-gzWzA8'
+        Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-RahJNI'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f4a8f/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_f4a8f.dir/build.make CMakeFiles/cmTC_f4a8f.dir/build
-        gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-gzWzA8'
-        Building C object CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o
-        /usr/bin/cc   -v -o CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-4.2/Modules/CMakeCCompilerABI.c
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_9444a/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_9444a.dir/build.make CMakeFiles/cmTC_9444a.dir/build
+        gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-RahJNI'
+        Building C object CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o
+        /usr/bin/gcc   -v -o CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-4.2/Modules/CMakeCCompilerABI.c
         Using built-in specs.
-        COLLECT_GCC=/usr/bin/cc
+        COLLECT_GCC=/usr/bin/gcc
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
         OFFLOAD_TARGET_DEFAULT=1
         Target: x86_64-linux-gnu
@@ -1326,8 +1226,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f4a8f.dir/'
-         /usr/libexec/gcc/x86_64-linux-gnu/15/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-4.2/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_f4a8f.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -fzero-init-padding-bits=all -Wbidi-chars=any -o /tmp/cc6jrwH3.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9444a.dir/'
+         /usr/libexec/gcc/x86_64-linux-gnu/15/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-4.2/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_9444a.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -fzero-init-padding-bits=all -Wbidi-chars=any -o /tmp/cchnpqrb.s
         GNU C23 (Ubuntu 15.2.0-16ubuntu1) version 15.2.0 (x86_64-linux-gnu)
         	compiled by GNU C version 15.2.0, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version isl-0.27-GMP
         
@@ -1344,16 +1244,16 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: edd70396dcc669433a92073f97309866
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f4a8f.dir/'
-         /usr/bin/x86_64-linux-gnu-as -v --64 -o CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o /tmp/cc6jrwH3.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9444a.dir/'
+         /usr/bin/x86_64-linux-gnu-as -v --64 -o CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o /tmp/cchnpqrb.s
         GNU assembler version 2.46 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.46
         COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.'
-        Linking C executable cmTC_f4a8f
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f4a8f.dir/link.txt --verbose=1
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.'
+        Linking C executable cmTC_9444a
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9444a.dir/link.txt --verbose=1
         Using built-in specs.
-        COLLECT_GCC=/usr/bin/cc
+        COLLECT_GCC=/usr/bin/gcc
         COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
         OFFLOAD_TARGET_DEFAULT=1
@@ -1364,14 +1264,14 @@ events:
         gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1) 
         COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f4a8f' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f4a8f.'
-         /usr/libexec/gcc/x86_64-linux-gnu/15/collect2 -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccbhV8Yo.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f4a8f /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_9444a' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_9444a.'
+         /usr/libexec/gcc/x86_64-linux-gnu/15/collect2 -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccPwxBsx.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_9444a /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o
         collect2 version 15.2.0
-        /usr/bin/ld -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccbhV8Yo.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f4a8f /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o
+        /usr/bin/ld -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccPwxBsx.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_9444a /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o
         GNU ld (GNU Binutils for Ubuntu) 2.46
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f4a8f' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f4a8f.'
-        /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o -o cmTC_f4a8f
-        gmake[1]: Leaving directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-gzWzA8'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_9444a' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_9444a.'
+        /usr/bin/gcc  -v -Wl,-v CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o -o cmTC_9444a
+        gmake[1]: Leaving directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-RahJNI'
         
       exitCode: 0
   -
@@ -1406,15 +1306,15 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-gzWzA8']
+        ignore line: [Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-RahJNI']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f4a8f/fast]
-        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_f4a8f.dir/build.make CMakeFiles/cmTC_f4a8f.dir/build]
-        ignore line: [gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-gzWzA8']
-        ignore line: [Building C object CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o]
-        ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-4.2/Modules/CMakeCCompilerABI.c]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_9444a/fast]
+        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_9444a.dir/build.make CMakeFiles/cmTC_9444a.dir/build]
+        ignore line: [gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-RahJNI']
+        ignore line: [Building C object CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o]
+        ignore line: [/usr/bin/gcc   -v -o CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-4.2/Modules/CMakeCCompilerABI.c]
         ignore line: [Using built-in specs.]
-        ignore line: [COLLECT_GCC=/usr/bin/cc]
+        ignore line: [COLLECT_GCC=/usr/bin/gcc]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
         ignore line: [OFFLOAD_TARGET_DEFAULT=1]
         ignore line: [Target: x86_64-linux-gnu]
@@ -1422,8 +1322,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f4a8f.dir/']
-        ignore line: [ /usr/libexec/gcc/x86_64-linux-gnu/15/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-4.2/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_f4a8f.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -fzero-init-padding-bits=all -Wbidi-chars=any -o /tmp/cc6jrwH3.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9444a.dir/']
+        ignore line: [ /usr/libexec/gcc/x86_64-linux-gnu/15/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-4.2/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_9444a.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -fzero-init-padding-bits=all -Wbidi-chars=any -o /tmp/cchnpqrb.s]
         ignore line: [GNU C23 (Ubuntu 15.2.0-16ubuntu1) version 15.2.0 (x86_64-linux-gnu)]
         ignore line: [	compiled by GNU C version 15.2.0  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.3.1  isl version isl-0.27-GMP]
         ignore line: []
@@ -1440,16 +1340,16 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: edd70396dcc669433a92073f97309866]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f4a8f.dir/']
-        ignore line: [ /usr/bin/x86_64-linux-gnu-as -v --64 -o CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o /tmp/cc6jrwH3.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9444a.dir/']
+        ignore line: [ /usr/bin/x86_64-linux-gnu-as -v --64 -o CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o /tmp/cchnpqrb.s]
         ignore line: [GNU assembler version 2.46 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.46]
         ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.']
-        ignore line: [Linking C executable cmTC_f4a8f]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f4a8f.dir/link.txt --verbose=1]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.']
+        ignore line: [Linking C executable cmTC_9444a]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9444a.dir/link.txt --verbose=1]
         ignore line: [Using built-in specs.]
-        ignore line: [COLLECT_GCC=/usr/bin/cc]
+        ignore line: [COLLECT_GCC=/usr/bin/gcc]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
         ignore line: [OFFLOAD_TARGET_DEFAULT=1]
@@ -1460,13 +1360,13 @@ events:
         ignore line: [gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1) ]
         ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f4a8f' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_f4a8f.']
-        link line: [ /usr/libexec/gcc/x86_64-linux-gnu/15/collect2 -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccbhV8Yo.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f4a8f /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_9444a' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_9444a.']
+        link line: [ /usr/libexec/gcc/x86_64-linux-gnu/15/collect2 -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccPwxBsx.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_9444a /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
           arg [/usr/libexec/gcc/x86_64-linux-gnu/15/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/ccbhV8Yo.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccPwxBsx.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -1484,7 +1384,7 @@ events:
           arg [-znow] ==> ignore
           arg [-zrelro] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_f4a8f] ==> ignore
+          arg [cmTC_9444a] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o]
@@ -1499,7 +1399,7 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o] ==> ignore
           arg [-lgcc] ==> lib [gcc]
           arg [--push-state] ==> ignore
           arg [--as-needed] ==> ignore
@@ -1514,7 +1414,7 @@ events:
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
         ignore line: [collect2 version 15.2.0]
-        ignore line: [/usr/bin/ld -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccbhV8Yo.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f4a8f /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_f4a8f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccPwxBsx.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_9444a /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_9444a.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
         linker tool for 'C': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o] ==> [/usr/lib/x86_64-linux-gnu/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o] ==> [/usr/lib/x86_64-linux-gnu/crti.o]
@@ -1554,8 +1454,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-adK17h"
-      binary: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-adK17h"
+      source: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-yt5uqg"
+      binary: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-yt5uqg"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_FLAGS_DEBUG: "-g"
@@ -1565,15 +1465,15 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-adK17h'
+        Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-yt5uqg'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_85257/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_85257.dir/build.make CMakeFiles/cmTC_85257.dir/build
-        gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-adK17h'
-        Building CXX object CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o
-        /usr/bin/c++   -v -o CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_9bda4/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_9bda4.dir/build.make CMakeFiles/cmTC_9bda4.dir/build
+        gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-yt5uqg'
+        Building CXX object CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/bin/g++   -v -o CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
-        COLLECT_GCC=/usr/bin/c++
+        COLLECT_GCC=/usr/bin/g++
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
         OFFLOAD_TARGET_DEFAULT=1
         Target: x86_64-linux-gnu
@@ -1581,8 +1481,8 @@ events:
         Thread model: posix
         Supported LTO compression algorithms: zlib zstd
         gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_85257.dir/'
-         /usr/libexec/gcc/x86_64-linux-gnu/15/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_85257.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -fzero-init-padding-bits=all -Wbidi-chars=any -o /tmp/ccXwJDV7.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9bda4.dir/'
+         /usr/libexec/gcc/x86_64-linux-gnu/15/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_9bda4.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -fzero-init-padding-bits=all -Wbidi-chars=any -o /tmp/ccj4HaUX.s
         GNU C++17 (Ubuntu 15.2.0-16ubuntu1) version 15.2.0 (x86_64-linux-gnu)
         	compiled by GNU C version 15.2.0, GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.3.1, isl version isl-0.27-GMP
         
@@ -1603,16 +1503,16 @@ events:
          /usr/include
         End of search list.
         Compiler executable checksum: b661a74662ad7cf413c4193391ab5290
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_85257.dir/'
-         /usr/bin/x86_64-linux-gnu-as -v --64 -o CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccXwJDV7.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9bda4.dir/'
+         /usr/bin/x86_64-linux-gnu-as -v --64 -o CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccj4HaUX.s
         GNU assembler version 2.46 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.46
         COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.'
-        Linking CXX executable cmTC_85257
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_85257.dir/link.txt --verbose=1
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.'
+        Linking CXX executable cmTC_9bda4
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9bda4.dir/link.txt --verbose=1
         Using built-in specs.
-        COLLECT_GCC=/usr/bin/c++
+        COLLECT_GCC=/usr/bin/g++
         COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper
         OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
         OFFLOAD_TARGET_DEFAULT=1
@@ -1623,14 +1523,14 @@ events:
         gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1) 
         COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/
         LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../:/lib/:/usr/lib/
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_85257' '-foffload-options=-l_GCC_stdc++' '-foffload-options=-l_GCC_m' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_85257.'
-         /usr/libexec/gcc/x86_64-linux-gnu/15/collect2 -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccngeoOW.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_85257 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_9bda4' '-foffload-options=-l_GCC_stdc++' '-foffload-options=-l_GCC_m' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_9bda4.'
+         /usr/libexec/gcc/x86_64-linux-gnu/15/collect2 -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWIm57C.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_9bda4 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o
         collect2 version 15.2.0
-        /usr/bin/ld -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccngeoOW.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_85257 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o
+        /usr/bin/ld -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWIm57C.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_9bda4 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o
         GNU ld (GNU Binutils for Ubuntu) 2.46
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_85257' '-foffload-options=-l_GCC_stdc++' '-foffload-options=-l_GCC_m' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_85257.'
-        /usr/bin/c++  -v -Wl,-v CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_85257
-        gmake[1]: Leaving directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-adK17h'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_9bda4' '-foffload-options=-l_GCC_stdc++' '-foffload-options=-l_GCC_m' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_9bda4.'
+        /usr/bin/g++  -v -Wl,-v CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_9bda4
+        gmake[1]: Leaving directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-yt5uqg'
         
       exitCode: 0
   -
@@ -1671,15 +1571,15 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-adK17h']
+        ignore line: [Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-yt5uqg']
         ignore line: []
-        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_85257/fast]
-        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_85257.dir/build.make CMakeFiles/cmTC_85257.dir/build]
-        ignore line: [gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-adK17h']
-        ignore line: [Building CXX object CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o]
-        ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_9bda4/fast]
+        ignore line: [/usr/bin/gmake  -f CMakeFiles/cmTC_9bda4.dir/build.make CMakeFiles/cmTC_9bda4.dir/build]
+        ignore line: [gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-yt5uqg']
+        ignore line: [Building CXX object CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/bin/g++   -v -o CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
-        ignore line: [COLLECT_GCC=/usr/bin/c++]
+        ignore line: [COLLECT_GCC=/usr/bin/g++]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
         ignore line: [OFFLOAD_TARGET_DEFAULT=1]
         ignore line: [Target: x86_64-linux-gnu]
@@ -1687,8 +1587,8 @@ events:
         ignore line: [Thread model: posix]
         ignore line: [Supported LTO compression algorithms: zlib zstd]
         ignore line: [gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_85257.dir/']
-        ignore line: [ /usr/libexec/gcc/x86_64-linux-gnu/15/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_85257.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -fzero-init-padding-bits=all -Wbidi-chars=any -o /tmp/ccXwJDV7.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9bda4.dir/']
+        ignore line: [ /usr/libexec/gcc/x86_64-linux-gnu/15/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-4.2/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpdir CMakeFiles/cmTC_9bda4.dir/ -dumpbase CMakeCXXCompilerABI.cpp.cpp -dumpbase-ext .cpp -mtune=generic -march=x86-64 -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -fzero-init-padding-bits=all -Wbidi-chars=any -o /tmp/ccj4HaUX.s]
         ignore line: [GNU C++17 (Ubuntu 15.2.0-16ubuntu1) version 15.2.0 (x86_64-linux-gnu)]
         ignore line: [	compiled by GNU C version 15.2.0  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.3.1  isl version isl-0.27-GMP]
         ignore line: []
@@ -1709,16 +1609,16 @@ events:
         ignore line: [ /usr/include]
         ignore line: [End of search list.]
         ignore line: [Compiler executable checksum: b661a74662ad7cf413c4193391ab5290]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_85257.dir/']
-        ignore line: [ /usr/bin/x86_64-linux-gnu-as -v --64 -o CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccXwJDV7.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9bda4.dir/']
+        ignore line: [ /usr/bin/x86_64-linux-gnu-as -v --64 -o CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccj4HaUX.s]
         ignore line: [GNU assembler version 2.46 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.46]
         ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.']
-        ignore line: [Linking CXX executable cmTC_85257]
-        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_85257.dir/link.txt --verbose=1]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.']
+        ignore line: [Linking CXX executable cmTC_9bda4]
+        ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9bda4.dir/link.txt --verbose=1]
         ignore line: [Using built-in specs.]
-        ignore line: [COLLECT_GCC=/usr/bin/c++]
+        ignore line: [COLLECT_GCC=/usr/bin/g++]
         ignore line: [COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper]
         ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
         ignore line: [OFFLOAD_TARGET_DEFAULT=1]
@@ -1729,13 +1629,13 @@ events:
         ignore line: [gcc version 15.2.0 (Ubuntu 15.2.0-16ubuntu1) ]
         ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/15/:/usr/libexec/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/]
         ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/15/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/15/../../../:/lib/:/usr/lib/]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_85257' '-foffload-options=-l_GCC_stdc++' '-foffload-options=-l_GCC_m' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_85257.']
-        link line: [ /usr/libexec/gcc/x86_64-linux-gnu/15/collect2 -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccngeoOW.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_85257 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_9bda4' '-foffload-options=-l_GCC_stdc++' '-foffload-options=-l_GCC_m' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' 'cmTC_9bda4.']
+        link line: [ /usr/libexec/gcc/x86_64-linux-gnu/15/collect2 -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWIm57C.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_9bda4 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
           arg [/usr/libexec/gcc/x86_64-linux-gnu/15/collect2] ==> ignore
           arg [-plugin] ==> ignore
           arg [/usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so] ==> ignore
           arg [-plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper] ==> ignore
-          arg [-plugin-opt=-fresolution=/tmp/ccngeoOW.res] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccWIm57C.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
           arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -1753,7 +1653,7 @@ events:
           arg [-znow] ==> ignore
           arg [-zrelro] ==> ignore
           arg [-o] ==> ignore
-          arg [cmTC_85257] ==> ignore
+          arg [cmTC_9bda4] ==> ignore
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o]
@@ -1768,7 +1668,7 @@ events:
           arg [-L/lib] ==> dir [/lib]
           arg [-L/usr/lib] ==> dir [/usr/lib]
           arg [-v] ==> ignore
-          arg [CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
           arg [-lstdc++] ==> lib [stdc++]
           arg [-lm] ==> lib [m]
           arg [-lgcc_s] ==> lib [gcc_s]
@@ -1779,7 +1679,7 @@ events:
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o]
           arg [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o] ==> obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
         ignore line: [collect2 version 15.2.0]
-        ignore line: [/usr/bin/ld -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccngeoOW.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_85257 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_85257.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
+        ignore line: [/usr/bin/ld -plugin /usr/libexec/gcc/x86_64-linux-gnu/15/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-linux-gnu/15/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWIm57C.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_9bda4 /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/15/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/15 -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/15/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/15/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_9bda4.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/15/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crtn.o]
         linker tool for 'CXX': /usr/bin/ld
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/Scrt1.o] ==> [/usr/lib/x86_64-linux-gnu/Scrt1.o]
         collapse obj [/usr/lib/gcc/x86_64-linux-gnu/15/../../../x86_64-linux-gnu/crti.o] ==> [/usr/lib/x86_64-linux-gnu/crti.o]
@@ -1831,9 +1731,9 @@ events:
       - "pkg-config"
       - "pkgconf"
     candidate_directories:
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/"
       - "/usr/local/bin/"
@@ -1862,12 +1762,12 @@ events:
       - "/opt/sbin/"
       - "/opt/"
     searched_directories:
+      - "/home/batman/.local/bin/pkg-config"
+      - "/home/batman/.local/bin/pkgconf"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/pkg-config"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/pkgconf"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/pkg-config"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/pkgconf"
-      - "/home/batman/.local/bin/pkg-config"
-      - "/home/batman/.local/bin/pkgconf"
       - "/home/batman/.local/share/omakub/bin/pkg-config"
       - "/home/batman/.local/share/omakub/bin/pkgconf"
       - "/usr/local/sbin/pkg-config"
@@ -1879,6 +1779,7 @@ events:
     found: "/usr/bin/pkg-config"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -1934,6 +1835,7 @@ events:
     found: "/usr/lib/x86_64-linux-gnu/libssl.so"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -1991,6 +1893,7 @@ events:
     found: "/usr/lib/x86_64-linux-gnu/libcrypto.so"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -2042,12 +1945,12 @@ events:
     candidate_directories:
       - "/usr/include/include/"
       - "/usr/include/"
+      - "/home/batman/.local/bin/include/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/include/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/include/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/include/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/include/"
       - "/home/batman/.local/share/omakub/bin/"
       - "/usr/local/sbin/include/"
@@ -2109,6 +2012,7 @@ events:
     found: "/usr/include/"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -2163,15 +2067,15 @@ events:
       - "/usr/lib/x86_64-linux-gnu/lib/"
       - "/usr/lib/x86_64-linux-gnu/lib64/"
       - "/usr/lib/x86_64-linux-gnu/"
+      - "/home/batman/.local/bin/lib/"
+      - "/home/batman/.local/bin/lib64/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/lib/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/lib64/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/lib/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/lib64/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/lib/"
-      - "/home/batman/.local/bin/lib64/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/lib/"
       - "/home/batman/.local/share/omakub/bin/lib64/"
       - "/home/batman/.local/share/omakub/bin/"
@@ -2266,6 +2170,7 @@ events:
     found: "/usr/lib/x86_64-linux-gnu/libssl.so"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -2318,15 +2223,15 @@ events:
       - "/usr/lib/x86_64-linux-gnu/lib/"
       - "/usr/lib/x86_64-linux-gnu/lib64/"
       - "/usr/lib/x86_64-linux-gnu/"
+      - "/home/batman/.local/bin/lib/"
+      - "/home/batman/.local/bin/lib64/"
+      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/lib/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/lib64/"
       - "/home/batman/.local/share/mise/installs/python/latest/bin/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/lib/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/lib64/"
       - "/home/batman/Desktop/Coding/Projects/x-ncu/build/bin/"
-      - "/home/batman/.local/bin/lib/"
-      - "/home/batman/.local/bin/lib64/"
-      - "/home/batman/.local/bin/"
       - "/home/batman/.local/share/omakub/bin/lib/"
       - "/home/batman/.local/share/omakub/bin/lib64/"
       - "/home/batman/.local/share/omakub/bin/"
@@ -2417,6 +2322,7 @@ events:
     found: "/usr/lib/x86_64-linux-gnu/libcrypto.so"
     search_context:
       ENV{PATH}:
+        - "/home/batman/.local/bin"
         - "/home/batman/.local/share/mise/installs/python/latest/bin"
         - "./bin"
         - "/home/batman/.local/bin"
@@ -2458,8 +2364,8 @@ events:
     checks:
       - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
     directories:
-      source: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-e1p9hD"
-      binary: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-e1p9hD"
+      source: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-jU6vnv"
+      binary: "/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-jU6vnv"
     cmakeVariables:
       CMAKE_C_FLAGS: ""
       CMAKE_C_FLAGS_DEBUG: "-g"
@@ -2468,17 +2374,17 @@ events:
       variable: "CMAKE_HAVE_LIBC_PTHREAD"
       cached: true
       stdout: |
-        Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-e1p9hD'
+        Change Dir: '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-jU6vnv'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f9fff/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_f9fff.dir/build.make CMakeFiles/cmTC_f9fff.dir/build
-        gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-e1p9hD'
-        Building C object CMakeFiles/cmTC_f9fff.dir/src.c.o
-        /usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_f9fff.dir/src.c.o -c /home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-e1p9hD/src.c
-        Linking C executable cmTC_f9fff
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f9fff.dir/link.txt --verbose=1
-        /usr/bin/cc CMakeFiles/cmTC_f9fff.dir/src.c.o -o cmTC_f9fff
-        gmake[1]: Leaving directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-e1p9hD'
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_8dfcd/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_8dfcd.dir/build.make CMakeFiles/cmTC_8dfcd.dir/build
+        gmake[1]: Entering directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-jU6vnv'
+        Building C object CMakeFiles/cmTC_8dfcd.dir/src.c.o
+        /usr/bin/gcc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_8dfcd.dir/src.c.o -c /home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-jU6vnv/src.c
+        Linking C executable cmTC_8dfcd
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8dfcd.dir/link.txt --verbose=1
+        /usr/bin/gcc CMakeFiles/cmTC_8dfcd.dir/src.c.o -o cmTC_8dfcd
+        gmake[1]: Leaving directory '/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/CMakeScratch/TryCompile-jU6vnv'
         
       exitCode: 0
 ...

@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/batman/Desktop/Coding/Projects/x-ncu/build",
+  "command": "/usr/bin/g++ -DCROW_USE_BOOST -I/home/batman/Desktop/Coding/Projects/x-ncu/boost_1_90_0 -I/home/batman/Desktop/Coding/Projects/x-ncu/Crow-1.3.1/include -I/home/batman/Desktop/Coding/Projects/x-ncu/jwt-cpp/include -g -o CMakeFiles/X_NCU.dir/main.cpp.o -c /home/batman/Desktop/Coding/Projects/x-ncu/main.cpp",
+  "file": "/home/batman/Desktop/Coding/Projects/x-ncu/main.cpp",
+  "output": "CMakeFiles/X_NCU.dir/main.cpp.o"
+}
+]

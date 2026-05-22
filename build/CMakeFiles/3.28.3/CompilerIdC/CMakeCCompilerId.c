@@ -184,7 +184,6 @@
 # define COMPILER_VERSION_MINOR DEC(__open_xl_release__)
 # define COMPILER_VERSION_PATCH DEC(__open_xl_modification__)
 # define COMPILER_VERSION_TWEAK DEC(__open_xl_ptf_fix_level__)
-# define COMPILER_VERSION_INTERNAL_STR  __clang_version__
 
 
 #elif defined(__ibmxl__) && defined(__clang__)
@@ -290,13 +289,6 @@
 # define COMPILER_VERSION_MINOR DEC(__ORANGEC_MINOR__)
 # define COMPILER_VERSION_PATCH DEC(__ORANGEC_PATCHLEVEL__)
 
-#elif defined(__RENESAS__)
-# define COMPILER_ID "Renesas"
-/* __RENESAS_VERSION__ = 0xVVRRPP00 */
-# define COMPILER_VERSION_MAJOR HEX(__RENESAS_VERSION__ >> 24 & 0xFF)
-# define COMPILER_VERSION_MINOR HEX(__RENESAS_VERSION__ >> 16 & 0xFF)
-# define COMPILER_VERSION_PATCH HEX(__RENESAS_VERSION__ >> 8  & 0xFF)
-
 #elif defined(__TINYC__)
 # define COMPILER_ID "TinyCC"
 
@@ -342,13 +334,6 @@
   # define COMPILER_VERSION_MINOR DEC(__ARMCOMPILER_VERSION/10000 % 100)
   # define COMPILER_VERSION_PATCH DEC(__ARMCOMPILER_VERSION/100   % 100)
 # define COMPILER_VERSION_INTERNAL DEC(__ARMCOMPILER_VERSION)
-
-#elif defined(__clang__) && defined(__ti__)
-# define COMPILER_ID "TIClang"
-  # define COMPILER_VERSION_MAJOR DEC(__ti_major__)
-  # define COMPILER_VERSION_MINOR DEC(__ti_minor__)
-  # define COMPILER_VERSION_PATCH DEC(__ti_patchlevel__)
-# define COMPILER_VERSION_INTERNAL DEC(__ti_version__)
 
 #elif defined(__clang__)
 # define COMPILER_ID "Clang"
@@ -431,14 +416,6 @@
 #  define COMPILER_VERSION_PATCH DEC(__SUBVERSION__)
 #  define COMPILER_VERSION_INTERNAL DEC(__IAR_SYSTEMS_ICC__)
 # endif
-
-#elif defined(__DCC__) && defined(_DIAB_TOOL)
-# define COMPILER_ID "Diab"
-  # define COMPILER_VERSION_MAJOR DEC(__VERSION_MAJOR_NUMBER__)
-  # define COMPILER_VERSION_MINOR DEC(__VERSION_MINOR_NUMBER__)
-  # define COMPILER_VERSION_PATCH DEC(__VERSION_ARCH_FEATURE_NUMBER__)
-  # define COMPILER_VERSION_TWEAK DEC(__VERSION_BUG_FIX_NUMBER__)
-
 
 #elif defined(__SDCC_VERSION_MAJOR) || defined(SDCC)
 # define COMPILER_ID "SDCC"
@@ -702,14 +679,6 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 #  define ARCHITECTURE_ID ""
 # endif
 
-#elif defined(__clang__) && defined(__ti__)
-# if defined(__ARM_ARCH)
-#  define ARCHITECTURE_ID "ARM"
-
-# else /* unknown architecture */
-#  define ARCHITECTURE_ID ""
-# endif
-
 #elif defined(__TI_COMPILER_VERSION__)
 # if defined(__TI_ARM__)
 #  define ARCHITECTURE_ID "ARM"
@@ -741,7 +710,7 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 # elif defined(__CMCS__)
 #  define ARCHITECTURE_ID "MCS"
 
-# elif defined(__CARM__) || defined(__CPARM__)
+# elif defined(__CARM__)
 #  define ARCHITECTURE_ID "ARM"
 
 # elif defined(__CARC__)
@@ -752,20 +721,6 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 
 # elif defined(__CPCP__)
 #  define ARCHITECTURE_ID "PCP"
-
-# else
-#  define ARCHITECTURE_ID ""
-# endif
-
-#elif defined(__RENESAS__)
-# if defined(__CCRX__)
-#  define ARCHITECTURE_ID "RX"
-
-# elif defined(__CCRL__)
-#  define ARCHITECTURE_ID "RL78"
-
-# elif defined(__CCRH__)
-#  define ARCHITECTURE_ID "RH850"
 
 # else
 #  define ARCHITECTURE_ID ""
@@ -857,28 +812,19 @@ char const* info_arch = "INFO" ":" "arch[" ARCHITECTURE_ID "]";
 
 
 
-#define C_STD_99 199901L
-#define C_STD_11 201112L
-#define C_STD_17 201710L
-#define C_STD_23 202311L
-
-#ifdef __STDC_VERSION__
-#  define C_STD __STDC_VERSION__
-#endif
-
-#if !defined(__STDC__) && !defined(__clang__) && !defined(__RENESAS__)
+#if !defined(__STDC__) && !defined(__clang__)
 # if defined(_MSC_VER) || defined(__ibmxl__) || defined(__IBMC__)
 #  define C_VERSION "90"
 # else
 #  define C_VERSION
 # endif
-#elif C_STD > C_STD_17
+#elif __STDC_VERSION__ > 201710L
 # define C_VERSION "23"
-#elif C_STD > C_STD_11
+#elif __STDC_VERSION__ >= 201710L
 # define C_VERSION "17"
-#elif C_STD > C_STD_99
+#elif __STDC_VERSION__ >= 201000L
 # define C_VERSION "11"
-#elif C_STD >= C_STD_99
+#elif __STDC_VERSION__ >= 199901L
 # define C_VERSION "99"
 #else
 # define C_VERSION "90"
@@ -888,7 +834,7 @@ const char* info_language_standard_default =
 
 const char* info_language_extensions_default = "INFO" ":" "extensions_default["
 #if (defined(__clang__) || defined(__GNUC__) || defined(__xlC__) ||           \
-     defined(__TI_COMPILER_VERSION__) || defined(__RENESAS__)) &&             \
+     defined(__TI_COMPILER_VERSION__)) &&                                     \
   !defined(__STRICT_ANSI__)
   "ON"
 #else
@@ -914,7 +860,7 @@ int main(int argc, char* argv[])
 #ifdef COMPILER_VERSION_MAJOR
   require += info_version[argc];
 #endif
-#if defined(COMPILER_VERSION_INTERNAL) || defined(COMPILER_VERSION_INTERNAL_STR)
+#ifdef COMPILER_VERSION_INTERNAL
   require += info_version_internal[argc];
 #endif
 #ifdef SIMULATE_ID

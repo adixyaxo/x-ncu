@@ -164,7 +164,13 @@
                 {{user_initials}}
             </div>
             <div class="flex-1 overflow-hidden">
-                <p class="font-semibold text-sm text-gray-200 tracking-wide truncate">{{user_name}}</p>
+                <p class="font-semibold text-sm text-gray-200 tracking-wide truncate flex items-center gap-1">
+                    <span class="truncate">{{user_name}}</span>
+                    {{#is_admin}}
+                    <i class="ph-fill ph-seal-check text-black bg-white rounded-full text-[14px] flex-shrink-0"
+                        title="Admin"></i>
+                    {{/is_admin}}
+                </p>
                 <p class="text-xmuted text-[13px] mt-0.5 truncate">{{user_handle}}</p>
             </div>
         </div>

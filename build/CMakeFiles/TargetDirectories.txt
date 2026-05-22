@@ -1,3 +1,3 @@
-/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/X_NCU.dir
-/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/edit_cache.dir
-/home/batman/Desktop/Coding/Projects/x-ncu/build/CMakeFiles/rebuild_cache.dir
+/home/meowmeow/x-ncu/build/CMakeFiles/X_NCU.dir
+/home/meowmeow/x-ncu/build/CMakeFiles/edit_cache.dir
+/home/meowmeow/x-ncu/build/CMakeFiles/rebuild_cache.dir

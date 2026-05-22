@@ -60,12 +60,14 @@
             </div>
 
             <div class="px-4 pt-3 pb-4 border-b border-xborder">
-                <h1 class="text-xl font-extrabold">{{profile_name}}</h1>
-                <p class="text-xmuted text-[15px] leading-tight flex items-center gap-1">
-                    <span>{{profile_handle}}</span>
+                <h1 class="text-xl font-extrabold flex items-center gap-1">
+                    <span>{{profile_name}}</span>
                     {{#is_admin}}
                     <i class="ph-fill ph-seal-check text-black bg-white rounded-full text-[16px]" title="Admin"></i>
                     {{/is_admin}}
+                </h1>
+                <p class="text-xmuted text-[15px] leading-tight flex items-center gap-1">
+                    <span>{{profile_handle}}</span>
                     {{^is_admin}}
                     {{#is_verified}}
                     <i class="ph-fill ph-seal-check text-[#1DA1F2] text-[16px]" title="Verified"></i>

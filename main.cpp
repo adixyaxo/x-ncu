@@ -5,6 +5,7 @@
  * It reads and writes data to simple CSV files instead of a big database.
  * It also uses tokens to keep users logged in safely.
  */
+
 #include "crow.h"
 #include <iostream>
 #include <fstream>
@@ -22,16 +23,19 @@
 
 using namespace std;
 
+// ========== BHAUMIK: HELPER FUNCTION DECLARATIONS ==========
+// Role normalization and validation helper functions
 string normalizeRole(const string &role);
 bool isStaffRole(const string &role);
 bool isAdminRole(const string &role);
 
 /*
- * USER CLASS:
- * This part defines what a "user" is in our system.
- * It holds details like their name, email, password, and followers.
- * It also has tools to save these details back into the users.csv file.
+ * ========== ABHISHEK: USER CLASS (OOP - Classes & Objects) ==========
+ * This class defines what a "user" is in our system.
+ * It holds details like their name, email, password, followers, and social features.
+ * It also has methods to manage and save user details to/from the users.csv file.
  */
+// User class with 14 columns and enhanced CSV handling - ABHISHEK
 class user
 {
 private:
@@ -53,18 +57,23 @@ private:
     int followers_count_private = 0;
     int posts_private = 0;
 
-    // PROGRAMME & SOCIAL FEATURES
+    // PROGRAMME & SOCIAL FEATURES NEWLY IMPLEMENTED
     string programme_private = "";
     string liked_post_ids_private = "";
     string followed_user_ids_private = "";
 
 public:
+
+    // CONSTRUCTORS
     user();
     user(int targetUserNo);
+
+    //DECONSTRUCTORS
     ~user();
 
+
     // ==========================================
-    // GETTERS
+    // ABHISHEK: GETTERS (Methods for accessing private members)
     // ==========================================
     int id() const { return id_private; }
     string fullname() const { return fullname_private; }
@@ -77,7 +86,6 @@ public:
     bool isFound() const { return isFound_private; }
     int posts() const { return posts_private; }
 
-    // NEW GETTERS
     string location() const { return location_private; }
     string link() const { return link_private; }
     int following_count() const { return following_count_private; }
@@ -86,8 +94,10 @@ public:
     string programme() const { return programme_private; }
     string liked_post_ids() const { return liked_post_ids_private; }
     string followed_user_ids() const { return followed_user_ids_private; }
+
+
     // ==========================================
-    // SETTERS
+    // ABHISHEK: SETTERS (Methods for modifying private members)
     // ==========================================
     void id(int val) { id_private = val; }
     void fullname(const string &val) { fullname_private = val; }
@@ -100,7 +110,6 @@ public:
     void isFound(bool val) { isFound_private = val; }
     void posts(int val) { posts_private = val; }
 
-    // NEW SETTERS
     void location(const string &val) { location_private = val; }
     void link(const string &val) { link_private = val; }
     void following_count(int val) { following_count_private = val; }
@@ -110,13 +119,18 @@ public:
     void liked_post_ids(const string &val) { liked_post_ids_private = val; }
     void followed_user_ids(const string &val) { followed_user_ids_private = val; }
 
+
+    // ========== ABHUDAYA: CSV DATABASE METHOD DECLARATION ==========
+    // Method to update/save user data to CSV file
     void updateUserInCSV();
 };
 
+// ========== ABHISHEK: USER CLASS CONSTRUCTORS & IMPLEMENTATION ==========
 user::user() {}
 
-// Updated constructor to populate the private variables
-user::user(int targetUserNo) // constructor -- read data from user.csv ya fir user database --- store krke ek class banaega
+// ========== ABHUDAYA: USER CONSTRUCTOR - CSV FILE READING ==========
+// Constructor that reads user data from database/users.csv and populates class members
+user::user(int targetUserNo) // ABHUDAYA: Read from CSV database and populate user object
 {
     ifstream file("database/users.csv");
 
@@ -124,7 +138,7 @@ user::user(int targetUserNo) // constructor -- read data from user.csv ya fir us
         return;
 
     string line;
-    getline(file, line); // Skip header
+    getline(file, line); // Skip CSV header
 
     while (getline(file, line))
     {
@@ -132,10 +146,9 @@ user::user(int targetUserNo) // constructor -- read data from user.csv ya fir us
             continue; // Skip blank lines
 
         /*
-         * BREAKING DOWN THE LINE:
-         * We use a 'stringstream' to treat the text line like a mini-file.
-         * Then, we use 'getline' to read word by word, stopping at every comma.
-         * This is how we split the CSV row into separate pieces of data.
+         * ========== ABHUDAYA: CSV PARSING ==========
+         * Parsing CSV line using stringstream to extract comma-separated values
+         * Each getline call reads until the next comma, splitting CSV data into fields
          */
         stringstream ss(line);
         string idStr;
@@ -205,6 +218,8 @@ user::user(int targetUserNo) // constructor -- read data from user.csv ya fir us
 
 user::~user() {}
 
+// ========== ABHUDAYA: CSV FILE UPDATE METHOD ==========
+// Updates user data in the CSV database by reading all lines, finding the user, and rewriting the file
 void user::updateUserInCSV()
 {
     ifstream file("database/users.csv");
@@ -212,16 +227,17 @@ void user::updateUserInCSV()
         return;
 
     /*
-     * UPDATING A CSV FILE:
-     * You cannot easily change a single line in the middle of a text file.
-     * So, we read every single line into a list (vector) in memory.
-     * When we find the user we want to update, we replace their old line with the new data.
-     * Finally, we erase the old file and write the entire list back to it.
+     * ========== ABHUDAYA: CSV UPDATE ALGORITHM ==========
+     * CSV files cannot be modified in-place. Process:
+     * 1. Read entire CSV into memory (vector of lines)
+     * 2. Find the user record by matching ID
+     * 3. Replace the old record with updated data
+     * 4. Write all lines back to the CSV file
      */
     vector<string> lines;
     string line;
     getline(file, line);
-    lines.push_back(line); // Header
+    lines.push_back(line); // Keep CSV header
 
     bool found = false;
     while (getline(file, line))
@@ -271,7 +287,14 @@ void user::updateUserInCSV()
     }
 }
 
-// LIKE HELPER FUNCTIONS
+
+//=============================================================================================
+// ========== BHAUMIK: HELPER FUNCTIONS FOR LIKES AND FOLLOWS ==========
+// These are optimization functions that handle repeated patterns of data manipulation
+// Used to avoid code duplication in the main application logic
+//=============================================================================================
+
+// ========== BHAUMIK: CHECK IF USER LIKED A POST ==========
 bool hasUserLikedPost(int userId, int postId)
 {
     user u(userId);
@@ -289,6 +312,7 @@ bool hasUserLikedPost(int userId, int postId)
     return false;
 }
 
+// ========== BHAUMIK: ADD LIKE TO USER'S PROFILE ==========
 void addLikeToUser(int userId, int postId)
 {
     user u(userId);
@@ -303,6 +327,7 @@ void addLikeToUser(int userId, int postId)
     u.updateUserInCSV();
 }
 
+// ========== BHAUMIK: REMOVE LIKE FROM USER'S PROFILE ==========
 void removeLikeFromUser(int userId, int postId)
 {
     user u(userId);
@@ -332,7 +357,13 @@ void removeLikeFromUser(int userId, int postId)
     u.updateUserInCSV();
 }
 
-// FOLLOW HELPER FUNCTIONS
+
+//=============================================================================================
+// ========== BHAUMIK: HELPER FUNCTIONS FOR FOLLOWS ==========
+// Utility functions to manage user follows/subscriptions
+//=============================================================================================
+
+// ========== BHAUMIK: GET LIST OF FOLLOWED USERS ==========
 vector<int> getFollowedUsers(int userId)
 {
     vector<int> followed;
@@ -352,6 +383,7 @@ vector<int> getFollowedUsers(int userId)
     return followed;
 }
 
+// ========== BHAUMIK: CHECK IF USER FOLLOWS ANOTHER USER ==========
 bool doesUserFollow(int userA, int userB)
 {
     user u(userA);
@@ -369,6 +401,7 @@ bool doesUserFollow(int userA, int userB)
     return false;
 }
 
+// ========== BHAUMIK: ADD FOLLOW RELATIONSHIP ==========
 void addFollow(int userA, int userB)
 {
     if (userA == userB) return;
@@ -392,6 +425,7 @@ void addFollow(int userA, int userB)
     }
 }
 
+// ========== BHAUMIK: REMOVE FOLLOW RELATIONSHIP ==========
 void removeFollow(int userA, int userB)
 {
     user u(userA);
@@ -429,10 +463,12 @@ void removeFollow(int userA, int userB)
     }
 }
 
+//=============================================================================================
+// ========== ABHUDAYA: GET USER PROFILE BY USERNAME - CSV DATABASE LOOKUP ==========
+// Searches users.csv file to find a user by username handle and returns their user ID
 /*
- * GET USER PROFILE:
- * This tool searches the users.csv file to find someone by their username.
- * If it finds them, it gives back their secret ID number.
+ * This function queries the users.csv database to locate a user by their username.
+ * Returns the user's ID number if found, or -2 if file cannot be opened.
  */
 int getuserprofile(const string &username)
 {
@@ -445,22 +481,22 @@ int getuserprofile(const string &username)
 
     string line;
 
-    // 1. Skip the header row
+    // Skip CSV header row
     if (file.good())
     {
         getline(file, line);
     }
 
-    // 2. Loop through the remaining rows
+    // Search through all user records
     while (getline(file, line))
     {
         if (line.empty())
-            continue; // Skip any empty lines
+            continue; // Skip empty lines
 
         stringstream ss(line);
         string idStr, currentUsername;
 
-        // 3. Extract Column 1 (UserID) and Column 2 (Username)
+        // Extract Column 1 (UserID) and Column 2 (Username/Handle)
         getline(ss, idStr, ',');
         getline(ss, currentUsername, ',');
 
@@ -481,19 +517,24 @@ int getuserprofile(const string &username)
 
     file.close();
 
-    // 5. If the loop finishes without returning, the user wasn't found
+    // If the loop finishes, user wasn't found
     return -1;
 }
 
+//=============================================================================================
+// ========== AFSHA: AUTHENTICATE USER - SECURITY & AUTHENTICATION ==========
+// Validates user login credentials by checking email and password against database
+// Returns user ID if authentication succeeds, -2 if database error, -1 if credentials invalid
 /*
- * AUTHENTICATE USER:
- * This checks if the email and password entered match our records.
- * It reads the users.csv file and compares passwords safely.
- * If correct, it lets the user log in.
+ * This function implements the login security check:
+ * 1. Reads stored password hash from users.csv
+ * 2. Hashes the input password using SHA256
+ * 3. Compares hashes for security (never stores plain text passwords)
+ * 4. Returns user ID on successful authentication
  */
-int authenticateUser(const string &inputEmail, const string &inputPassword)
+int authenticateUser(const string &inputEmail, const string &inputPassword) // AFSHA: SIGNIN
 {
-    // 1. Open the CSV file
+    // Open the CSV database file
     ifstream file("database/users.csv");
 
     if (!file.is_open())
@@ -504,17 +545,17 @@ int authenticateUser(const string &inputEmail, const string &inputPassword)
 
     string line;
 
-    // 2. Read and discard the first line (the header row)
+    // Skip CSV header row
     getline(file, line);
 
-    // 3. Loop through the remaining rows one by one
+    // Search through all user records for matching email
     while (getline(file, line))
     {
         stringstream ss(line);
         string idStr, email, fullName, handle, role, programme, storedPassword, is_verified, bio, created_at;
         string location, link, following, followers, posts;
 
-        // 4. Extract each column up to the comma
+        // Extract each column from CSV separated by commas
         getline(ss, idStr, ',');
         getline(ss, handle, ',');
         getline(ss, email, ',');
@@ -543,23 +584,29 @@ int authenticateUser(const string &inputEmail, const string &inputPassword)
             }
             else
             {
-                // Email found, but password doesn't match
+                // Email found but password mismatch
                 return -1;
             }
         }
     }
 
-    // 6. Loop finished, email was never found
-    return 0; // Return 0 here to trigger your "User Not Found" response
+    // User email was never found in database
+    return 0;
 }
 
+//=============================================================================================
+// ========== AFSHA: REGISTER USER - SECURITY & AUTHENTICATION ==========
+// Creates new user account with email verification and password hashing
+// Returns new user ID if registration succeeds, -1 if email exists, -2 if file error
 /*
- * REGISTER USER:
- * This adds a brand new user to our system.
- * It creates a new row in the users.csv file with all their details.
- * It also makes sure their email is not already taken.
+ * User registration process:
+ * 1. Verify email is not already registered
+ * 2. Generate new unique user ID
+ * 3. Hash password using SHA256 for secure storage
+ * 4. Write new user record to users.csv database
+ * 5. Return new user ID
  */
-int registerUser(const string &email, const string &fullName, const string &role, const string &password)
+int registerUser(const string &email, const string &fullName, const string &role, const string &password) // AFSHA: SIGNUP
 {
     string filePath = "database/users.csv";
     ifstream inFile(filePath);
@@ -580,8 +627,9 @@ int registerUser(const string &email, const string &fullName, const string &role
             string idStr, storedEmail, dummy;
 
             getline(ss, idStr, ',');
-            getline(ss, dummy, ',');       // Username
-            getline(ss, storedEmail, ','); // Email
+            getline(ss, dummy, ',');       // Username/handle
+            getline(ss, storedEmail, ','); // Email field
+
 
             if (storedEmail == email)
             {
@@ -681,16 +729,22 @@ int registerUser(const string &email, const string &fullName, const string &role
     return newId;
 }
 
+//=============================================================================================
+// ========== ABHISHEK: POST CLASS (OOP - Classes & Objects) ==========
+// This class encapsulates all post-related data and behavior
+// Manages posts (tweets) with tracking of content, likes, reposts, and metadata
+// Fields: PostID, UserID, Content, ParentID, LikesCount, RetweetsCount, CreatedAt, Role
 /*
- * POST CLASS:
- * This part manages all the posts (like tweets) made by users.
- * It keeps track of who posted it, what it says, and how many likes it has.
- * It also saves new posts into the posts.csv file.
+ * Post class structure:
+ * - Stores post metadata (ID, user who posted, creation time, role of poster)
+ * - Tracks engagement metrics (likes, retweets)
+ * - Supports threaded posts via ParentID (replies to other posts)
+ * - Provides getters/setters for all private data members
  */
 class post
 {
 private:
-    // PostID,UserID,Content,ParentID,LikesCount,RetweetsCount,CreatedAt,role
+    // Post CSV format: PostID,UserID,Content,ParentID,LikesCount,RetweetsCount,CreatedAt,Role
     int id_private;
     int user_id_private = -1;
     string content_private;
@@ -702,8 +756,7 @@ private:
     bool isFound_private;
 
 public:
-    // GETTERS AND SETTERS
-    // GETTERS
+    // ========== ABHISHEK: GETTERS (Methods for accessing private members) ==========
     int id() const { return id_private; }
     int user_id() const { return user_id_private; }
     string content() const { return content_private; }
@@ -713,7 +766,7 @@ public:
     string created_at() const { return created_at_private; }
     string role() const { return role_private; }
     bool isFound() const { return isFound_private; }
-    // SETTERS
+
     void id(int val) { id_private = val; }
     void user_id(int val) { user_id_private = val; }
     void content(const string &val) { content_private = val; }
@@ -723,15 +776,19 @@ public:
     void created_at(const string &val) { created_at_private = val; }
     void role(const string &val) { role_private = val; }
     void isFound(bool val) { isFound_private = val; }
-    // CONSTRUCTOR AND DESTRUCTOR
+
+    // ========== ABHISHEK: CONSTRUCTOR & DESTRUCTOR ==========
     post();
     post(const string &content, int user_id, int parent_id = -1);
     ~post();
+
+    // ========== ABHUDAYA: CSV DATABASE METHODS ==========
     static post getpost(int id);
     static void savepost(const post &p);
     static bool deletepost(int post_id);
 };
 
+// ========== ABHISHEK: POST CLASS CONSTRUCTORS IMPLEMENTATION ==========
 post::post()
 {
 }
@@ -902,6 +959,7 @@ post post::getpost(int id)
         getline(ss, created_at, ',');
         getline(ss, role);
 
+
         try
         {
             int post_id = stoi(post_id_str);
@@ -933,6 +991,8 @@ post post::getpost(int id)
     return p;
 }
 
+// ========== ABHUDAYA: SAVE POST TO CSV DATABASE ==========
+// Creates a new post record in the posts.csv database file
 void post::savepost(const post &p)
 {
     string filePath = "database/posts.csv";
@@ -1007,7 +1067,7 @@ void post::savepost(const post &p)
         return;
     }
 
-    // Rewrite the entire file
+    // Rewrite entire file with updated records
     ofstream outFile(filePath);
 
     for (const auto &l : lines)
@@ -1018,6 +1078,8 @@ void post::savepost(const post &p)
     outFile.close();
 }
 
+// ========== ABHUDAYA: DELETE POST FROM CSV DATABASE ==========
+// Removes a post record from posts.csv database by post ID
 bool post::deletepost(int post_id)
 {
     string filePath = "database/posts.csv";
@@ -1090,13 +1152,15 @@ bool post::deletepost(int post_id)
 }
 
 //=================================
-// CROW FUNCTIONS
+// ========== ADITYA: CROW FRAMEWORK - HTTP ROUTES & HANDLERS ==========
 //=================================
 
+// Forward declaration of token verification function
 int verify_token(const crow::request &req);
 
-// Helper function to require login
-crow::response requireLogin(const crow::request &req)
+// ========== ADITYA: REQUIRE LOGIN REDIRECT HELPER - CROW RESPONSE ==========
+// Helper function that redirects unauthenticated requests to login page
+crow::response requireLogin(const crow::request &req) // ADITYA: Crow framework
 {
     int userID = verify_token(req);
     if (userID <= 0)
@@ -1113,7 +1177,8 @@ crow::response requireLogin(const crow::request &req)
     return res;
 }
 
-// Generating user credentials
+// ========== BHAUMIK: GENERATE USER INITIALS FOR DISPLAY ==========
+// Helper function to create 2-letter initials from full name for avatar display
 string getInitials(const string &name)
 {
     if (name.empty())
@@ -1129,138 +1194,155 @@ string getInitials(const string &name)
     return initials;
 }
 
-struct HubInfo
-{
-    string slug;
-    string name;
-    string short_name;
-    string description;
-};
-
-vector<HubInfo> getAcademicHubs()
-{
-    return {
-        {"engineering-technology", "Engineering & Technology", "ET", "Engineering projects, labs, hardware, and technical collaboration."},
-        {"computer-applications", "Computer Applications", "CA", "Software, systems, data, and applied computing discussions."},
-        {"management-business-administration", "Management & Business Administration", "MBA", "Business, management, events, and campus leadership."},
-        {"commerce", "Commerce", "COM", "Accounting, finance, markets, and commerce conversations."},
-        {"economics", "Economics", "ECO", "Policy, markets, development, and economic research discussions."},
-        {"law", "Law", "LAW", "Moot courts, case analysis, legal research, and policy debate."},
-        {"humanities-liberal-arts", "Humanities & Liberal Arts", "HLA", "Culture, writing, history, society, and interdisciplinary thinking."},
-        {"psychology", "Psychology", "PSY", "Behavior, cognition, counseling, and mental health discussions."},
-        {"sciences", "Sciences", "SCI", "Physics, chemistry, biology, mathematics, and research collaboration."},
-        {"design-media", "Design & Media", "DM", "Visual design, communication, content, and creative production."},
-        {"allied-health-sciences", "Allied Health Sciences", "AHS", "Health sciences, clinical practice, wellness, and public health."},
-        {"doctoral-phd-programs", "Doctoral (Ph.D.) Programs", "PHD", "Research methods, publications, thesis work, and doctoral life."}
+    struct HubInfo
+    {
+        string slug;
+        string name;
+        string short_name;
+        string description;
     };
-}
 
-string hubProgrammeFromSlug(const string &slug)
-{
-    if (slug == "cse" || slug == "ca" || slug == "computer-apps") return "Computer Applications";
-    if (slug == "ece" || slug == "me" || slug == "et" || slug == "engineering") return "Engineering & Technology";
-    if (slug == "mba" || slug == "management") return "Management & Business Administration";
-    if (slug == "humanities" || slug == "liberal-arts") return "Humanities & Liberal Arts";
-    if (slug == "design") return "Design & Media";
-    if (slug == "health" || slug == "allied-health") return "Allied Health Sciences";
-    if (slug == "phd" || slug == "doctoral") return "Doctoral (Ph.D.) Programs";
-
-    for (const auto &hub : getAcademicHubs())
+    vector<HubInfo> getAcademicHubs()
     {
-        if (hub.slug == slug || hub.name == slug)
-            return hub.name;
+        return {
+            {"engineering-technology", "Engineering & Technology", "ET", "Engineering projects, labs, hardware, and technical collaboration."},
+            {"computer-applications", "Computer Applications", "CA", "Software, systems, data, and applied computing discussions."},
+            {"management-business-administration", "Management & Business Administration", "MBA", "Business, management, events, and campus leadership."},
+            {"commerce", "Commerce", "COM", "Accounting, finance, markets, and commerce conversations."},
+            {"economics", "Economics", "ECO", "Policy, markets, development, and economic research discussions."},
+            {"law", "Law", "LAW", "Moot courts, case analysis, legal research, and policy debate."},
+            {"humanities-liberal-arts", "Humanities & Liberal Arts", "HLA", "Culture, writing, history, society, and interdisciplinary thinking."},
+            {"psychology", "Psychology", "PSY", "Behavior, cognition, counseling, and mental health discussions."},
+            {"sciences", "Sciences", "SCI", "Physics, chemistry, biology, mathematics, and research collaboration."},
+            {"design-media", "Design & Media", "DM", "Visual design, communication, content, and creative production."},
+            {"allied-health-sciences", "Allied Health Sciences", "AHS", "Health sciences, clinical practice, wellness, and public health."},
+            {"doctoral-phd-programs", "Doctoral (Ph.D.) Programs", "PHD", "Research methods, publications, thesis work, and doctoral life."}
+        };
     }
 
-    return "";
-}
-
-string hubSlugFromProgramme(const string &programme)
-{
-    for (const auto &hub : getAcademicHubs())
+    string hubProgrammeFromSlug(const string &slug)
     {
-        if (hub.name == programme)
-            return hub.slug;
+        if (slug == "cse" || slug == "ca" || slug == "computer-apps") return "Computer Applications";
+        if (slug == "ece" || slug == "me" || slug == "et" || slug == "engineering") return "Engineering & Technology";
+        if (slug == "mba" || slug == "management") return "Management & Business Administration";
+        if (slug == "humanities" || slug == "liberal-arts") return "Humanities & Liberal Arts";
+        if (slug == "design") return "Design & Media";
+        if (slug == "health" || slug == "allied-health") return "Allied Health Sciences";
+        if (slug == "phd" || slug == "doctoral") return "Doctoral (Ph.D.) Programs";
+
+        for (const auto &hub : getAcademicHubs())
+        {
+            if (hub.slug == slug || hub.name == slug)
+                return hub.name;
+        }
+
+        return "";
     }
 
-    return "";
-}
-
-vector<crow::mustache::context> buildHubContexts(const string &currentProgramme = "")
-{
-    vector<crow::mustache::context> hubs;
-    for (const auto &hub : getAcademicHubs())
+    string hubSlugFromProgramme(const string &programme)
     {
-        crow::mustache::context hub_ctx;
-        hub_ctx["slug"] = hub.slug;
-        hub_ctx["name"] = hub.name;
-        hub_ctx["short_name"] = hub.short_name;
-        hub_ctx["description"] = hub.description;
-        if (hub.name == currentProgramme)
-            hub_ctx["is_current"] = true;
-        hubs.push_back(hub_ctx);
-    }
-    return hubs;
-}
+        for (const auto &hub : getAcademicHubs())
+        {
+            if (hub.name == programme)
+                return hub.slug;
+        }
 
-void addCurrentUserContext(crow::mustache::context &ctx, int user_id)
-{
-    user currentUser(user_id);
-
-    if (!currentUser.isFound())
-        return;
-
-    string initials = "U";
-
-    if (!currentUser.fullname().empty())
-    {
-        initials = "";
-        initials += currentUser.fullname()[0];
-
-        size_t space = currentUser.fullname().find(' ');
-        if (space != string::npos && space + 1 < currentUser.fullname().size())
-            initials += currentUser.fullname()[space + 1];
+        return "";
     }
 
-    ctx["user_initials"] = initials;
-    ctx["user_name"] = currentUser.fullname();
-    ctx["user_handle"] = currentUser.handle();
-    ctx["user_programme"] = currentUser.programme();
-    ctx["user_hub_slug"] = hubSlugFromProgramme(currentUser.programme());
-    ctx["is_staff"] = isStaffRole(currentUser.role());
-    ctx["is_admin"] = isAdminRole(currentUser.role());
-    ctx["academic_hubs"] = buildHubContexts(currentUser.programme());
-}
+    vector<crow::mustache::context> buildHubContexts(const string &currentProgramme = "")
+    {
+        vector<crow::mustache::context> hubs;
+        for (const auto &hub : getAcademicHubs())
+        {
+            crow::mustache::context hub_ctx;
+            hub_ctx["slug"] = hub.slug;
+            hub_ctx["name"] = hub.name;
+            hub_ctx["short_name"] = hub.short_name;
+            hub_ctx["description"] = hub.description;
+            if (hub.name == currentProgramme)
+                hub_ctx["is_current"] = true;
+            hubs.push_back(hub_ctx);
+        }
+        return hubs;
+    }
 
-string getRequestParam(const crow::request &req, const string &name)
-{
-    const char *urlValue = req.url_params.get(name);
-    if (urlValue)
-        return urlValue;
+    // ========== ADITYA & BHAUMIK: PREPARE CURRENT USER CONTEXT FOR TEMPLATES ==========
+    // Helper function that populates template context with current user's data
+    // Used in route handlers to pass user info to HTML templates
+    void addCurrentUserContext(crow::mustache::context &ctx, int user_id)
+    {
+        user currentUser(user_id);
 
-    crow::query_string params("?" + req.body);
-    const char *value = params.get(name);
-    return value ? value : "";
-}
+        if (!currentUser.isFound())
+            return;
 
-string normalizeRole(const string &role)
-{
-    if (role == "student" || role == "Student") return "Student";
-    if (role == "teacher" || role == "Teacher") return "Teacher";
-    if (role == "staff" || role == "Staff") return "Staff";
-    if (role == "admin" || role == "Admin") return "Admin";
-    return role;
-}
+        string initials = "U";
 
-bool isStaffRole(const string &role)
-{
-    return role == "staff" || role == "Staff" || isAdminRole(role);
-}
+        if (!currentUser.fullname().empty())
+        {
+            initials = "";
+            initials += currentUser.fullname()[0];
 
-bool isAdminRole(const string &role)
-{
-    return role == "admin" || role == "Admin";
-}
+            size_t space = currentUser.fullname().find(' ');
+            if (space != string::npos && space + 1 < currentUser.fullname().size())
+                initials += currentUser.fullname()[space + 1];
+        }
 
+        ctx["user_initials"] = initials;
+        ctx["user_name"] = currentUser.fullname();
+        ctx["user_handle"] = currentUser.handle();
+        ctx["user_programme"] = currentUser.programme();
+        ctx["user_hub_slug"] = hubSlugFromProgramme(currentUser.programme());
+        ctx["is_staff"] = isStaffRole(currentUser.role());
+        ctx["is_admin"] = isAdminRole(currentUser.role());
+        ctx["academic_hubs"] = buildHubContexts(currentUser.programme());
+    }
+
+    // ========== ADITYA: GET REQUEST PARAMETER FROM FORM DATA ==========
+    // Helper function to extract URL-encoded form parameters from POST requests
+    string getRequestParam(const crow::request &req, const string &name)
+    {
+        const char *urlValue = req.url_params.get(name);
+        if (urlValue)
+            return urlValue;
+
+        crow::query_string params("?" + req.body);
+        const char *value = params.get(name);
+        return value ? value : "";
+    }
+
+    // ========== BHAUMIK: ROLE VALIDATION HELPER FUNCTIONS ==========
+    // These are optimization functions that avoid repeating role comparison logic
+    // Used throughout codebase for user role checks and authorization
+
+    // ========== BHAUMIK: NORMALIZE ROLE CASE ==========
+    // Standardizes role strings to proper case for consistent comparison
+    string normalizeRole(const string &role)
+    {
+        if (role == "student" || role == "Student") return "Student";
+        if (role == "teacher" || role == "Teacher") return "Teacher";
+        if (role == "staff" || role == "Staff") return "Staff";
+        if (role == "admin" || role == "Admin") return "Admin";
+        return role;
+    }
+
+    // ========== BHAUMIK: CHECK IF USER IS STAFF OR ADMIN ==========
+    // Returns true if user has staff or admin privileges
+    bool isStaffRole(const string &role)
+    {
+        return role == "staff" || role == "Staff" || isAdminRole(role);
+    }
+
+    // ========== BHAUMIK: CHECK IF USER IS ADMIN ==========
+    // Returns true only if user has admin privileges
+    bool isAdminRole(const string &role)
+    {
+        return role == "admin" || role == "Admin";
+    }
+
+// ========== BHAUMIK: LOAD NEWS FROM CSV ==========
+// Helper function to load news items from news.csv and prepare them for display
 vector<crow::mustache::context> loadNews()
 {
     vector<crow::mustache::context> news_vector;
@@ -1296,12 +1378,17 @@ vector<crow::mustache::context> loadNews()
     return news_vector;
 }
 
-// verify function
+//========================================
+// ========== AFSHA: TOKEN VERIFICATION - SECURITY & AUTHENTICATION ==========
+// Validates JWT token from cookies to verify user authentication status
+// Returns user ID if token is valid, -1 if invalid or missing
 
 /*
- * VERIFY TOKEN:
- * This checks the secret digital badge (token) of the user.
- * It makes sure the user is actually logged in before letting them see private pages.
+ * This security function:
+ * 1. Extracts token from HTTP Cookie header
+ * 2. Decodes and validates JWT signature using secret key
+ * 3. Extracts user ID from validated token claims
+ * 4. Returns user ID (>0 means authenticated, <=0 means invalid/expired)
  */
 int verify_token(const crow::request &req)
 {
@@ -1362,6 +1449,49 @@ int verify_token(const crow::request &req)
  * This is the starting point of the whole website.
  * It turns on the server and lists all the web pages users can visit.
  */
+
+// ========================================================================================================
+// ========== MAIN FUNCTION - X-NCU SERVER APPLICATION ==========
+// ========================================================================================================
+// TEAM MEMBER RESPONSIBILITIES:
+//
+// ADITYA: Crow framework and HTTP routing
+//   - All CROW_ROUTE declarations (GET, POST, etc)
+//   - Route handlers and HTTP method implementations
+//   - Routes: /, /students, /teachers, /staff, /logout, /about, /login, /signup
+//   - Action routes: /post, /deletepost, /updatepost, /profile, /editprofile, /updateprofile
+//   - Social action routes: /like, /unlike, /follow, /unfollow
+//   - Community routes: /hubs, /hub, /following, /followers, /cse, /ece, /me, /request-access, etc.
+//
+// AFSHA: Security and authentication
+//   - User authentication functions (authenticateUser, registerUser)
+//   - JWT token handling and verification (verify_token)
+//   - OTP generation and verification
+//   - Password hashing with SHA256
+//   - Routes: /auth (login POST), /register (signup POST), /send-otp
+//
+// ABHUDAYA: Database handling (CSV file operations)
+//   - CSV file reading and writing for all data persistence
+//   - User constructor (reads from users.csv)
+//   - user::updateUserInCSV() - saves user data
+//   - post::savepost() - creates new posts
+//   - post::deletepost() - removes posts
+//   - All file I/O operations
+//
+// ABHISHEK: OOP classes and objects
+//   - user class: Members, getters, setters, constructors, destructors
+//   - post class: Members, getters, setters, constructors, destructors
+//   - Data structure design and encapsulation
+//
+// BHAUMIK: Helper functions and code optimization
+//   - User interaction helpers: hasUserLikedPost, addLikeToUser, removeLikeFromUser
+//   - Follow management: doesUserFollow, addFollow, removeFollow, getFollowedUsers
+//   - Role validation: normalizeRole, isStaffRole, isAdminRole
+//   - Display helpers: getInitials, loadNews
+//   - Context builders: addCurrentUserContext, getRequestParam
+//
+// ========================================================================================================
+
 int main()
 {
     crow::SimpleApp app;
@@ -1370,10 +1500,12 @@ int main()
     // ==========================================
     // 1. HOME ROUTE
     // ==========================================
+    // ========== ADITYA: HOME ROUTE - CROW GET HANDLER ==========
     /*
      * HOME PAGE ROUTE (/):
-     * This prepares the main feed where you see all posts.
-     * It checks if you are logged in, loads posts from the database, and sends them to the webpage.
+     * Displays the main feed with all posts (GET request)
+     * Checks user authentication, loads posts from CSV database, renders template
+     * Requires: Valid JWT token in cookies
      */
     CROW_ROUTE(app, "/")([](const crow::request &req)
                          {
@@ -1535,11 +1667,12 @@ int main()
     return crow::response(page.render(ctx)); });
 
     // ==========================================
-    // 2. STUDENTS FEED ROUTE
+    // ========== ADITYA: STUDENTS FEED ROUTE - CROW GET HANDLER ==========
     // ==========================================
     /*
      * STUDENTS FEED ROUTE (/students):
-     * This is a special feed that only shows posts made by students.
+     * Displays a filtered feed with only posts made by students
+     * GET request requiring authentication
      */
     CROW_ROUTE(app, "/students")([](const crow::request &req)
                                  {
@@ -1632,7 +1765,8 @@ int main()
         auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
     // ==========================================
-    // 3. TEACHERS FEED ROUTE
+    // ==========================================
+    // ========== ADITYA: TEACHERS FEED ROUTE - CROW GET HANDLER ==========
     // ==========================================
     CROW_ROUTE(app, "/teachers")([](const crow::request &req)
                                  {
@@ -1725,7 +1859,7 @@ int main()
         auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
     // ==========================================
-    // 4. STAFF FEED ROUTE
+    // ========== ADITYA: STAFF FEED ROUTE - CROW GET HANDLER ==========
     // ==========================================
     CROW_ROUTE(app, "/staff")([](const crow::request &req)
                               {
@@ -1818,6 +1952,8 @@ int main()
         auto page = crow::mustache::load("index.html"); return crow::response(page.render(ctx)); });
 
     // GET ABOUT PAGE
+    // ========== ADITYA: LOGOUT ROUTE - CROW GET HANDLER ==========
+    // Clears JWT token cookie to log out user and redirects to login page
     CROW_ROUTE(app, "/logout")([]()
                                {
                                 crow::response res;
@@ -1826,26 +1962,31 @@ int main()
                                 res.set_header("Location", "/login");
                                return res; });
 
+    // ========== ADITYA: ABOUT PAGE ROUTE - CROW GET HANDLER ==========
+    // Renders static about page
     CROW_ROUTE(app, "/about")([](const crow::request &req)
                               {
         auto variable_page = crow::mustache::load("about.html");
         return variable_page.render(); });
 
-    // GET LOGIN PAGE
+    // ========== ADITYA: LOGIN PAGE ROUTE - CROW GET HANDLER ==========
+    // Displays login form for user authentication
     CROW_ROUTE(app, "/login")([](const crow::request &req)
                               {
         if (verify_token(req) > 0) { crow::response res; res.code = 303; res.set_header("Location", "/"); return res; }
         auto variable_page = crow::mustache::load("login.html");
         return crow::response(variable_page.render()); });
 
-    // GET SIGNUP PAGE
+    // ========== ADITYA: SIGNUP PAGE ROUTE - CROW GET HANDLER ==========
+    // Displays signup/registration form for new users
     CROW_ROUTE(app, "/signup")([](const crow::request &req)
                                {
         if (verify_token(req) > 0) { crow::response res; res.code = 303; res.set_header("Location", "/"); return res; }
         auto variable_page = crow::mustache::load("signup.html");
         return crow::response(variable_page.render()); });
 
-    // POST SEND OTP
+    // ========== AFSHA: SEND OTP ROUTE - CROW POST HANDLER ==========
+    // Sends one-time password (OTP) to user email for account verification
     CROW_ROUTE(app, "/send-otp").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                                  {
         crow::query_string params("?" + req.body);
@@ -1856,7 +1997,10 @@ int main()
         }
         return crow::response(500, "Failed to send OTP"); });
 
-    // POST REGISTER DATA
+    // ========== AFSHA: REGISTER USER ROUTE - CROW POST HANDLER ==========
+    // Handles user registration with email verification via OTP
+    // ========== AFSHA: REGISTER ROUTE - CROW POST HANDLER ==========
+    // Processes user registration with OTP verification and creates new account
     CROW_ROUTE(app, "/register").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                                  {
         crow::query_string params("?" + req.body);
@@ -1909,10 +2053,12 @@ int main()
      * This loads a specific user's personal page.
      * It shows their details and only the posts they have made.
      */
+    // ========== ADITYA: VIEW USER PROFILE ROUTE - CROW GET HANDLER ==========
+    // Displays a user's profile page with their posts and information
     CROW_ROUTE(app, "/profile/<string>")([](const crow::request &req, string username)
                                          {
 
-    // requireLogin(req);
+    // Verify current user is logged in
     int userID = verify_token(req);
 
     if (username[0] != '@')
@@ -2074,7 +2220,8 @@ int main()
 
     return crow::response(404); });
 
-    // POST AUTHENTICATION DATA
+    // ========== AFSHA: AUTHENTICATION ROUTE - CROW POST HANDLER ==========
+    // Processes user login: validates credentials, generates JWT token, sets secure cookie
     CROW_ROUTE(app, "/auth").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                              {
         crow::query_string params("?" + req.body);
@@ -2117,7 +2264,8 @@ int main()
         } });
 
     // ==========================================
-    // new post route
+    // ========== ADITYA: CREATE POST ROUTE - CROW POST HANDLER ==========
+    // Creates a new post with optional reply/thread capability
     // ==========================================
     CROW_ROUTE(app, "/post").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                              {
@@ -2152,6 +2300,8 @@ int main()
         res.set_header("Location", "/");
         return res; });
 
+    // ========== ADITYA: UPDATE POST ROUTE - CROW GET/POST HANDLER ==========
+    // Handles post update/edit functionality via GET or POST requests
     CROW_ROUTE(app, "/updatepost")
         .methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
                                                                 {
@@ -2215,7 +2365,8 @@ int main()
             return res; });
 
     // ==========================================
-    // DELETE POST ROUTE
+    // ========== ADITYA: DELETE POST ROUTE - CROW GET/POST HANDLER ==========
+    // Removes a post from the database
     // ==========================================
     CROW_ROUTE(app, "/deletepost").methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
                                                                                            {
@@ -2292,6 +2443,8 @@ int main()
             return crow::response(500, message_page.render(ctx));
         } });
 
+    // ========== ADITYA: EDIT PROFILE PAGE ROUTE - CROW GET/POST HANDLER ==========
+    // Displays and processes profile edit form
     CROW_ROUTE(app, "/editprofile").methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST)([](const crow::request &req)
                                                                                            {
         if (verify_token(req)<= 0)
@@ -2328,6 +2481,8 @@ int main()
 
         } return crow::response(200, "Profile updated successfully"); });
 
+    // ========== ADITYA: UPDATE PROFILE ROUTE - CROW POST HANDLER ==========
+    // Processes profile updates and saves changes to database
     CROW_ROUTE(app, "/updateprofile").methods(crow::HTTPMethod::POST)([](const crow::request &req)
                                                                                              {
         if (verify_token(req)<= 0)
@@ -2369,7 +2524,8 @@ int main()
             return crow::response(500, message_page.render(ctx));
         } });
 
-    // LIKE ROUTE
+    // ========== ADITYA: LIKE POST ROUTE - CROW POST HANDLER (Uses BHAUMIK helper functions) ==========
+    // Adds a like to a post using helper function
     CROW_ROUTE(app, "/like").methods(crow::HTTPMethod::POST)([](const crow::request &req)
     {
         int user_id = verify_token(req);
@@ -2397,7 +2553,8 @@ int main()
         catch (...) { return crow::response(400, "Invalid post_id"); }
     });
 
-    // UNLIKE ROUTE
+    // ========== ADITYA: UNLIKE POST ROUTE - CROW POST HANDLER (Uses BHAUMIK helper functions) ==========
+    // Removes a like from a post using helper function
     CROW_ROUTE(app, "/unlike").methods(crow::HTTPMethod::POST)([](const crow::request &req)
     {
         int user_id = verify_token(req);
@@ -2425,7 +2582,8 @@ int main()
         catch (...) { return crow::response(400, "Invalid post_id"); }
     });
 
-    // FOLLOW ROUTE
+    // ========== ADITYA: FOLLOW USER ROUTE - CROW POST HANDLER (Uses BHAUMIK helper functions) ==========
+    // Creates a follow relationship between users
     CROW_ROUTE(app, "/follow").methods(crow::HTTPMethod::POST)([](const crow::request &req)
     {
         int user_id = verify_token(req);
@@ -2451,7 +2609,8 @@ int main()
         catch (...) { return crow::response(400, "Invalid user_id"); }
     });
 
-    // UNFOLLOW ROUTE
+    // ========== ADITYA: UNFOLLOW USER ROUTE - CROW POST HANDLER (Uses BHAUMIK helper functions) ==========
+    // Removes a follow relationship between users
     CROW_ROUTE(app, "/unfollow").methods(crow::HTTPMethod::POST)([](const crow::request &req)
     {
         int user_id = verify_token(req);
@@ -2569,7 +2728,8 @@ int main()
         return crow::response(page.render(ctx));
     });
 
-    // ACADEMIC HUBS INDEX
+    // ========== ADITYA: ACADEMIC HUBS INDEX ROUTE - CROW GET HANDLER ==========
+    // Displays list of all academic hubs/communities for user to browse
     CROW_ROUTE(app, "/hubs")([](const crow::request &req)
     {
         int user_id = verify_token(req);

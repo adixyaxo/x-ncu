@@ -47,6 +47,12 @@
         </div>
 
         <form id="post-form" class="p-4 border-b border-xborder flex space-x-4" action="/post" method="POST">
+            {{#post_target_feed}}
+            <input type="hidden" name="target_feed" value="{{post_target_feed}}">
+            {{/post_target_feed}}
+            {{#post_redirect}}
+            <input type="hidden" name="redirect_to" value="{{post_redirect}}">
+            {{/post_redirect}}
             <div class="w-10 h-10 rounded-full bg-xborder flex-shrink-0 flex items-center justify-center font-bold">
                 {{user_initials}}
             </div>
@@ -111,21 +117,21 @@
 
                     <div class=" flex justify-between items-center mt-3
                         text-xmuted w-full max-w-md">
-                        <a href="/updatepost?action=3&id={{id}}"
+                        <a href="/updatepost?action=3&id={{id}}&redirect_to={{post_redirect}}"
                             class="flex items-center space-x-2 hover:text-blue-400 transition-colors group">
                             <div class="p-1.5 group-hover:bg-blue-400/10 rounded-full">
                                 <i class="ph ph-chat-circle text-lg"></i>
                             </div>
                             <span class="text-xs">{{replies}}</span>
                         </a>
-                        <a href="/updatepost?action=2&id={{id}}"
+                        <a href="/updatepost?action=2&id={{id}}&redirect_to={{post_redirect}}"
                             class="flex items-center space-x-2 hover:text-xgreen transition-colors group">
                             <div class="p-1.5 group-hover:bg-xgreen/10 rounded-full">
                                 <i class="ph ph-arrows-left-right text-lg"></i>
                             </div>
                             <span class="text-xs">{{reposts}}</span>
                         </a>
-                        <a href="/updatepost?action=1&id={{id}}"
+                        <a href="/updatepost?action=1&id={{id}}&redirect_to={{post_redirect}}"
                             class="flex items-center space-x-2 hover:text-pink-500 transition-colors group">
                             <div class="p-1.5 group-hover:bg-pink-500/10 rounded-full">
                                 <i class="ph ph-heart text-lg"></i>
@@ -133,7 +139,7 @@
                             <span class="text-xs">{{likes}}</span>
                         </a>
                         {{#can_delete}}
-                        <a href="/deletepost?id={{id}}"
+                        <a href="/deletepost?id={{id}}&redirect_to={{post_redirect}}"
                             class="flex items-center hover:text-red-500 transition-colors group">
                             <div class="p-1.5 group-hover:bg-red-500/10 rounded-full">
                                 <i class="ph ph-trash text-lg"></i>

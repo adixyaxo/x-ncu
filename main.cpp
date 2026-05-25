@@ -3136,6 +3136,7 @@
             }
 
             vector<crow::mustache::context> posts_list;
+            unordered_map<int, bool> seenHubPosts;
             if (hasAccess)
             {
                 ifstream postsFile("database/posts.csv");
@@ -3159,12 +3160,13 @@
 
                         try
                         {
+                            int postId = stoi(postIdStr);
                             int authorId = stoi(userIdStr);
                             user author(authorId);
-                            if (author.isFound() && author.programme() == programme)
+                            if (author.isFound() && author.programme() == programme && !seenHubPosts[postId])
                             {
                                 crow::mustache::context post_ctx;
-                                post_ctx["post_id"] = postIdStr;
+                                post_ctx["post_id"] = to_string(postId);
                                 post_ctx["author"] = author.fullname();
                                 post_ctx["content"] = content;
                                 post_ctx["author_handle"] = author.handle();
@@ -3173,7 +3175,8 @@
                                 post_ctx["is_verified"] = author.is_verified();
                                 post_ctx["likes"] = likes;
                                 post_ctx["time_ago"] = createdAt.size() >= 10 ? createdAt.substr(0, 10) : createdAt;
-                                post_ctx["liked"] = hasUserLikedPost(user_id, stoi(postIdStr));
+                                post_ctx["liked"] = hasUserLikedPost(user_id, postId);
+                                seenHubPosts[postId] = true;
                                 posts_list.push_back(post_ctx);
                             }
                         }
